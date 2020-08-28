@@ -42,11 +42,9 @@ function videoBack(name){
     let mp4 = document.createElement('source');
     mp4.src = `videos/${name}.mp4`;
     mp4.type = 'video/mp4';
-    videobg.appendChild(mp4);
     let webm = document.createElement('source');
     webm.src = `videos/webm/${name}.webm`;
     webm.type = 'video/webm';
-    videobg.appendChild(webm);
     let fallback = document.createElement('img');
     fallback.src = `videos/${name}.png`;
     document.querySelector('#videoBG').appendChild(fallback);
