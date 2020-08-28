@@ -47,7 +47,90 @@ function videoBack(name){
   }
 
 }
+//slidemenu
 
+function slidemenu(value, option){
+
+  switch(value){
+    case 'wind':
+      chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, option);
+    break;
+    case 'humidity':
+      chart_summon('humidity',  'rgb(0,238,255)', 'rgba(0,238,255, 0.25)', '%', option);
+    break;
+    case 'uv':
+      chart_summon('uvIndex', 'rgb(163,78,233)', 'rgba(163,78,233, 0.25)', '', option);
+    break;
+    case 'clouds':
+      chart_summon('cloudCover','rgb(104,231,142)', 'rgba(104,231,142, 0.25)', '%', option);
+    break;
+    case 'precipProbability':
+      chart_summon('precipProbability','rgb(0, 119, 255)', 'rgba(0, 119, 255, 0.25)', '%', option);
+  }
+  
+}
+function radio_events(option){
+  let radio_arr = document.getElementsByClassName('slide-toggle');
+   radio_arr[0].checked = true;
+  remove_events();
+  for(let i = 0; i<radio_arr.length;i++){
+    
+    radio_arr[i].addEventListener('click', ()=>{
+      slidemenu(radio_arr[i].value, option)}); 
+  }
+}
+
+Chart.pluginService.register({
+    beforeRender: function(chart) {
+      if (chart.config.options.showAllTooltips) {
+        // create an array of tooltips
+        // we can't use the chart tooltip because there is only one tooltip per chart
+        chart.pluginTooltips = [];
+        chart.config.data.datasets.forEach(function(dataset, i) {
+          chart.getDatasetMeta(i).data.forEach(function(sector, j) {
+            chart.pluginTooltips.push(new Chart.Tooltip({
+              _chart: chart.chart,
+              _chartInstance: chart,
+              _data: chart.data,
+              _options: chart.options.tooltips,
+              _active: [sector]
+            }, chart));
+          });
+        });
+
+        // turn off normal tooltips
+        chart.options.tooltips.enabled = false;
+      }
+    },
+    afterDraw: function(chart, easing) {
+      if (chart.config.options.showAllTooltips) {
+        // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
+        if (!chart.allTooltipsOnce) {
+          if (easing !== 1)
+            return;
+          chart.allTooltipsOnce = true;
+        }
+
+        // turn on tooltips
+        chart.options.tooltips.enabled = true;
+        Chart.helpers.each(chart.pluginTooltips, function(tooltip) {
+          tooltip.initialize();
+          tooltip.update();
+          // we don't actually need this since we are not animating tooltips
+          tooltip.pivot();
+          tooltip.transition(easing).draw();
+        });
+        chart.options.tooltips.enabled = false;
+      }
+    }
+  })
+
+function remove_events(){
+  let new_nav = document.getElementById('slidemenu');
+  let newest_nav = new_nav.cloneNode(true);
+  new_nav.remove();
+  document.getElementById('display').appendChild(newest_nav);
+}
 let localization = {
   'ru':{
     app_temp:'Ощущается как: ',
@@ -227,6 +310,152 @@ function load(request_data = request){
            const response = await fetch(api_url, options);
            const rdata = await response.json();
            console.log(rdata);
+           function chart_summon(option, option_color, option_back, axis_l, mode){
+            document.getElementById('myChart').remove();
+          
+            let chart_block = document.createElement('canvas');
+            chart_block.id = 'myChart';
+            document.getElementsByClassName('chart-container')[0].append(chart_block);
+            console.log('chart was created');
+            //chart
+          let chart_data = [],
+          max_chart =0,
+          chart_labels = [],
+          tooltip_pos = 'top';
+          if(mode=='' || mode ==0){
+            for(let i =0; i<24;i++){
+              //current data
+              if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                chart_data[i] = Math.round(rdata.hourly.data[i][option]*100);
+              }else{
+                chart_data[i] = Math.round(rdata.hourly.data[i][option]);
+              }
+              document.querySelectorAll('.hour > .pop' )[i].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
+              document.querySelectorAll('.hour > .temp' )[i].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
+              document.querySelectorAll('.hour > .sky' )[i].src = `img/icons/${rdata.hourly.data[i].icon}.svg`;
+          
+              document.querySelectorAll('.hour > .time' )[i].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
+              chart_labels[i] = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
+              if(max_chart < chart_data[i]){
+                max_chart = chart_data[i];
+              }
+            }
+          }
+          else if(mode != ''){
+            for(let i = 0; i<rdata.hourly.data.length;i++){
+              if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
+               
+                for(let j =0; j<24;j++){
+                  //hourly
+          
+                    document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
+                  document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
+                  document.querySelectorAll('.hour > .sky' )[j].src = `img/icons/${rdata.hourly.data[i+j].icon}.svg`;
+          
+                 document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
+                 if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                  chart_data[j] = Math.round(rdata.hourly.data[i+j][option]*100);
+                }else{
+                  chart_data[j] = Math.round(rdata.hourly.data[i+j][option]);
+                }
+                chart_labels[j] = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
+                if(max_chart < chart_data[j]){
+                  max_chart = chart_data[j];
+                }
+                }
+                  
+                  
+              }
+            }
+          }
+          
+          let coef =0;
+          if(max_chart > 70){
+            coef = 30;
+          }else{
+            coef = 3;
+            tooltip_pos = 'bottom';
+          }
+            let ctx = document.getElementById('myChart').getContext('2d');
+            let chart = new Chart(ctx, {
+                type: 'line',
+          
+                data: {
+                    labels: chart_labels,
+                    datasets: [{
+          
+                        label: '',
+                        pointBackgroundColor: option_color,
+                        backgroundColor: option_back,
+                        borderColor: option_color,
+                        data: chart_data
+                    }]
+                },
+          
+                // Configuration options go here
+                options: {
+                  //responsive:false,
+                    maintainAspectRatio: false,
+                    onAnimationComplete: function(){
+                        myBarChart.showTooltip(bars,false);
+                        },
+                        
+                    scales: {
+                        xAxes: [{
+          
+                            gridLines: {
+                                 color: "rgba(255, 255, 255, 0.25)",
+                                 zeroLineColor: 'rgba(255, 255, 255, 0.25)',
+                                 drawBorder:false,
+          
+                                 
+                                },
+                            ticks:{
+                                fontColor:'#fff',
+                                fontSize:18,
+          
+                            }
+                            
+                        }],
+                        yAxes: [{
+                          
+                            display:false,
+                            
+                            gridLines: { color: "rgba(255, 255, 255, 0)",
+                          zeroLineColor: 'rgba(255, 255, 255, 0.25)' },
+          
+                            ticks: {
+                                beginAtZero:true,
+                                
+                                max: max_chart +coef
+                            }
+                        }]
+                    },
+                    
+                    legend: {
+                        display: false,
+                    },
+                     showAllTooltips: true,
+                     tooltips:{
+                         
+                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                        displayColors: false,
+                        bodyFontSize: 18,
+                        bodyAlign:'center',
+                      xPadding:-20,
+          
+                        
+                        
+                        bodyFontFamily:"'Rubik', sans-serif",
+                        callbacks: {
+                           label: function(tooltipItem, data) { return tooltipItem.yLabel + axis_l; },
+                            title: function() {return null},
+                         }
+                     }
+                }
+            });
+            
+          }
            //current
            let settings_headlines = document.querySelectorAll('.settings_item > h3');
 
@@ -288,9 +517,10 @@ function load(request_data = request){
       
               document.querySelectorAll('.hour > .time' )[i].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
             }
-
             radio_events('');
             chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, 0);
+            
+            
             document.getElementById('days-fake').checked = true;
               
            }
@@ -313,239 +543,7 @@ function load(request_data = request){
             document.querySelectorAll('.day > .date')[i].innerHTML = localization[lang][date.format('ddd')]+' ' + date.format(localization[lang].date);
             }
 
-            //slidemenu
-
-            function slidemenu(value, option){
-
-              switch(value){
-                case 'wind':
-                  chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, option);
-                break;
-                case 'humidity':
-                  chart_summon('humidity',  'rgb(0,238,255)', 'rgba(0,238,255, 0.25)', '%', option);
-                break;
-                case 'uv':
-                  chart_summon('uvIndex', 'rgb(163,78,233)', 'rgba(163,78,233, 0.25)', '', option);
-                break;
-                case 'clouds':
-                  chart_summon('cloudCover','rgb(104,231,142)', 'rgba(104,231,142, 0.25)', '%', option);
-                break;
-                case 'precipProbability':
-                  chart_summon('precipProbability','rgb(0, 119, 255)', 'rgba(0, 119, 255, 0.25)', '%', option);
-              }
-              
-            }
             
-
-            function radio_events(option){
-              let radio_arr = document.getElementsByClassName('slide-toggle');
-               radio_arr[0].checked = true;
-              remove_events();
-              for(let i = 0; i<radio_arr.length;i++){
-                
-                radio_arr[i].addEventListener('click', ()=>{
-                  slidemenu(radio_arr[i].value, option)}); 
-              }
-            }
-            radio_events(0);
-            
-
-            Chart.pluginService.register({
-                beforeRender: function(chart) {
-                  if (chart.config.options.showAllTooltips) {
-                    // create an array of tooltips
-                    // we can't use the chart tooltip because there is only one tooltip per chart
-                    chart.pluginTooltips = [];
-                    chart.config.data.datasets.forEach(function(dataset, i) {
-                      chart.getDatasetMeta(i).data.forEach(function(sector, j) {
-                        chart.pluginTooltips.push(new Chart.Tooltip({
-                          _chart: chart.chart,
-                          _chartInstance: chart,
-                          _data: chart.data,
-                          _options: chart.options.tooltips,
-                          _active: [sector]
-                        }, chart));
-                      });
-                    });
-      
-                    // turn off normal tooltips
-                    chart.options.tooltips.enabled = false;
-                  }
-                },
-                afterDraw: function(chart, easing) {
-                  if (chart.config.options.showAllTooltips) {
-                    // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
-                    if (!chart.allTooltipsOnce) {
-                      if (easing !== 1)
-                        return;
-                      chart.allTooltipsOnce = true;
-                    }
-      
-                    // turn on tooltips
-                    chart.options.tooltips.enabled = true;
-                    Chart.helpers.each(chart.pluginTooltips, function(tooltip) {
-                      tooltip.initialize();
-                      tooltip.update();
-                      // we don't actually need this since we are not animating tooltips
-                      tooltip.pivot();
-                      tooltip.transition(easing).draw();
-                    });
-                    chart.options.tooltips.enabled = false;
-                  }
-                }
-              })
-            function chart_summon(option, option_color, option_back, axis_l, mode){
-              document.getElementById('myChart').remove();
-
-              let chart_block = document.createElement('canvas');
-              chart_block.id = 'myChart';
-              document.getElementsByClassName('chart-container')[0].append(chart_block);
-              console.log('chart was created');
-              //chart
-            let chart_data = [],
-            max_chart =0,
-            chart_labels = [],
-            tooltip_pos = 'top';
-            if(mode=='' || mode ==0){
-              for(let i =0; i<24;i++){
-                //current data
-                if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
-                  chart_data[i] = Math.round(rdata.hourly.data[i][option]*100);
-                }else{
-                  chart_data[i] = Math.round(rdata.hourly.data[i][option]);
-                }
-                document.querySelectorAll('.hour > .pop' )[i].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
-                document.querySelectorAll('.hour > .temp' )[i].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
-                document.querySelectorAll('.hour > .sky' )[i].src = `img/icons/${rdata.hourly.data[i].icon}.svg`;
-      
-                document.querySelectorAll('.hour > .time' )[i].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
-                chart_labels[i] = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
-                if(max_chart < chart_data[i]){
-                  max_chart = chart_data[i];
-                }
-              }
-            }
-            else if(mode != ''){
-              for(let i = 0; i<rdata.hourly.data.length;i++){
-                if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
-                 
-                  for(let j =0; j<24;j++){
-                    //hourly
-
-                      document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
-                    document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
-                    document.querySelectorAll('.hour > .sky' )[j].src = `img/icons/${rdata.hourly.data[i+j].icon}.svg`;
-          
-                   document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
-                   if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
-                    chart_data[j] = Math.round(rdata.hourly.data[i+j][option]*100);
-                  }else{
-                    chart_data[j] = Math.round(rdata.hourly.data[i+j][option]);
-                  }
-                  chart_labels[j] = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
-                  if(max_chart < chart_data[j]){
-                    max_chart = chart_data[j];
-                  }
-                  }
-                    
-                    
-                }
-              }
-            }
-            
-            let coef =0;
-            if(max_chart > 70){
-              coef = 30;
-            }else{
-              coef = 3;
-              tooltip_pos = 'bottom';
-            }
-              let ctx = document.getElementById('myChart').getContext('2d');
-              let chart = new Chart(ctx, {
-                  type: 'line',
-
-                  data: {
-                      labels: chart_labels,
-                      datasets: [{
-  
-                          label: '',
-                          pointBackgroundColor: option_color,
-                          backgroundColor: option_back,
-                          borderColor: option_color,
-                          data: chart_data
-                      }]
-                  },
-  
-                  // Configuration options go here
-                  options: {
-                    //responsive:false,
-                      maintainAspectRatio: false,
-                      onAnimationComplete: function(){
-                          myBarChart.showTooltip(bars,false);
-                          },
-                          
-                      scales: {
-                          xAxes: [{
-
-                              gridLines: {
-                                   color: "rgba(255, 255, 255, 0.25)",
-                                   zeroLineColor: 'rgba(255, 255, 255, 0.25)',
-                                   drawBorder:false,
-  
-                                   
-                                  },
-                              ticks:{
-                                  fontColor:'#fff',
-                                  fontSize:18,
-  
-                              }
-                              
-                          }],
-                          yAxes: [{
-                            
-                              display:false,
-                              
-                              gridLines: { color: "rgba(255, 255, 255, 0)",
-                            zeroLineColor: 'rgba(255, 255, 255, 0.25)' },
-  
-                              ticks: {
-                                  beginAtZero:true,
-                                  
-                                  max: max_chart +coef
-                              }
-                          }]
-                      },
-                      
-                      legend: {
-                          display: false,
-                      },
-                       showAllTooltips: true,
-                       tooltips:{
-                           
-                          backgroundColor: 'rgba(255, 255, 255, 0)',
-                          displayColors: false,
-                          bodyFontSize: 18,
-                          bodyAlign:'center',
-                        xPadding:-20,
-
-                          
-                          
-                          bodyFontFamily:"'Rubik', sans-serif",
-                          callbacks: {
-                             label: function(tooltipItem, data) { return tooltipItem.yLabel + axis_l; },
-                              title: function() {return null},
-                           }
-                       }
-                  }
-              });
-              
-            }
-            function remove_events(){
-              let new_nav = document.getElementById('slidemenu');
-              let newest_nav = new_nav.cloneNode(true);
-              new_nav.remove();
-              document.getElementById('display').appendChild(newest_nav);
-            }
             
             
             // forecast with hours and graphs
