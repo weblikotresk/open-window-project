@@ -34,7 +34,7 @@ body{
     position: relative;
     height: 100vh;
     margin: 0;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
 }
 #container{
     width: 100%;
