@@ -16,10 +16,14 @@ function videoBack(name){
     videobg.id= 'videoBG';
     videobg.classList.add('no_opacity');
 
-    let source = document.createElement('source');
-    source.src = `videos/${name}.mp4`;
-    source.type = 'video/mp4';
-    videobg.appendChild(source);
+    let mp4 = document.createElement('source');
+    mp4.src = `videos/${name}.mp4`;
+    mp4.type = 'video/mp4';
+    videobg.appendChild(mp4);
+    let webm = document.createElement('source');
+    webm.src = `videos/webm/${name}.webm`;
+    webm.type = 'video/webm';
+    videobg.appendChild(webm);
 
     let fallback = document.createElement('img');
     fallback.src = `videos/${name}.png`;
@@ -35,13 +39,19 @@ function videoBack(name){
     }, 400);
   }else{
     //first creation
-    let source = document.createElement('source');
-    source.src = `videos/${name}.mp4`;
-    source.type = 'video/mp4';
+    let mp4 = document.createElement('source');
+    mp4.src = `videos/${name}.mp4`;
+    mp4.type = 'video/mp4';
+    videobg.appendChild(mp4);
+    let webm = document.createElement('source');
+    webm.src = `videos/webm/${name}.webm`;
+    webm.type = 'video/webm';
+    videobg.appendChild(webm);
     let fallback = document.createElement('img');
     fallback.src = `videos/${name}.png`;
     document.querySelector('#videoBG').appendChild(fallback);
-    document.querySelector('#videoBG').appendChild(source);
+    document.querySelector('#videoBG').appendChild(mp4);
+    document.querySelector('#videoBG').appendChild(webm);
     document.querySelector('#videoBG').classList.add('full_opacity');
     setTimeout(()=>document.querySelector('#videoBG').classList.remove('no_opacity'), 400);
   }
@@ -49,88 +59,7 @@ function videoBack(name){
 }
 //slidemenu
 
-function slidemenu(value, option){
 
-  switch(value){
-    case 'wind':
-      chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, option);
-    break;
-    case 'humidity':
-      chart_summon('humidity',  'rgb(0,238,255)', 'rgba(0,238,255, 0.25)', '%', option);
-    break;
-    case 'uv':
-      chart_summon('uvIndex', 'rgb(163,78,233)', 'rgba(163,78,233, 0.25)', '', option);
-    break;
-    case 'clouds':
-      chart_summon('cloudCover','rgb(104,231,142)', 'rgba(104,231,142, 0.25)', '%', option);
-    break;
-    case 'precipProbability':
-      chart_summon('precipProbability','rgb(0, 119, 255)', 'rgba(0, 119, 255, 0.25)', '%', option);
-  }
-  
-}
-function radio_events(option){
-  let radio_arr = document.getElementsByClassName('slide-toggle');
-   radio_arr[0].checked = true;
-  remove_events();
-  for(let i = 0; i<radio_arr.length;i++){
-    
-    radio_arr[i].addEventListener('click', ()=>{
-      slidemenu(radio_arr[i].value, option)}); 
-  }
-}
-
-Chart.pluginService.register({
-    beforeRender: function(chart) {
-      if (chart.config.options.showAllTooltips) {
-        // create an array of tooltips
-        // we can't use the chart tooltip because there is only one tooltip per chart
-        chart.pluginTooltips = [];
-        chart.config.data.datasets.forEach(function(dataset, i) {
-          chart.getDatasetMeta(i).data.forEach(function(sector, j) {
-            chart.pluginTooltips.push(new Chart.Tooltip({
-              _chart: chart.chart,
-              _chartInstance: chart,
-              _data: chart.data,
-              _options: chart.options.tooltips,
-              _active: [sector]
-            }, chart));
-          });
-        });
-
-        // turn off normal tooltips
-        chart.options.tooltips.enabled = false;
-      }
-    },
-    afterDraw: function(chart, easing) {
-      if (chart.config.options.showAllTooltips) {
-        // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
-        if (!chart.allTooltipsOnce) {
-          if (easing !== 1)
-            return;
-          chart.allTooltipsOnce = true;
-        }
-
-        // turn on tooltips
-        chart.options.tooltips.enabled = true;
-        Chart.helpers.each(chart.pluginTooltips, function(tooltip) {
-          tooltip.initialize();
-          tooltip.update();
-          // we don't actually need this since we are not animating tooltips
-          tooltip.pivot();
-          tooltip.transition(easing).draw();
-        });
-        chart.options.tooltips.enabled = false;
-      }
-    }
-  })
-
-function remove_events(){
-  let new_nav = document.getElementById('slidemenu');
-  let newest_nav = new_nav.cloneNode(true);
-  new_nav.remove();
-  document.getElementById('display').appendChild(newest_nav);
-}
 let localization = {
   'ru':{
     app_temp:'Ощущается как: ',
@@ -310,7 +239,37 @@ function load(request_data = request){
            const response = await fetch(api_url, options);
            const rdata = await response.json();
            console.log(rdata);
-           function chart_summon(option, option_color, option_back, axis_l, mode){
+           function slidemenu(value, option){
+
+            switch(value){
+              case 'wind':
+                chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, option);
+              break;
+              case 'humidity':
+                chart_summon('humidity',  'rgb(0,238,255)', 'rgba(0,238,255, 0.25)', '%', option);
+              break;
+              case 'uv':
+                chart_summon('uvIndex', 'rgb(163,78,233)', 'rgba(163,78,233, 0.25)', '', option);
+              break;
+              case 'clouds':
+                chart_summon('cloudCover','rgb(104,231,142)', 'rgba(104,231,142, 0.25)', '%', option);
+              break;
+              case 'precipProbability':
+                chart_summon('precipProbability','rgb(0, 119, 255)', 'rgba(0, 119, 255, 0.25)', '%', option);
+            }
+            
+          }
+          function radio_events(option){
+            let radio_arr = document.getElementsByClassName('slide-toggle');
+             radio_arr[0].checked = true;
+            remove_events();
+            for(let i = 0; i<radio_arr.length;i++){
+              
+              radio_arr[i].addEventListener('click', ()=>{
+                slidemenu(radio_arr[i].value, option)}); 
+            }
+          }
+          function chart_summon(option, option_color, option_back, axis_l, mode){
             document.getElementById('myChart').remove();
           
             let chart_block = document.createElement('canvas');
@@ -455,6 +414,57 @@ function load(request_data = request){
                 }
             });
             
+          }
+          Chart.pluginService.register({
+              beforeRender: function(chart) {
+                if (chart.config.options.showAllTooltips) {
+                  // create an array of tooltips
+                  // we can't use the chart tooltip because there is only one tooltip per chart
+                  chart.pluginTooltips = [];
+                  chart.config.data.datasets.forEach(function(dataset, i) {
+                    chart.getDatasetMeta(i).data.forEach(function(sector, j) {
+                      chart.pluginTooltips.push(new Chart.Tooltip({
+                        _chart: chart.chart,
+                        _chartInstance: chart,
+                        _data: chart.data,
+                        _options: chart.options.tooltips,
+                        _active: [sector]
+                      }, chart));
+                    });
+                  });
+          
+                  // turn off normal tooltips
+                  chart.options.tooltips.enabled = false;
+                }
+              },
+              afterDraw: function(chart, easing) {
+                if (chart.config.options.showAllTooltips) {
+                  // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
+                  if (!chart.allTooltipsOnce) {
+                    if (easing !== 1)
+                      return;
+                    chart.allTooltipsOnce = true;
+                  }
+          
+                  // turn on tooltips
+                  chart.options.tooltips.enabled = true;
+                  Chart.helpers.each(chart.pluginTooltips, function(tooltip) {
+                    tooltip.initialize();
+                    tooltip.update();
+                    // we don't actually need this since we are not animating tooltips
+                    tooltip.pivot();
+                    tooltip.transition(easing).draw();
+                  });
+                  chart.options.tooltips.enabled = false;
+                }
+              }
+            })
+          
+          function remove_events(){
+            let new_nav = document.getElementById('slidemenu');
+            let newest_nav = new_nav.cloneNode(true);
+            new_nav.remove();
+            document.getElementById('display').appendChild(newest_nav);
           }
            //current
            let settings_headlines = document.querySelectorAll('.settings_item > h3');

@@ -769,6 +769,9 @@ label.day:hover{
         width:84%;
         margin: 0 auto;
     }
+    .days_wrap{
+        width: 100%;
+    }
     #slidemenu{
         width: 95%;
         margin: 45px auto 0;
