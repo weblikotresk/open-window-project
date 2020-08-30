@@ -165,19 +165,33 @@ let localization = {
 };
 //Settings 
 let request = new Object();
-request.lang = 'ru';
-request.units = 'si';
+// document.cookie = 'lang=ru';
+ console.log(localStorage.lang);
+if(localStorage.lang == 'undefined'){
+  request.lang = 'ru';
+  request.units = 'si';
+
+}else{
+  request.lang = localStorage.lang;
+  request.units = localStorage.units;
+}
+console.log(localStorage);
+console.log(request);
+// request.lang = document.cookie;
+// request.units = 'si';
 let settingsInputs =[];
 settingsInputs[0] =  document.querySelectorAll('.lang');
 settingsInputs[1] =  document.querySelectorAll('.units');
 for(let i =0;i<settingsInputs[0].length; i++){
   settingsInputs[0][i].addEventListener('click', ()=>{
     request.lang = settingsInputs[0][i].value;
+    localStorage.lang = settingsInputs[0][i].value;
   })
 }
 for(let i =0;i<settingsInputs[1].length; i++){
   settingsInputs[1][i].addEventListener('click', ()=>{
     request.units = settingsInputs[1][i].value;
+    localStorage.units = settingsInputs[1][i].value;
   })
 }
 
@@ -237,6 +251,11 @@ function load(request_data = request){
            const response = await fetch(api_url, options);
            const rdata = await response.json();
            console.log(rdata);
+           localStorage.lang = lang;
+           localStorage.units = units;
+           console.log(localStorage);
+
+      
            function slidemenu(value, option){
 
             switch(value){

@@ -1,4 +1,5 @@
-
+// const http = require('http');
+// const Cookies = require('cookies');
 const express = require('express');
 const compression = require('compression');
 const fetch = require('node-fetch');
@@ -8,6 +9,7 @@ app.listen(process.env.PORT || 5000);
 app.use(express.static('public', {
     etag: true, // Just being explicit about the default.
     lastModified: true,  // Just being explicit about the default.
+    
     setHeaders: (res, path) => {
       if (path.endsWith('.ico')) {
         // All of the project's HTML files end in .html
@@ -35,6 +37,15 @@ app.get('/weather/:latlon/:lang/:units', async (req, res)=>{
     const latlon = req.params.latlon.split(',');
     const lang = req.params.lang;
     const units = req.params.units;
+
+    // let cookies = new Cookies(req, res);
+    // cookies.set('lang', lang);
+    // cookies.set('units', units);
+
+    // res.setHeader('Set-Cookie', [`lang=${lang}`,`units=${units}`]);
+    // cookies[0] = res.getHeader('Set-Cookie');
+    // cookies.set('bruh', 'test');
+    // console.log(cookies.get('bruh'));
     const lat = latlon[0];
     const lon = latlon[1];
     console.log(latlon, lang, units);
@@ -46,5 +57,7 @@ app.get('/weather/:latlon/:lang/:units', async (req, res)=>{
     const response = await fetch(api_url);
     const json = await response.json();
     res.json(json);
+    
+
 
 });
