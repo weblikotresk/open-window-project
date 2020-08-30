@@ -74,11 +74,15 @@ let localization = {
     curr:'Текущая погода',
     local:'Язык',
     uni:'Единицы измерения',
-    source:'Источники:',
+    source:'Источники',
     tochange:'Чтобы подвердить изменения, закройте окно настроек. Страница автоматически перезагрузится.',
     loading:'Страница загружается, пожалуйста, подождите.',
     not_load:'Если страница долго не загружается, проверьте, включена ли геолокация на вашем устройстве и разрешено ли её использование на этом сайте.',
     geo_error:'Версия вашего браузера не поддерживает функцию передачи геолокации сторонним сайтам. Обновите его до последней версии и попробуйте снова.',
+    wind_dir_h:'Направление ветра (только для мобильных устройств)',
+    wind_dir:'Эта функция включает автопозиционирование стрелки, которая показывает направление ветра относительно Северного полюса. Может работать не на всех устройствах. Если ваш компас работает некорректно, откалибруйте его в Google/Apple Maps.',
+    on:'Включить',
+    off:'Выключить',
     'Mon':'Пн,',
     'Tue':'Вт,',
     'Wed':'Ср,',
@@ -126,9 +130,13 @@ let localization = {
     curr:'Current mode',
     local:'Language',
     uni:'Units of measurements',
-    source:'Sources:',
+    source:'Sources',
     tochange:'Close the settings window to confirm the changes. The page will automatically reload.',
     geo_error:'Your browser version does not support the function of transferring geolocation to third-party sites. Please update it to the latest version and try again.',
+    wind_dir_h:'Wind direction (only for mobile devices)',
+    wind_dir:"This function enables auto-positioning of the wind arrow relative to the North Pole. May not work on every device. If the compass doesn't work correctly, consider recalibrate it in the Google/Apple Maps.",
+    on:'On',
+    off:'Off',
     'Mon':'Mon,',
     'Tue':'Tue,',
     'Wed':'Wed,',
@@ -170,30 +178,46 @@ let request = new Object();
 if(localStorage.lang == 'undefined'){
   request.lang = 'ru';
   request.units = 'si';
-
+  request.wind = false;
 }else{
   request.lang = localStorage.lang;
   request.units = localStorage.units;
+  request.wind = localStorage.wind;
 }
-console.log(localStorage);
-console.log(request);
-// request.lang = document.cookie;
-// request.units = 'si';
+
 let settingsInputs =[];
 settingsInputs[0] =  document.querySelectorAll('.lang');
 settingsInputs[1] =  document.querySelectorAll('.units');
-for(let i =0;i<settingsInputs[0].length; i++){
-  settingsInputs[0][i].addEventListener('click', ()=>{
-    request.lang = settingsInputs[0][i].value;
-    localStorage.lang = settingsInputs[0][i].value;
-  })
-}
-for(let i =0;i<settingsInputs[1].length; i++){
-  settingsInputs[1][i].addEventListener('click', ()=>{
-    request.units = settingsInputs[1][i].value;
-    localStorage.units = settingsInputs[1][i].value;
-  })
-}
+settingsInputs[2] =  document.querySelectorAll('.wind');
+
+  for(let i =0;i<settingsInputs[0].length; i++){
+    if(request.lang == settingsInputs[0][i].value){
+      settingsInputs[0][i].checked = true;
+    }
+    settingsInputs[0][i].addEventListener('click', ()=>{
+      request.lang = settingsInputs[0][i].value;
+      localStorage.lang = settingsInputs[0][i].value;
+    })
+  }
+  for(let i =0;i<settingsInputs[1].length; i++){
+    if(request.units == settingsInputs[1][i].value){
+      settingsInputs[1][i].checked = true;
+    }
+    settingsInputs[1][i].addEventListener('click', ()=>{
+      request.units = settingsInputs[1][i].value;
+      localStorage.units = settingsInputs[1][i].value;
+    })
+  }
+  for(let i =0;i<settingsInputs[2].length; i++){
+    if(request.wind == settingsInputs[2][i].value){
+      settingsInputs[2][i].checked = true;
+    }
+    settingsInputs[2][i].addEventListener('click', ()=>{
+      request.wind = settingsInputs[2][i].value;
+      localStorage.wind = settingsInputs[2][i].value;
+    })
+  }
+
 
 let settingsIcon = document.querySelector('#settings > svg'),
 closeBtn = document.getElementsByClassName('close_settings')[0];
@@ -254,7 +278,11 @@ function load(request_data = request){
            localStorage.lang = lang;
            localStorage.units = units;
            console.log(localStorage);
-
+           function handleOrientation(event) {
+            var x = event.alpha;  
+            document.querySelector('.wind_dir').style.transform = `rotate(${x + rdata.currently.windBearing}deg)`;
+          }  
+          
       
            function slidemenu(value, option){
 
@@ -484,12 +512,16 @@ function load(request_data = request){
             document.getElementById('display').appendChild(newest_nav);
           }
            //current
-           let settings_headlines = document.querySelectorAll('.settings_item > h3');
-
+           let settings_headlines = document.querySelectorAll('.wind-subitem_label > h3');
            settings_headlines[0].innerHTML = localization[lang].local;
            settings_headlines[1].innerHTML =localization[lang].uni;
-           document.querySelector('.sources > h3').innerHTML = localization[lang].source;
+           settings_headlines[2].innerHTML = localization[lang].wind_dir_h;
+           settings_headlines[3].innerHTML = localization[lang].source;
            document.querySelector('.settings_block > span').innerHTML = localization[lang].tochange;
+           document.querySelector('.wind-settings  p').innerHTML = localization[lang].wind_dir;
+           let wind_options = document.querySelectorAll('.turn_wind');
+           wind_options[0].innerHTML = localization[lang].on;
+           wind_options[1].innerHTML = localization[lang].off;
           // document.querySelector('html').style.backgroundImage = `url(videos/${rdata.currently.icon}.png)`;
           
            if(moment().format('YYYY') == 2020){
@@ -518,7 +550,7 @@ function load(request_data = request){
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
             document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
-            document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing+225}deg)`;
+            window.addEventListener('deviceorientation', handleOrientation);
      
             document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
             document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
