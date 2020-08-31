@@ -280,13 +280,43 @@ function load(request_data = request){
            localStorage.units = units;
            console.log(localStorage);
 
-           function handleOrientation(event) {
-            var x = event.alpha;  
-            document.querySelector('.wind_dir').style.transform = `rotate(${45+x}deg)`;
-            alert(event.absolute);
-          }  
+          //  function handleOrientation(event) {
+          //   var x = event.alpha;  
+          //   document.querySelector('.wind_dir').style.transform = `rotate(${45+x}deg)`;
+          //   alert(event.absolute);
+          // }  
+          function compass(){
+            let promise = FULLTILT.getDeviceOrientation({ 'type': 'world' });
+
+              // Wait for Promise result
+            promise.then(function(deviceOrientation) { // Device Orientation Events are supported
+
+              // Register a callback to run every time a new 
+              // deviceorientation event is fired by the browser.
+              deviceOrientation.listen(function() {
+
+                // Get the current *screen-adjusted* device orientation angles
+                let currentOrientation = deviceOrientation.getScreenAdjustedEuler();
+
+                // Calculate the current compass heading that the user is 'looking at' (in degrees)
+                let compassHeading = 360 - currentOrientation.alpha;
+
+                // Do something with `compassHeading` here...
+                //225 = 45(modifying icon) + 180(modifying library)
+                document.querySelector('.wind_dir').style.transform = `rotate(${225+compassHeading}deg)`;
+
+              });
+
+            }).catch(function(errorMessage) { // Device Orientation Events are not supported
+
+              console.log(errorMessage);
+
+              // Implement some fallback controls here...
+
+            });
+          }
+          compass();
           
-          //var deviceOrientationEvent = new DeviceOrientationEvent(deviceorientationabsolute, true);
            function slidemenu(value, option){
 
             switch(value){
@@ -557,10 +587,11 @@ function load(request_data = request){
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
             document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
             if(document.querySelector('#wind-1').checked){
-              window.addEventListener('deviceorientation', handleOrientation);
+              
+              window.addEventListener('deviceOrientation', compass);
             }else{
-              document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing-180}deg)`
-              window.removeEventListener('deviceorientation', handleOrientation);
+              // document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing-180}deg)`
+              window.removeEventListener('deviceorientation', compass);
             }
             
      
