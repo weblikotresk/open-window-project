@@ -554,7 +554,7 @@ function load(request_data = request){
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
             document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
-            if(document.querySelector('#wind-1').value){
+            if(document.querySelector('#wind-1').checked){
               window.addEventListener('deviceorientation', handleOrientation);
             }else{
               window.removeEventListener('deviceorientation', handleOrientation);
