@@ -254,6 +254,7 @@ function load(request_data = request){
     if('geolocation' in navigator){
         navigator.geolocation.getCurrentPosition(async position =>{
           //location btn fix
+          console.log(position)
           if(request != request_data){
             request_data = request;
           }
