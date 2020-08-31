@@ -254,7 +254,7 @@ function load(request_data = request){
     if('geolocation' in navigator){
         navigator.geolocation.getCurrentPosition(async position =>{
           //location btn fix
-          console.log(position)
+         
           if(request != request_data){
             request_data = request;
           }
@@ -283,6 +283,14 @@ function load(request_data = request){
            function handleOrientation(event) {
             var x = event.alpha;  
             document.querySelector('.wind_dir').style.transform = `rotate(${45+x}deg)`;
+            const options = { frequency: 10, referenceFrame: 'device' };
+            const sensor = new AbsoluteOrientationSensor(options);
+
+            sensor.addEventListener('reading', () => {
+              // model is a Three.js object instantiated elsewhere.
+              console.log(sensor.quaternion);
+            });
+            sensor.start()
           }  
           
       
