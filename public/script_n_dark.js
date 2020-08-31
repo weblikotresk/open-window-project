@@ -302,8 +302,8 @@ function load(request_data = request){
                 let compassHeading = 360 - currentOrientation.alpha;
 
                 // Do something with `compassHeading` here...
-                //225 = 45(modifying icon) + 180(modifying library)
-                document.querySelector('.wind_dir').style.transform = `rotate(${225+compassHeading}deg)`;
+                // 45(modifying icon)
+                document.querySelector('.wind_dir').style.transform = `rotate(${45+compassHeading}deg)`;
 
               });
 
