@@ -283,23 +283,10 @@ function load(request_data = request){
            function handleOrientation(event) {
             var x = event.alpha;  
             document.querySelector('.wind_dir').style.transform = `rotate(${45+x}deg)`;
-            const options = { frequency: 0.5, referenceFrame: 'device' };
-            const sensor = new AbsoluteOrientationSensor(options);
-
-            sensor.addEventListener('reading', (e) => {
-              var q = e.target.quaternion;
-              // model is a Three.js object instantiated elsewhere.
-              let alpha = Math.atan2(2*q[0]*q[1] + 2*q[2]*q[3], 1 - 2*q[1]*q[1] - 2*q[2]*q[2])*(180/Math.PI);
-            if(alpha < 0) alpha = 360+ alpha;
-           // this.alpha = 360 - alpha;
-            //this.rotatePlayerIcon(360 - alpha);
-            console.log(360 - alpha)
-
-            });
-            sensor.start()
+            alert(event.absolute);
           }  
           
-      
+          //var deviceOrientationEvent = new DeviceOrientationEvent(deviceorientationabsolute, true);
            function slidemenu(value, option){
 
             switch(value){
