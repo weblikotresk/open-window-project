@@ -557,6 +557,7 @@ function load(request_data = request){
             if(document.querySelector('#wind-1').checked){
               window.addEventListener('deviceorientation', handleOrientation);
             }else{
+              document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing}deg)`
               window.removeEventListener('deviceorientation', handleOrientation);
             }
             
