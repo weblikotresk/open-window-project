@@ -283,7 +283,7 @@ function load(request_data = request){
            function handleOrientation(event) {
             var x = event.alpha;  
             document.querySelector('.wind_dir').style.transform = `rotate(${45+x}deg)`;
-            const options = { frequency: 10, referenceFrame: 'device' };
+            const options = { frequency: 0.5, referenceFrame: 'device' };
             const sensor = new AbsoluteOrientationSensor(options);
 
             sensor.addEventListener('reading', () => {
