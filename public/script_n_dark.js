@@ -79,8 +79,8 @@ let localization = {
     loading:'Страница загружается, пожалуйста, подождите.',
     not_load:'Если страница долго не загружается, проверьте, включена ли геолокация на вашем устройстве и разрешено ли её использование на этом сайте.',
     geo_error:'Версия вашего браузера не поддерживает функцию передачи геолокации сторонним сайтам. Обновите его до последней версии и попробуйте снова.',
-    wind_dir_h:'Направление ветра (только для мобильных устройств)',
-    wind_dir:'Эта функция включает автопозиционирование стрелки, которая показывает направление ветра относительно Северного полюса. Может работать не на всех устройствах. Если ваш компас работает некорректно, откалибруйте его в Google/Apple Maps.',
+    wind_dir_h:'Направление ветра<br>(только для мобильных устройств)',
+    wind_dir:'Эта функция включает автопозиционирование стрелки, которая показывает направление ветра относительно Северного полюса.<br> Может работать не на всех устройствах.<br> Если ваш компас работает некорректно, откалибруйте его в Google/Apple Maps.',
     on:'Включить',
     off:'Выключить',
     'Mon':'Пн,',
@@ -133,8 +133,8 @@ let localization = {
     source:'Sources',
     tochange:'Close the settings window to confirm the changes. The page will automatically reload.',
     geo_error:'Your browser version does not support the function of transferring geolocation to third-party sites. Please update it to the latest version and try again.',
-    wind_dir_h:'Wind direction (only for mobile devices)',
-    wind_dir:"This function enables auto-positioning of the wind arrow relative to the North Pole. May not work on every device. If the compass doesn't work correctly, consider recalibrate it in the Google/Apple Maps.",
+    wind_dir_h:'Wind direction<br>(only for mobile devices)',
+    wind_dir:"This function enables auto-positioning of the wind arrow relative to the North Pole.<br> May not work on every device.<br> If the compass doesn't work correctly, consider recalibrate it in the Google/Apple Maps.",
     on:'On',
     off:'Off',
     'Mon':'Mon,',
@@ -278,6 +278,7 @@ function load(request_data = request){
            localStorage.lang = lang;
            localStorage.units = units;
            console.log(localStorage);
+
            function handleOrientation(event) {
             var x = event.alpha;  
             document.querySelector('.wind_dir').style.transform = `rotate(${x + rdata.currently.windBearing}deg)`;
@@ -536,7 +537,10 @@ function load(request_data = request){
               icon.src=`img/icons/${rdata.currently.icon}.svg`;
               icon.alt='';
               icon.className='icon';
-              
+
+              let water_drop = document.createElement('img');
+              water_drop.src = 'img/icons/water.svg';
+              water_drop.classList.add('pop_drop');
              
             console.log(localization[lang].units[units], lang);
             document.querySelector('.temp_val').innerHTML = Math.round(rdata.currently.temperature) + localization[lang].units[units].temp;
@@ -550,7 +554,12 @@ function load(request_data = request){
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
             document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
-            window.addEventListener('deviceorientation', handleOrientation);
+            if(document.querySelector('#wind-1').value){
+              window.addEventListener('deviceorientation', handleOrientation);
+            }else{
+              window.removeEventListener('deviceorientation', handleOrientation);
+            }
+            
      
             document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
             document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
@@ -570,7 +579,10 @@ function load(request_data = request){
             }
             //hourly
             for(let i =0;i<24;i++){
-              document.querySelectorAll('.hour > .pop' )[i].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
+              
+              let pop = document.querySelectorAll('.hour > .pop' )[i];
+              pop.innerHTML =water_drop + Math.round(rdata.hourly.data[i].precipProbability*100)+'%' ;
+              //pop.prepend(water_drop);
               document.querySelectorAll('.hour > .temp' )[i].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
               document.querySelectorAll('.hour > .sky' )[i].src = `img/icons/${rdata.hourly.data[i].icon}.svg`;
       
