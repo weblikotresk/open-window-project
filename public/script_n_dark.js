@@ -281,7 +281,7 @@ function load(request_data = request){
 
            function handleOrientation(event) {
             var x = event.alpha;  
-            document.querySelector('.wind_dir').style.transform = `rotate(${x}deg)`;
+            document.querySelector('.wind_dir').style.transform = `rotate(${45+x}deg)`;
           }  
           
       
