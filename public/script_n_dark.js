@@ -563,13 +563,15 @@ function load(request_data = localStorage){
             //document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
-            if(localStorage.wind == 'on'){
-              window.addEventListener('deviceorientation',compass);
-            }else{
-              window.removeEventListener('deviceorientation', compass);
+            if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
+              // Chrome 50+ specific
+              window.addEventListener('deviceorientationabsolute', compass);
+            } else if ('ondeviceorientation' in window && localStorage.wind == 'on') {
+              window.addEventListener('deviceorientation', compass);
               setTimeout(()=>
               document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing+45}deg)`, 1000);
             }
+
           
             document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
             document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
