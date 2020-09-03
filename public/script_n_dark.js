@@ -270,7 +270,7 @@ function load(request_data = localStorage){
            const rdata = await response.json();
            console.log(rdata);
            //rdata is raw data response from the api
-          let compass_dir = function compass(){
+          function compass(){
             let promise = FULLTILT.getDeviceOrientation({ 'type': 'world' });
 
               // Wait for Promise result
@@ -580,9 +580,9 @@ function load(request_data = localStorage){
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if(localStorage.wind == 'on'){
-              window.addEventListener('deviceOrientation',compass_dir);
+              window.addEventListener('deviceOrientation',compass());
             }else{
-              window.removeEventListener('deviceOrientation', compass_dir);
+              window.removeEventListener('deviceOrientation', compass());
               setTimeout(()=>
               document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing+45}deg)`, 1000);
             }
