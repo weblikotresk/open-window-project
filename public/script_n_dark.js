@@ -270,7 +270,7 @@ function load(request_data = localStorage){
            const rdata = await response.json();
            console.log(rdata);
            //rdata is raw data response from the api
-          function compass(){
+          let compass = function compass(){
             let promise = FULLTILT.getDeviceOrientation({ 'type': 'world' });
 
               // Wait for Promise result
