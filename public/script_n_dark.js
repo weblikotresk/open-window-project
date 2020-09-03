@@ -80,6 +80,8 @@ let localization = {
     wind_dir:'Эта функция включает автопозиционирование стрелки, которая показывает направление ветра относительно Северного полюса.<br> Может работать не на всех устройствах.<br> Если ваш компас работает некорректно, откалибруйте его в Google/Apple Maps.',
     on:'Включить',
     off:'Выключить',
+    compass_error:'Ваш браузер не поддерживает данную функцию. Пожалуйста, обновите его до последней версии и попробуйте снова.',
+    compass_f:'Сервис не смог получить информацию компаса. Обновите ваш браузер до последней версии и попробуйте снова.',
     'Mon':'Пн,',
     'Tue':'Вт,',
     'Wed':'Ср,',
@@ -134,6 +136,8 @@ let localization = {
     wind_dir:"This function enables auto-positioning of the wind arrow relative to the North Pole.<br> May not work on every device.<br> If the compass doesn't work correctly, consider recalibrate it in the Google/Apple Maps.",
     on:'On',
     off:'Off',
+    compass_error:'Compass heading is not available in your browser. Consider update it to the last version and try again.',
+    compass_f:'Could not retrieve absolute orientation. Consider update your browser to the last version and try again.',
     'Mon':'Mon,',
     'Tue':'Tue,',
     'Wed':'Wed,',
@@ -274,7 +278,7 @@ function load(request_data = localStorage){
             
             function compass(event) {
               var alpha;
-              const delta = -80;
+              const delta = 80;
               console.log(event);
               if (event.absolute) {
                 alpha = event.alpha;
@@ -282,11 +286,12 @@ function load(request_data = localStorage){
                 // get absolute orientation for Safari/iOS
                 alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
               } else {
-                console.log('Could not retrieve absolute orientation');
+                  console.log('Could not retrieve absolute orientation');
+                  alert(localization[lang].compass_f);
+                  alpha = rdata.currently.windBearing + 45;
               }
-              alpha = alpha + delta - rdata.currently.windBearing;
+              alpha = alpha - delta - rdata.currently.windBearing;
             document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
-              console.log('Absolute orientation: ' + alpha);
             }
           
           //slidemenu manage which chart to summon onclick on slidemenu
@@ -562,7 +567,7 @@ function load(request_data = localStorage){
             document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-            //document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
+            document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
@@ -570,8 +575,13 @@ function load(request_data = localStorage){
               window.addEventListener('deviceorientationabsolute', compass);
             } else if ('ondeviceorientation' in window && localStorage.wind == 'on') {
               window.addEventListener('deviceorientation', compass);
+            }else if(localStorage.wind == 'off'){
+              window.removeEventListener('deviceorientationabsolute', compass);
+              window.removeEventListener('deviceorientation', compass);
               setTimeout(()=>
               document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing+45}deg)`, 1000);
+            }else{
+              alert(localization[lang].compass_error);
             }
 
           
