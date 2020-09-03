@@ -575,7 +575,7 @@ function load(request_data = localStorage){
             document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-            document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
+            //document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if(localStorage.wind == 'on'){
