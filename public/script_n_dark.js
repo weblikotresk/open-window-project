@@ -274,6 +274,7 @@ function load(request_data = localStorage){
             
             function compass(event) {
               var alpha;
+              console.log(event);
               if (event.absolute) {
                 alpha = event.alpha;
               } else if (event.hasOwnProperty('webkitCompassHeading')) {
@@ -563,9 +564,9 @@ function load(request_data = localStorage){
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if(localStorage.wind == 'on'){
-              window.addEventListener('deviceOrientation',compass());
+              window.addEventListener('deviceorientation',compass);
             }else{
-              window.removeEventListener('deviceOrientation', compass());
+              window.removeEventListener('deviceorientation', compass);
               setTimeout(()=>
               document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing+45}deg)`, 1000);
             }
