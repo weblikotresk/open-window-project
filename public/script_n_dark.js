@@ -289,6 +289,7 @@ function load(request_data = localStorage){
                 // Do something with `compassHeading` here...
                 // 45(modifying icon)
                 let wind_dir = rdata.currently.windBearing;
+                console.log(compassHeading);
                 document.querySelector('.wind_dir').style.transform = `rotate(${45+compassHeading}deg)`;
                 document.querySelector('.wind_speed').innerHTML = wind_dir + ' ' + (45+compassHeading);
 
