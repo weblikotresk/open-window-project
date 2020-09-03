@@ -270,39 +270,22 @@ function load(request_data = localStorage){
            const rdata = await response.json();
            console.log(rdata);
            //rdata is raw data response from the api
-          function compass(){
-            let promise = FULLTILT.getDeviceOrientation({ 'type': 'world' });
 
-              // Wait for Promise result
-            promise.then(function(deviceOrientation) { // Device Orientation Events are supported
-
-              // Register a callback to run every time a new 
-              // deviceorientation event is fired by the browser.
-              deviceOrientation.listen(function() {
-
-                // Get the current *screen-adjusted* device orientation angles
-                let currentOrientation = deviceOrientation.getScreenAdjustedEuler();
-
-                // Calculate the current compass heading that the user is 'looking at' (in degrees)
-                let compassHeading = 360 - currentOrientation.alpha;
-
-                // Do something with `compassHeading` here...
-                // 45(modifying icon)
-                let wind_dir = rdata.currently.windBearing;
-                console.log(compassHeading);
-                document.querySelector('.wind_dir').style.transform = `rotate(${45+compassHeading}deg)`;
-                document.querySelector('.wind_speed').innerHTML = wind_dir + ' ' + (45+compassHeading);
-
-              });
-
-            }).catch(function(errorMessage) { // Device Orientation Events are not supported
-
-              alert(errorMessage);
-
-              // Implement some fallback controls here...
-
-            });
-          }
+            
+            function compass(event) {
+              var alpha;
+              if (event.absolute) {
+                alpha = event.alpha;
+              } else if (event.hasOwnProperty('webkitCompassHeading')) {
+                // get absolute orientation for Safari/iOS
+                alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
+              } else {
+                console.log('Could not retrieve absolute orientation');
+              }
+            
+              console.log('Absolute orientation: ' + alpha);
+            }
+          
           //slidemenu manage which chart to summon onclick on slidemenu
            function slidemenu(value, option){
 
