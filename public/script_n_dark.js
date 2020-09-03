@@ -294,13 +294,12 @@ function load(request_data = localStorage){
 
             }).catch(function(errorMessage) { // Device Orientation Events are not supported
 
-              console.log(errorMessage);
+              alert(errorMessage);
 
               // Implement some fallback controls here...
 
             });
           }
-          compass();
           //slidemenu manage which chart to summon onclick on slidemenu
            function slidemenu(value, option){
 
@@ -578,9 +577,9 @@ function load(request_data = localStorage){
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if(localStorage.wind == 'on'){
-              window.addEventListener('deviceOrientation', compass);
+              window.ondeviceOrientation = compass;
             }else{
-              window.removeEventListener('deviceorientation', compass);
+              window.ondeviceOrientation = null;
               setTimeout(()=>
               document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing+45}deg)`, 1000);
             }
