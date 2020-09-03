@@ -274,7 +274,7 @@ function load(request_data = localStorage){
             
             function compass(event) {
               var alpha;
-              const delta = 141;
+              const delta = 75;
               console.log(event);
               if (event.absolute) {
                 alpha = event.alpha;
