@@ -274,6 +274,7 @@ function load(request_data = localStorage){
             
             function compass(event) {
               var alpha;
+              const delta = 141;
               console.log(event);
               if (event.absolute) {
                 alpha = event.alpha;
@@ -283,7 +284,8 @@ function load(request_data = localStorage){
               } else {
                 console.log('Could not retrieve absolute orientation');
               }
-            
+              alpha = alpha + delta - rdata.currently.windBearing;
+            document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               console.log('Absolute orientation: ' + alpha);
             }
           
