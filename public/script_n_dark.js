@@ -579,9 +579,9 @@ function load(request_data = localStorage){
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if(localStorage.wind == 'on'){
-              window.ondeviceOrientation = compass;
+              window.addEventListener('deviceOrientation',compass);
             }else{
-              window.ondeviceOrientation = null;
+              window.removeEventListener('deviceOrientation', compass);
               setTimeout(()=>
               document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing+45}deg)`, 1000);
             }
