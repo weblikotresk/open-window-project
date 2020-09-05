@@ -276,7 +276,7 @@ function load(request_data = localStorage){
            //rdata is raw data response from the api
 
             
-            function compass(event, mode) {
+            function compass(event){
               var alpha;
               const delta = 70;
               console.log(event);
@@ -288,24 +288,26 @@ function load(request_data = localStorage){
               } else {
                   console.log('Could not retrieve absolute orientation');
                   alert(localization[lang].compass_f);
-                  alpha = rdata[mode].windBearing + 45;
+                  alpha = rdata[wind_mode].windBearing + 45;
               }
-              alpha = alpha - delta - rdata[mode].windBearing;
+              alpha = alpha - delta - rdata[wind_mode].windBearing;
             document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
             }
+          let wind_mode ='currently';
           function wind_arrow(mode){
             //mode = currently, daily, hourly
             alert('wind_arrow');
+            wind_mode = mode;
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
               // Chrome 50+ specific
-              window.addEventListener('deviceorientationabsolute', compass(event,mode));
+              window.addEventListener('deviceorientationabsolute', compass);
             } else if ('ondeviceorientation' in window && localStorage.wind == 'on') {
-              window.addEventListener('deviceorientation', compass(event,mode));
+              window.addEventListener('deviceorientation', compass);
             }else if(localStorage.wind == 'off'){
-              window.removeEventListener('deviceorientationabsolute', compass(event,mode));
-              window.removeEventListener('deviceorientation', compass(event,mode));
+              window.removeEventListener('deviceorientationabsolute', compass);
+              window.removeEventListener('deviceorientation', compass);
               setTimeout(()=>
               document.querySelector('.wind_dir').style.transform = `rotate(${rdata[mode].windBearing+45}deg)`, 1000);
             }else{
