@@ -227,7 +227,8 @@ settingsIcon.addEventListener('click', ()=>{
 closeBtn.addEventListener('click', ()=>{
   //close the settings window
     document.getElementsByClassName('settings_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
-    setTimeout(()=>{document.getElementsByClassName('settings_window')[0].style.zIndex = -2;load(localStorage)}, 550);
+    setTimeout(()=>{document.getElementsByClassName('settings_window')[0].style.zIndex = -2;location.reload();
+    return false;}, 550);
 });
 
 //Loading window
@@ -296,7 +297,6 @@ function load(request_data = localStorage){
           let wind_mode ='currently';
           function wind_arrow(mode){
             //mode = currently, daily, hourly
-            alert('wind_arrow');
             wind_mode = mode;
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
@@ -696,7 +696,7 @@ function load(request_data = localStorage){
                 document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
                 document.querySelector('.wind_speed').innerHTML = rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
-                document.querySelector('.wind_dir').style.transform = `rotate(${rdata.daily.data[i].windBearing+225}deg)`;
+                wind_arrow(`daily.data[${i}]`);
           
                   document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
                   document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
