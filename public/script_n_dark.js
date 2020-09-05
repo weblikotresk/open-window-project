@@ -279,7 +279,7 @@ function load(request_data = localStorage){
             
             function compass(event){
               var alpha;
-              const delta = 90;
+              const delta = 100;
               console.log(event);
               if(wind_mode == 'currently'){
                 if (event.absolute) {
