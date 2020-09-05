@@ -276,9 +276,9 @@ function load(request_data = localStorage){
            //rdata is raw data response from the api
 
             
-            function compass(event) {
+            function compass(event, mode) {
               var alpha;
-              const delta = 80;
+              const delta = 70;
               console.log(event);
               if (event.absolute) {
                 alpha = event.alpha;
@@ -288,12 +288,31 @@ function load(request_data = localStorage){
               } else {
                   console.log('Could not retrieve absolute orientation');
                   alert(localization[lang].compass_f);
-                  alpha = rdata.currently.windBearing + 45;
+                  alpha = rdata[mode].windBearing + 45;
               }
-              alpha = alpha - delta - rdata.currently.windBearing;
+              alpha = alpha - delta - rdata[mode].windBearing;
             document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
             }
-          
+          function wind_arrow(mode){
+            //mode = currently, daily, hourly
+            alert('wind_arrow');
+            //if wind is turned off, we remove deviceorientation
+            // event and set normal mode for the wind arrow
+            if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
+              // Chrome 50+ specific
+              window.addEventListener('deviceorientationabsolute', compass(event,mode));
+            } else if ('ondeviceorientation' in window && localStorage.wind == 'on') {
+              window.addEventListener('deviceorientation', compass(event,mode));
+            }else if(localStorage.wind == 'off'){
+              window.removeEventListener('deviceorientationabsolute', compass(event,mode));
+              window.removeEventListener('deviceorientation', compass(event,mode));
+              setTimeout(()=>
+              document.querySelector('.wind_dir').style.transform = `rotate(${rdata[mode].windBearing+45}deg)`, 1000);
+            }else{
+              alert(localization[lang].compass_error);
+              document.querySelector('.wind_dir').style.transform = `rotate(${rdata[mode].windBearing+45}deg)`;
+            }
+          }
           //slidemenu manage which chart to summon onclick on slidemenu
            function slidemenu(value, option){
 
@@ -568,21 +587,7 @@ function load(request_data = localStorage){
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
             document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
-            //if wind is turned off, we remove deviceorientation
-            // event and set normal mode for the wind arrow
-            if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
-              // Chrome 50+ specific
-              window.addEventListener('deviceorientationabsolute', compass);
-            } else if ('ondeviceorientation' in window && localStorage.wind == 'on') {
-              window.addEventListener('deviceorientation', compass);
-            }else if(localStorage.wind == 'off'){
-              window.removeEventListener('deviceorientationabsolute', compass);
-              window.removeEventListener('deviceorientation', compass);
-              setTimeout(()=>
-              document.querySelector('.wind_dir').style.transform = `rotate(${rdata.currently.windBearing+45}deg)`, 1000);
-            }else{
-              alert(localization[lang].compass_error);
-            }
+            wind_arrow('currently');
 
           
             document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
