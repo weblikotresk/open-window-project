@@ -281,23 +281,43 @@ function load(request_data = localStorage){
               var alpha;
               const delta = 90;
               console.log(event);
-              if (event.absolute) {
-                alpha = event.alpha;
-              } else if (event.hasOwnProperty('webkitCompassHeading')) {
-                // get absolute orientation for Safari/iOS
-                alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
-              } else {
-                  console.log('Could not retrieve absolute orientation');
-                  alert(localization[lang].compass_f);
-                  alpha = rdata[wind_mode].windBearing + 45;
+              if(wind_mode == 'currently'){
+                if (event.absolute) {
+                  alpha = event.alpha;
+                } else if (event.hasOwnProperty('webkitCompassHeading')) {
+                  // get absolute orientation for Safari/iOS
+                  alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
+                } else {
+                    console.log('Could not retrieve absolute orientation');
+                    alert(localization[lang].compass_f);
+                    alpha = rdata[wind_mode].windBearing + 45;
+                }
+                alpha = alpha - delta - rdata[wind_mode].windBearing;
+              document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
+              }else{
+                if (event.absolute) {
+                  alpha = event.alpha;
+                } else if (event.hasOwnProperty('webkitCompassHeading')) {
+                  // get absolute orientation for Safari/iOS
+                  alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
+                } else {
+                    console.log('Could not retrieve absolute orientation');
+                    alert(localization[lang].compass_f);
+                    alpha = wind_mode.windBearing + 45;
+                }
+                alpha = alpha - delta - wind_mode.windBearing;
+              document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }
-              alpha = alpha - delta - rdata[wind_mode].windBearing;
-            document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
+              
             }
           let wind_mode ='currently';
-          function wind_arrow(mode){
+          function wind_arrow(mode, i){
             //mode = currently, daily, hourly
             wind_mode = mode;
+            if(wind_mode!='currently'){
+              wind_mode = rdata[wind_mode].data[i];
+            }
+            console.log(wind_mode, mode, rdata[wind_mode]);
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
@@ -309,10 +329,10 @@ function load(request_data = localStorage){
               window.removeEventListener('deviceorientationabsolute', compass);
               window.removeEventListener('deviceorientation', compass);
               setTimeout(()=>
-              document.querySelector('.wind_dir').style.transform = `rotate(${rdata[mode].windBearing+45}deg)`, 1000);
+              document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+45}deg)`, 1000);
             }else{
               alert(localization[lang].compass_error);
-              document.querySelector('.wind_dir').style.transform = `rotate(${rdata[mode].windBearing+45}deg)`;
+              document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+45}deg)`;
             }
           }
           //slidemenu manage which chart to summon onclick on slidemenu
@@ -696,7 +716,7 @@ function load(request_data = localStorage){
                 document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
                 document.querySelector('.wind_speed').innerHTML = rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
-                wind_arrow(`daily.data[${i}]`);
+                wind_arrow(`daily`, i);
           
                   document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
                   document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
