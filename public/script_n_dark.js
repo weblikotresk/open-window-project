@@ -23,11 +23,6 @@ function videoBack(name){
     webm.src = `videos/webm/${name}.webm`;
     webm.type = 'video/webm';
     videobg.appendChild(webm);
-
-    let fallback = document.createElement('img');
-    fallback.src = `videos/${name}.png`;
-    videobg.appendChild(fallback);
-
     document.querySelector('#videoBG').classList.add('no_opacity');
     setTimeout(()=>{
       document.querySelector('#videoBG').classList.remove('full_opacity');
@@ -44,9 +39,6 @@ function videoBack(name){
     let webm = document.createElement('source');
     webm.src = `videos/webm/${name}.webm`;
     webm.type = 'video/webm';
-    let fallback = document.createElement('img');
-    fallback.src = `videos/${name}.png`;
-    document.querySelector('#videoBG').appendChild(fallback);
     document.querySelector('#videoBG').appendChild(mp4);
     document.querySelector('#videoBG').appendChild(webm);
     document.querySelector('#videoBG').classList.add('full_opacity');
@@ -303,6 +295,7 @@ function load(request_data = localStorage){
                     //alert(localization[lang].compass_f);
                     alpha = wind_mode.windBearing + 45;
                 }
+                console.log(alpha);
                 alpha = alpha - delta - wind_mode.windBearing;
               document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }
