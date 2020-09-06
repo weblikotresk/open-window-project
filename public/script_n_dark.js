@@ -283,7 +283,7 @@ function load(request_data = localStorage){
                     //alert(localization[lang].compass_f);
                     alpha = rdata[wind_mode].windBearing + 45;
                 }
-                alpha = alpha - delta - rdata[wind_mode].windBearing;
+                alpha = alpha + delta - rdata[wind_mode].windBearing;
               document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }else{
                 if (event.absolute) {
