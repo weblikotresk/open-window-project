@@ -271,7 +271,7 @@ function load(request_data = localStorage){
             
             function compass(event){
               var alpha;
-              const delta = 100;
+              const delta = 45;
               if(wind_mode == 'currently'){
                 if (event.absolute) {
                   alpha = event.alpha;
