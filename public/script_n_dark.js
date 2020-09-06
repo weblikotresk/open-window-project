@@ -6,12 +6,10 @@ function convertSeconds(seconds){
 
 }
 function videoBack(name){
-  let date = new Date();
-  let time = date.getHours();
-  let month = 12;
-  date = 2;
+  let date = new Date(),
+   time = date.getHours(),
+   month = date.getMonth()+1;
 
-  console.log(time);
   let postfix;
   if(name == 'clear-day' || name == 'rain'){
     if((month >=9)&&(month<=11)){
@@ -96,7 +94,7 @@ let localization = {
     wind_dir:'Эта функция включает автопозиционирование стрелки, которая показывает направление ветра относительно Северного полюса.<br> Может работать не на всех устройствах.<br> Если ваш компас работает некорректно, откалибруйте его в Google/Apple Maps.',
     on:'Включить',
     off:'Выключить',
-    compass_error:'Ваш браузер не поддерживает данную функцию. Пожалуйста, обновите его до последней версии и попробуйте снова.',
+    compass_error:'Ваш браузер не поддерживает получение данных компаса. Пожалуйста, обновите его до последней версии и попробуйте снова.',
     compass_f:'Сервис не смог получить информацию компаса. Обновите ваш браузер до последней версии и попробуйте снова.',
     'Mon':'Пн,',
     'Tue':'Вт,',
@@ -276,7 +274,6 @@ function load(request_data = localStorage){
            lang = request_data.lang,
            units = request_data.units,
            wind = request_data.wind;
-           console.log(lat, lon, units, lang,localStorage ,request_data, wind);
            const api_url = `weather/${lat},${lon}/${lang}/${units}`;
            const options = {
             method: "GET",
@@ -307,7 +304,6 @@ function load(request_data = localStorage){
                     //alert(localization[lang].compass_f);
                     alpha = rdata[wind_mode].windBearing + 45;
                 }
-                console.log(alpha,wind_mode);
                 alpha = alpha + delta - rdata[wind_mode].windBearing;
               document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }else{
@@ -320,7 +316,6 @@ function load(request_data = localStorage){
                     //alert(localization[lang].compass_f);
                     alpha = wind_mode.windBearing + 45;
                 }
-                console.log(alpha, wind_mode);
                 alpha = alpha + delta - wind_mode.windBearing;
               document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }
@@ -336,7 +331,6 @@ function load(request_data = localStorage){
             }else{
               wind_mode= rdata[wind_mode];
             }
-            console.log(wind_mode, mode, rdata[wind_mode]);
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
