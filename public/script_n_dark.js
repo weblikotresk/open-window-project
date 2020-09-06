@@ -287,7 +287,7 @@ function load(request_data = localStorage){
               document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }else{
                 if (event.absolute) {
-                  alpha = event.alpha;
+                  alpha = 360 - event.alpha;
                 } else if (event.hasOwnProperty('webkitCompassHeading')) {
                   // get absolute orientation for Safari/iOS
                   alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
