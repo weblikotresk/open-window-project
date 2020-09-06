@@ -6,6 +6,30 @@ function convertSeconds(seconds){
 
 }
 function videoBack(name){
+  let date = new Date();
+  let time = date.getHours();
+  let month = 12;
+  date = 2;
+
+  console.log(time);
+  let postfix;
+  if(name == 'clear-day' || name == 'rain'){
+    if((month >=9)&&(month<=11)){
+      postfix= '-autumn';
+    }else if((month >=11)||(month<=3)){
+      postfix= '-winter';
+    }else if((month >=3)&&(month<=5)){
+      postfix ='-spring';
+    }else{
+      postfix = '-summer';
+    }
+  }else{
+    postfix = '';
+  }
+  if((time <= 18 || time <= 5)&& (month >=11)||(month<=3) && name == 'snow'){
+    name = name + '_n';
+  }
+
   if(document.querySelector('#videoBG > source') !=null){
     //daily forecast
     let videobg = document.createElement('video');
@@ -16,11 +40,11 @@ function videoBack(name){
     videobg.classList.add('no_opacity');
 
     let mp4 = document.createElement('source');
-    mp4.src = `videos/${name}.mp4`;
+    mp4.src = `videos/${name + postfix}.mp4`;
     mp4.type = 'video/mp4';
     videobg.appendChild(mp4);
     let webm = document.createElement('source');
-    webm.src = `videos/webm/${name}.webm`;
+    webm.src = `videos/webm/${name+postfix}.webm`;
     webm.type = 'video/webm';
     videobg.appendChild(webm);
     document.querySelector('#videoBG').classList.add('no_opacity');
@@ -34,10 +58,10 @@ function videoBack(name){
   }else{
     //first creation
     let mp4 = document.createElement('source');
-    mp4.src = `videos/${name}.mp4`;
+    mp4.src = `videos/${name+postfix}.mp4`;
     mp4.type = 'video/mp4';
     let webm = document.createElement('source');
-    webm.src = `videos/webm/${name}.webm`;
+    webm.src = `videos/webm/${name+postfix}.webm`;
     webm.type = 'video/webm';
     document.querySelector('#videoBG').appendChild(mp4);
     document.querySelector('#videoBG').appendChild(webm);
