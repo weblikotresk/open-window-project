@@ -280,7 +280,6 @@ function load(request_data = localStorage){
             function compass(event){
               var alpha;
               const delta = 100;
-              console.log(event);
               if(wind_mode == 'currently'){
                 if (event.absolute) {
                   alpha = event.alpha;
@@ -289,7 +288,7 @@ function load(request_data = localStorage){
                   alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
                 } else {
                     console.log('Could not retrieve absolute orientation');
-                    alert(localization[lang].compass_f);
+                    //alert(localization[lang].compass_f);
                     alpha = rdata[wind_mode].windBearing + 45;
                 }
                 alpha = alpha - delta - rdata[wind_mode].windBearing;
@@ -301,8 +300,7 @@ function load(request_data = localStorage){
                   // get absolute orientation for Safari/iOS
                   alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
                 } else {
-                    console.log('Could not retrieve absolute orientation');
-                    alert(localization[lang].compass_f);
+                    //alert(localization[lang].compass_f);
                     alpha = wind_mode.windBearing + 45;
                 }
                 alpha = alpha - delta - wind_mode.windBearing;
@@ -310,12 +308,15 @@ function load(request_data = localStorage){
               }
               
             }
+
           let wind_mode ='currently';
           function wind_arrow(mode, i){
             //mode = currently, daily, hourly
             wind_mode = mode;
             if(wind_mode!='currently'){
               wind_mode = rdata[wind_mode].data[i];
+            }else{
+              wind_mode= rdata[wind_mode];
             }
             console.log(wind_mode, mode, rdata[wind_mode]);
             //if wind is turned off, we remove deviceorientation
