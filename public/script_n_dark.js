@@ -283,6 +283,7 @@ function load(request_data = localStorage){
                     //alert(localization[lang].compass_f);
                     alpha = rdata[wind_mode].windBearing + 45;
                 }
+                console.log(alpha,wind_mode);
                 alpha = alpha + delta - rdata[wind_mode].windBearing;
               document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }else{
@@ -295,8 +296,8 @@ function load(request_data = localStorage){
                     //alert(localization[lang].compass_f);
                     alpha = wind_mode.windBearing + 45;
                 }
-                console.log(alpha);
-                alpha = alpha - delta - wind_mode.windBearing;
+                console.log(alpha, wind_mode);
+                alpha = alpha + delta - wind_mode.windBearing;
               document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }
               
