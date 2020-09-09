@@ -338,7 +338,7 @@ function load(request_data = localStorage){
               window.addEventListener('deviceorientationabsolute', compass);
             } else if ('ondeviceorientation' in window && localStorage.wind == 'on') {
               window.addEventListener('deviceorientation', compass);
-            }else if(localStorage.wind == 'off'){
+            }else if(localStorage.wind == 'off' || localStorage.wind == undefined){
               window.removeEventListener('deviceorientationabsolute', compass);
               window.removeEventListener('deviceorientation', compass);
               setTimeout(()=>
