@@ -13,18 +13,22 @@ app.use(express.static('public', {
     setHeaders: (res, path) => {
       if (path.endsWith('.ico')) {
         // All of the project's HTML files end in .html
-        res.setHeader('Cache-Control', 'max-age=172800');
+        res.setHeader('Cache-Control', 'max-age=1296000');
       
       }else if (path.endsWith('.svg')) {
         // All of the project's HTML files end in .html
-        res.setHeader('Cache-Control', 'max-age=172800');
+        res.setHeader('Cache-Control', 'max-age=1296000');
       
       }else if (path.endsWith('swap')) {
         // All of the project's HTML files end in .html
-        res.setHeader('Cache-Control', 'max-age=172800');
+        res.setHeader('Cache-Control', 'max-age=1296000');
       }else if (path.endsWith('.png')) {
         // All of the project's HTML files end in .html
-        res.setHeader('Cache-Control', 'max-age=172800')
+        res.setHeader('Cache-Control', 'max-age=259200')
+      }else if (path.endsWith('.mp4') || path.endsWith('.webm')){
+        // All of the project's HTML files end in .html
+        res.setHeader('Cache-Control', 'max-age=259200');
+      
       };
     },
   }));

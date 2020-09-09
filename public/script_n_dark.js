@@ -38,11 +38,11 @@ function videoBack(name){
     videobg.classList.add('no_opacity');
 
     let mp4 = document.createElement('source');
-    mp4.src = `videos/${name + postfix}.mp4`;
+    mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.mp4`;
     mp4.type = 'video/mp4';
     videobg.appendChild(mp4);
     let webm = document.createElement('source');
-    webm.src = `videos/webm/${name+postfix}.webm`;
+    webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm${name + postfix}.webm`;
     webm.type = 'video/webm';
     videobg.appendChild(webm);
     document.querySelector('#videoBG').classList.add('no_opacity');
@@ -56,10 +56,10 @@ function videoBack(name){
   }else{
     //first creation
     let mp4 = document.createElement('source');
-    mp4.src = `videos/${name+postfix}.mp4`;
+    mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.mp4`;
     mp4.type = 'video/mp4';
     let webm = document.createElement('source');
-    webm.src = `videos/webm/${name+postfix}.webm`;
+    webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm/${name + postfix}.webm`;
     webm.type = 'video/webm';
     document.querySelector('#videoBG').appendChild(mp4);
     document.querySelector('#videoBG').appendChild(webm);
@@ -292,7 +292,7 @@ function load(request_data = localStorage){
             
             function compass(event){
               var alpha;
-              const delta = 45;
+              const delta = 225;
               if(wind_mode == 'currently'){
                 if (event.absolute) {
                   alpha = event.alpha;
