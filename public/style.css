@@ -12,7 +12,7 @@ html,body {
     position:fixed;
     z-index: -1;
     transition: .4s all ease-out;
-    left: -33.33%;
+
 }
 .full_opacity{
     opacity: 1;
@@ -802,6 +802,7 @@ label.day:hover{
         width:auto;
         height: 101vh;
         top: -7px;
+        left: -33.33%;
     }
 }
 
