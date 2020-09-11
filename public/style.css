@@ -12,8 +12,7 @@ html,body {
     position:fixed;
     z-index: -1;
     transition: .4s all ease-out;
-    
-
+    left: -33.33%;
 }
 .full_opacity{
     opacity: 1;
@@ -715,6 +714,7 @@ label.day:hover{
 .slider_wrap{
     grid-area: slider_wrap;
     position: relative;
+    width: -moz-available;
 }
 
 #hours{
