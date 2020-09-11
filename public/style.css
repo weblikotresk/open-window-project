@@ -595,7 +595,10 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     margin: 0 auto 10px auto;
     display: block;
 }
-
+.pop_drop{
+    margin-right: 3px;
+    width: 13px;
+}
 .temp{
     margin-bottom: 10px;
     font-size:1.3rem;

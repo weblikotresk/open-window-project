@@ -1,10 +1,10 @@
 
 function convertSeconds(seconds){
-    let date = new Date();
-    date.setTime(seconds * 1000);
-    return date.toISOString().slice(11,16);
-
+  let date = new Date();
+  date.setTime(seconds * 1000);
+  return date.toISOString().slice(11,16);
 }
+
 function videoBack(name){
   let date = new Date(),
    time = date.getHours(),
@@ -92,6 +92,7 @@ let localization = {
     geo_error:'Версия вашего браузера не поддерживает функцию передачи геолокации сторонним сайтам. Обновите его до последней версии и попробуйте снова.',
     wind_dir_h:'Направление ветра<br>(только для мобильных устройств)',
     wind_dir:'Эта функция включает автопозиционирование стрелки, которая показывает направление ветра относительно Северного полюса.<br> Может работать не на всех устройствах.<br> Если ваш компас работает некорректно, откалибруйте его в Google/Apple Maps.',
+    directions:['↑ С', '↗ СВ', '→ В', '↘ ЮВ', '↓ Ю', '↙ ЮЗ', '← З', '↖ СЗ'],
     on:'Включить',
     off:'Выключить',
     compass_error:'Ваш браузер не поддерживает получение данных компаса. Пожалуйста, обновите его до последней версии и попробуйте снова.',
@@ -148,6 +149,7 @@ let localization = {
     geo_error:'Your browser version does not support the function of transferring geolocation to third-party sites. Please update it to the latest version and try again.',
     wind_dir_h:'Wind direction<br>(only for mobile devices)',
     wind_dir:"This function enables auto-positioning of the wind arrow relative to the North Pole.<br> May not work on every device.<br> If the compass doesn't work correctly, consider recalibrate it in the Google/Apple Maps.",
+    directions:['↑ N', '↗ NE', '→ E', '↘ SE', '↓ S', '↙ SW', '← W', '↖ NW'],
     on:'On',
     off:'Off',
     compass_error:'Compass heading is not available in your browser. Consider update it to the last version and try again.',
@@ -186,7 +188,9 @@ let localization = {
   },
 
 };
-
+function getCardinalDirection(angle, directions) {
+  return directions[Math.round(angle / 45) % 8];
+}
 //Settings 
 //Settings are using localStorage, so we store everything there
 if(localStorage.lang == undefined){
@@ -331,6 +335,7 @@ function load(request_data = localStorage){
             }else{
               wind_mode= rdata[wind_mode];
             }
+            
             //if wind is turned off, we remove deviceorientation
             // event and set normal mode for the wind arrow
             if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
@@ -379,6 +384,13 @@ function load(request_data = localStorage){
                 slidemenu(radio_arr[i].value, option)}); 
             }
           }
+          let water_drop = document.createElement('img');
+           water_drop.src = 'img/icons/water.svg';
+           water_drop.className = 'pop_drop';
+           let water_drop_arr=[];
+           for(let i =0;i<36;i++){
+            water_drop_arr[i]=water_drop.cloneNode(true);
+          };
           function chart_summon(option, option_color, option_back, axis_l, mode){
             //restart chart
             document.getElementById('myChart').remove();
@@ -400,6 +412,7 @@ function load(request_data = localStorage){
                 chart_data[i] = Math.round(rdata.hourly.data[i][option]);
               }
               document.querySelectorAll('.hour > .pop' )[i].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
+              document.querySelectorAll('.hour > .pop' )[i].prepend(water_drop_arr[i]);
               document.querySelectorAll('.hour > .temp' )[i].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
               document.querySelectorAll('.hour > .sky' )[i].src = `img/icons/${rdata.hourly.data[i].icon}.svg`;
               document.querySelectorAll('.hour > .time' )[i].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
@@ -417,7 +430,9 @@ function load(request_data = localStorage){
                 for(let j =0; j<24;j++){
                   //hourly
           
-                    document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
+                    
+                  document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
+                  document.querySelectorAll('.hour > .pop' )[i].prepend(water_drop_arr[i]);
                   document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
                   document.querySelectorAll('.hour > .sky' )[j].src = `img/icons/${rdata.hourly.data[i+j].icon}.svg`;
           
@@ -592,6 +607,7 @@ function load(request_data = localStorage){
            wind_options[0].innerHTML = localization[lang].on;
            wind_options[1].innerHTML = localization[lang].off;
 
+           
           //legal fix lmao
            if(moment().format('YYYY') == 2020){
             document.querySelector('#legal > p>span').innerHTML = moment().format('YYYY')
@@ -606,11 +622,9 @@ function load(request_data = localStorage){
               icon.alt='';
               icon.className='icon';
 
-              let water_drop = document.createElement('img');
-              water_drop.src = 'img/icons/water.svg';
-              water_drop.classList.add('pop_drop');
+              
              
-            console.log(localization[lang].units[units], lang);
+            
             document.querySelector('.temp_val').innerHTML = Math.round(rdata.currently.temperature) + localization[lang].units[units].temp;
             
             document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(rdata.currently.apparentTemperature) +localization[lang].units[units].temp ;
@@ -618,13 +632,13 @@ function load(request_data = localStorage){
             document.querySelector('.condition').prepend(icon);
  
             document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.hourly.data[0].precipProbability*100) + '%';
+
+
             document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-            document.querySelector('.wind_speed').innerHTML = rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
+            document.querySelector('.wind_speed').innerHTML = getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
             wind_arrow('currently');
-
-          
             document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
             document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
             document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.currently.pressure + localization[lang].units[units].pres_units;
@@ -642,16 +656,7 @@ function load(request_data = localStorage){
             if(document.getElementsByClassName('backto')[0] != null){
               document.getElementsByClassName('backto')[0].remove();
             }
-            //hourly forecast
-            for(let i =0;i<24;i++){
-              let pop = document.querySelectorAll('.hour > .pop' )[i];
-              pop.innerHTML =water_drop + Math.round(rdata.hourly.data[i].precipProbability*100)+'%' ;
-              pop.prepend(water_drop);
-              document.querySelectorAll('.hour > .temp' )[i].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
-              document.querySelectorAll('.hour > .sky' )[i].src = `img/icons/${rdata.hourly.data[i].icon}.svg`;
-              document.querySelectorAll('.hour > .time' )[i].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
-            }
-
+            
             radio_events('');
             chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, 0);
             document.getElementById('days-fake').checked = true;
@@ -664,19 +669,21 @@ function load(request_data = localStorage){
            current();
           
            //daily forecast
+           
              for(let i = 0;i<8;i++){
             document.querySelectorAll('.day > .pop' )[i].innerHTML = Math.round(rdata.daily.data[i].precipProbability*100) +'%';
+            document.querySelectorAll('.day > .pop' )[i].prepend(water_drop_arr[i+8]);
             document.querySelectorAll('.day > .sky')[i].src = `img/icons/${rdata.daily.data[i].icon}.svg`;
             document.querySelectorAll('.day > .temp')[i].innerHTML = Math.round(rdata.daily.data[i].temperatureMax) +localization[lang].units[units].temp;
             //date
+            
             let date = moment(rdata.daily.data[i].time*1000);
             if(document.getElementsByClassName('weekday')[i] != null){
               document.getElementsByClassName('weekday')[i].remove();
             }
             document.querySelectorAll('.day > .date')[i].innerHTML = localization[lang][date.format('ddd')]+' ' + date.format(localization[lang].date);
             }
-
-            
+            console.log(water_drop_arr);
             
             
             // forecast with hours and graphs on click on the day
@@ -728,7 +735,7 @@ function load(request_data = localStorage){
                 document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[i].uvIndex;
                 document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-                document.querySelector('.wind_speed').innerHTML = rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
+                document.querySelector('.wind_speed').innerHTML = getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
                 wind_arrow(`daily`, i);
           
                   document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);

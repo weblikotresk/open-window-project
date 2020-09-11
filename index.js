@@ -1,5 +1,4 @@
-// const http = require('http');
-// const Cookies = require('cookies');
+
 const express = require('express');
 const compression = require('compression');
 const fetch = require('node-fetch');
@@ -25,10 +24,6 @@ app.use(express.static('public', {
       }else if (path.endsWith('.png')) {
         // All of the project's HTML files end in .html
         res.setHeader('Cache-Control', 'max-age=259200')
-      }else if (path.endsWith('.mp4') || path.endsWith('.webm')){
-        // All of the project's HTML files end in .html
-        res.setHeader('Cache-Control', 'max-age=259200');
-      
       };
     },
   }));
@@ -42,14 +37,6 @@ app.get('/weather/:latlon/:lang/:units', async (req, res)=>{
     const lang = req.params.lang;
     const units = req.params.units;
 
-    // let cookies = new Cookies(req, res);
-    // cookies.set('lang', lang);
-    // cookies.set('units', units);
-
-    // res.setHeader('Set-Cookie', [`lang=${lang}`,`units=${units}`]);
-    // cookies[0] = res.getHeader('Set-Cookie');
-    // cookies.set('bruh', 'test');
-    // console.log(cookies.get('bruh'));
     const lat = latlon[0];
     const lon = latlon[1];
     console.log(latlon, lang, units);
