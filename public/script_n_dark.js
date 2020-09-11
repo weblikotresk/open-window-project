@@ -433,7 +433,7 @@ function load(request_data = localStorage){
           
                     
                   document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
-                  document.querySelectorAll('.hour > .pop' )[i].prepend(water_drop_arr[i]);
+                  document.querySelectorAll('.hour > .pop' )[j].prepend(water_drop_arr[j]);
                   document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
                   document.querySelectorAll('.hour > .sky' )[j].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
           
