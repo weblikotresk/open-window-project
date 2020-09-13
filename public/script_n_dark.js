@@ -6,6 +6,7 @@ function convertSeconds(seconds){
 }
 
 function videoBack(name){
+  
   let date = new Date(),
    time = date.getHours(),
    month = date.getMonth()+1;
@@ -27,45 +28,58 @@ function videoBack(name){
   if((time <= 18 || time <= 5)&& (month >=11)||(month<=3) && name == 'snow'){
     name = name + '_n';
   }
-
-  if(document.querySelector('#videoBG > source') !=null){
-    //daily forecast
-    let videobg = document.createElement('video');
-    videobg.setAttribute('autoplay', true);
-    videobg.setAttribute('muted', true);
-    videobg.setAttribute('loop', true);
-    videobg.id= 'videoBG';
-    videobg.classList.add('no_opacity');
-
-    let mp4 = document.createElement('source');
-    mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.mp4`;
-    mp4.type = 'video/mp4';
-    videobg.appendChild(mp4);
-    let webm = document.createElement('source');
-    webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm${name + postfix}.webm`;
-    webm.type = 'video/webm';
-    videobg.appendChild(webm);
-    document.querySelector('#videoBG').classList.add('no_opacity');
-    setTimeout(()=>{
-      document.querySelector('#videoBG').classList.remove('full_opacity');
-      document.querySelector('#videoBG').remove();
-      document.body.prepend(videobg);
+ 
+  if(localStorage.back != 'vid'){
+    document.querySelector('#videoBG').remove();
+    let img_bg = document.createElement('img');
+    img_bg.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/back/${name + postfix}.png`;
+    img_bg.id = 'videoBG';
+    document.body.prepend(img_bg);
+    
+  console.log(`https://open-window-videos.s3.eu-west-2.amazonaws.com/img/back/${name + postfix}.png`);
+  }
+  else{
+    if(document.querySelector('#videoBG > source') !=null){
+      //daily forecast
+  
+      let videobg = document.createElement('video');
+      videobg.setAttribute('autoplay', true);
+      videobg.setAttribute('muted', true);
+      videobg.setAttribute('loop', true);
+      videobg.id= 'videoBG';
+      videobg.classList.add('no_opacity');
+  
+      let mp4 = document.createElement('source');
+      mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.mp4`;
+      mp4.type = 'video/mp4';
+      videobg.appendChild(mp4);
+      let webm = document.createElement('source');
+      webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm${name + postfix}.webm`;
+      webm.type = 'video/webm';
+      videobg.appendChild(webm);
+      document.querySelector('#videoBG').classList.add('no_opacity');
+      setTimeout(()=>{
+        document.querySelector('#videoBG').classList.remove('full_opacity');
+        document.querySelector('#videoBG').remove();
+        document.body.prepend(videobg);
+        document.querySelector('#videoBG').classList.add('full_opacity');
+        setTimeout(()=>document.querySelector('#videoBG').classList.remove('no_opacity'), 400);
+      }, 400);
+    }else{
+      //first creation
+      let mp4 = document.createElement('source');
+      mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.mp4`;
+      mp4.type = 'video/mp4';
+      let webm = document.createElement('source');
+      webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm/${name + postfix}.webm`;
+      webm.type = 'video/webm';
+      document.querySelector('#videoBG').appendChild(mp4);
+      document.querySelector('#videoBG').appendChild(webm);
       document.querySelector('#videoBG').classList.add('full_opacity');
       setTimeout(()=>document.querySelector('#videoBG').classList.remove('no_opacity'), 400);
-    }, 400);
-  }else{
-    //first creation
-    let mp4 = document.createElement('source');
-    mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.mp4`;
-    mp4.type = 'video/mp4';
-    let webm = document.createElement('source');
-    webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm/${name + postfix}.webm`;
-    webm.type = 'video/webm';
-    document.querySelector('#videoBG').appendChild(mp4);
-    document.querySelector('#videoBG').appendChild(webm);
-    document.querySelector('#videoBG').classList.add('full_opacity');
-    setTimeout(()=>document.querySelector('#videoBG').classList.remove('no_opacity'), 400);
+    }
   }
+  
 
 }
 
@@ -85,6 +99,10 @@ let localization = {
     curr:'Текущая погода',
     local:'Язык',
     uni:'Единицы измерения',
+    back:'Фон',
+    back_p:'Эта опция позволяет вам выбрать фон сайта. Фон-изображение может заметно сократить время загрузки.',
+    img:'Изображение',
+    vid:'Видео',
     source:'Источники',
     tochange:'Чтобы подвердить изменения, закройте окно настроек. Страница автоматически перезагрузится.',
     loading:'Страница загружается, пожалуйста, подождите.',
@@ -92,8 +110,8 @@ let localization = {
     geo_error:'Версия вашего браузера не поддерживает функцию передачи геолокации сторонним сайтам. Обновите его до последней версии и попробуйте снова.',
     wind_dir_h:'Направление ветра<br><span>(только для мобильных устройств)</span>',
     wind_dir:'Эта функция включает автопозиционирование стрелки, которая показывает направление ветра относительно Северного полюса.<br> Может работать не на всех устройствах.<br> Если ваш компас работает некорректно, откалибруйте его в Google/Apple Maps.',
-    //directions:['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'],
-    directions:['Ю', 'ЮЗ', 'З', 'СЗ', 'С', 'СВ', 'В', 'ЮВ'],
+    directions:['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'],
+    //directions:['Ю', 'ЮЗ', 'З', 'СЗ', 'С', 'СВ', 'В', 'ЮВ'],
     on:'Включить',
     off:'Выключить',
     compass_error:'Ваш браузер не поддерживает получение данных компаса. Пожалуйста, обновите его до последней версии и попробуйте снова.',
@@ -145,13 +163,17 @@ let localization = {
     curr:'Current mode',
     local:'Language',
     uni:'Units of measurements',
+    back:'Background',
+    back_p:'This option lets you choose your background. Consider using image background if the website takes too long to load.',
+    img:'Image',
+    vid:'Video',
     source:'Sources',
     tochange:'Close the settings window to confirm the changes. The page will automatically reload.',
     geo_error:'Your browser version does not support the function of transferring geolocation to third-party sites. Please update it to the latest version and try again.',
     wind_dir_h:'Wind direction<br><span>(only for mobile devices)</span>',
     wind_dir:"This function enables auto-positioning of the wind arrow relative to the North Pole.<br> May not work on every device.<br> If the compass doesn't work correctly, consider recalibrate it in the Google/Apple Maps.",
-    directions:['S', 'SW', 'W', 'NW', 'N', 'NE', 'E', 'SE'],
-    //directions:['Ю', 'ЮЗ', 'З', 'СЗ', 'С', 'СВ', 'В', 'ЮВ'],
+    directions:['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
+    //directions:['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'],
 
     on:'On',
     off:'Off',
@@ -192,21 +214,24 @@ let localization = {
 
 };
 function getCardinalDirection(angle, directions) {
-  return directions[Math.round(angle / 45) % 8];
+  let val = Math.floor((angle / 45) + 0.5);
+  return directions[(val % 8)];
 }
 //Settings 
 //Settings are using localStorage, so we store everything there
-if(localStorage.lang == undefined){
+if(localStorage.back == undefined){
   //default localStorage
   localStorage.lang = 'ru';
   localStorage.units = 'si';
   localStorage.wind = 'off';
+  localStorage.back = 'vid';
 }
 
 let settingsInputs =[];
 settingsInputs[0] =  document.querySelectorAll('.lang');
 settingsInputs[1] =  document.querySelectorAll('.units');
 settingsInputs[2] =  document.querySelectorAll('.wind-input');
+settingsInputs[3] =  document.querySelectorAll('.back-input');
 
   for(let i =0;i<settingsInputs[0].length; i++){
     //we need to highlight options that are in the localStorage
@@ -226,15 +251,24 @@ settingsInputs[2] =  document.querySelectorAll('.wind-input');
       localStorage.units = settingsInputs[1][i].value;
     })
   }
-   for(let i =0;i<settingsInputs[2].length; i++){
+  for(let i =0;i<settingsInputs[2].length; i++){
 
-     if(localStorage.wind == settingsInputs[2][i].value){
-       settingsInputs[2][i].checked = true;
-     }
-     settingsInputs[2][i].addEventListener('click', ()=>{
-       localStorage.wind = settingsInputs[2][i].value;
-     })
-   }
+    if(localStorage.wind == settingsInputs[2][i].value){
+      settingsInputs[2][i].checked = true;
+    }
+    settingsInputs[2][i].addEventListener('click', ()=>{
+      localStorage.wind = settingsInputs[2][i].value;
+    })
+  }
+  for(let i =0;i<settingsInputs[3].length; i++){
+
+    if(localStorage.back == settingsInputs[3][i].value){
+      settingsInputs[3][i].checked = true;
+    }
+    settingsInputs[3][i].addEventListener('click', ()=>{
+      localStorage.back = settingsInputs[3][i].value;
+    })
+  }
 
 
 let settingsIcon = document.querySelector('#settings > svg'),
@@ -299,7 +333,7 @@ function load(request_data = localStorage){
             
             function compass(event){
               var alpha;
-              const delta = 225;
+              const delta = 45;
               if(wind_mode == 'currently'){
                 if (event.absolute) {
                   alpha = event.alpha;
@@ -350,10 +384,10 @@ function load(request_data = localStorage){
               window.removeEventListener('deviceorientationabsolute', compass);
               window.removeEventListener('deviceorientation', compass);
               setTimeout(()=>
-              document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+45}deg)`, 1000);
+              document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+225}deg)`, 1000);
             }else{
               alert(localization[lang].compass_error);
-              document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+45}deg)`;
+              document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+225}deg)`;
             }
           }
           //slidemenu manage which chart to summon onclick on slidemenu
@@ -388,13 +422,9 @@ function load(request_data = localStorage){
             }
           }
           let water_drop = document.createElement('img');
-          
            water_drop.src = 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
            water_drop.className = 'pop_drop';
-           let water_drop_arr=[];
-           for(let i =0;i<36;i++){
-            water_drop_arr[i]=water_drop.cloneNode(true);
-          };
+
           function chart_summon(option, option_color, option_back, axis_l, mode){
             //restart chart
             document.getElementById('myChart').remove();
@@ -415,8 +445,9 @@ function load(request_data = localStorage){
               }else{
                 chart_data[i] = Math.round(rdata.hourly.data[i][option]);
               }
+              let pop_icon = water_drop.cloneNode(true);
               document.querySelectorAll('.hour > .pop' )[i].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
-              document.querySelectorAll('.hour > .pop' )[i].prepend(water_drop_arr[i]);
+              document.querySelectorAll('.hour > .pop' )[i].prepend(pop_icon);
               document.querySelectorAll('.hour > .temp' )[i].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
               document.querySelectorAll('.hour > .sky' )[i].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.hourly.data[i].icon}.svg`;
               document.querySelectorAll('.hour > .time' )[i].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
@@ -434,9 +465,9 @@ function load(request_data = localStorage){
                 for(let j =0; j<24;j++){
                   //hourly
           
-                    
+                  let pop_icon = water_drop.cloneNode(true);
                   document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
-                  document.querySelectorAll('.hour > .pop' )[j].prepend(water_drop_arr[j]);
+                  document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
                   document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
                   document.querySelectorAll('.hour > .sky' )[j].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
           
@@ -604,13 +635,17 @@ function load(request_data = localStorage){
            settings_headlines[0].innerHTML = localization[lang].local;
            settings_headlines[1].innerHTML =localization[lang].uni;
            settings_headlines[2].innerHTML = localization[lang].wind_dir_h;
-           settings_headlines[3].innerHTML = localization[lang].source;
+           settings_headlines[3].innerHTML = localization[lang].back;
+           settings_headlines[4].innerHTML = localization[lang].source;
            document.querySelector('.settings_block > span').innerHTML = localization[lang].tochange;
            document.querySelector('.wind-settings  p').innerHTML = localization[lang].wind_dir;
+           document.querySelector('.settings_item  p').innerHTML = localization[lang].back_p;
            let wind_options = document.querySelectorAll('.turn_wind');
            wind_options[0].innerHTML = localization[lang].on;
            wind_options[1].innerHTML = localization[lang].off;
-
+          let back_options = document.querySelectorAll('.back-label > span');
+          back_options[0].innerHTML = localization[lang].img;
+          back_options[1].innerHTML = localization[lang].vid;
            
           //legal fix lmao
            if(moment().format('YYYY') == 2020){
@@ -675,8 +710,9 @@ function load(request_data = localStorage){
            //daily forecast
            
              for(let i = 0;i<8;i++){
+               let pop_icon = water_drop.cloneNode(true);
             document.querySelectorAll('.day > .pop' )[i].innerHTML = Math.round(rdata.daily.data[i].precipProbability*100) +'%';
-            document.querySelectorAll('.day > .pop' )[i].prepend(water_drop_arr[i+8]);
+            document.querySelectorAll('.day > .pop' )[i].prepend(pop_icon);
             document.querySelectorAll('.day > .sky')[i].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.daily.data[i].icon}.svg`;
             document.querySelectorAll('.day > .temp')[i].innerHTML = Math.round(rdata.daily.data[i].temperatureMax) +localization[lang].units[units].temp;
             //date
@@ -687,7 +723,6 @@ function load(request_data = localStorage){
             }
             document.querySelectorAll('.day > .date')[i].innerHTML = localization[lang][date.format('ddd')]+' ' + date.format(localization[lang].date);
             }
-            console.log(water_drop_arr);
             
             
             // forecast with hours and graphs on click on the day
@@ -739,7 +774,7 @@ function load(request_data = localStorage){
                 document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[i].uvIndex;
                 document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-                document.querySelector('.wind_speed').innerHTML = getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
+                document.querySelector('.wind_speed').innerHTML = getCardinalDirection(rdata.daily.data[i].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
                 wind_arrow(`daily`, i);
           
                   document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);

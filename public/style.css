@@ -303,7 +303,8 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     height:30px;
     width: initial;
 }
-.settings_item:nth-of-type(2) >.settings-subitem {
+
+.settings_item >.settings-subitem{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -318,7 +319,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     transition: .3s all ease;
     border-radius: 10px;
 }
-.units_labels, .wind_labels{
+.units_labels, .wind_labels, .back-label{
     display:block;
     text-decoration: underline;
     padding: 10px;
@@ -350,6 +351,10 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
 .wind-settings   #wind-1:checked + .wind_labels{ border: 1px solid #fff;}
 .wind-settings  #wind-2:checked + .wind_labels{ border: 1px solid #fff;}
 
+.settings_item  #back-1 + .back-label { border: 1px solid rgba(0, 0, 0, 0);}
+.settings_item  #back-2 + .back-label{ border: 1px solid rgba(0, 0, 0, 0);}
+.settings_item  #back-1:checked + .back-label{ border: 1px solid #fff;}
+.settings_item  #back-2:checked + .back-label{ border: 1px solid #fff;}
 
 .to_change{
     margin: 0 auto 10px;
@@ -358,7 +363,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
 .settings_block input{
     display: none;
 }
-.wind-settings > .settings-subitem > p{
+.settings-subitem > p{
     font-size: 14px;
     width: 95%;
     margin: 0 auto 10px;
@@ -800,7 +805,7 @@ label.day:hover{
         width:100%;
         top: -7px;
         height: auto;
-        left: -33.33%;
+
     }
 }
 @media (max-aspect-ratio: 16/9) {
@@ -808,7 +813,7 @@ label.day:hover{
         width:auto;
         height: 101vh;
         top: -7px;
-
+        
     }
 }
 
@@ -893,6 +898,9 @@ label.day:hover{
     }
 }
 @media screen and (max-width:700px){
+    #videoBG{
+        left: -33.33%;
+    }
     #weather{
         grid-template-rows: repeat(3, 2fr) 1fr 1fr;
         grid-template-columns: 1fr 1fr;
@@ -1048,7 +1056,7 @@ label.day:hover{
     }
     .backto{
         width: 100px;
-        padding-top: 18%;
+        padding-top: 65px;
         margin: 0 30px 15px 0;
     }
     #slidemenu{
@@ -1064,6 +1072,5 @@ label.day:hover{
     }
     .chart_area{
         grid-row: 5/6;
-        margin-top: -35px;
     }
 } 
