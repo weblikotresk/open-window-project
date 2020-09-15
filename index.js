@@ -24,6 +24,9 @@ app.use(express.static('public', {
       }else if (path.endsWith('.png')) {
         // All of the project's HTML files end in .html
         res.setHeader('Cache-Control', 'max-age=259200')
+      }else if (path.endsWith('si')) {
+         // All of the project's HTML files end in .html
+         res.setHeader('Cache-Control', 'max-age=70')
       };
     },
   }));
