@@ -90,7 +90,7 @@ body{
     'legal legal legal legal legal legal days';
     padding: 25px;
     width: 900px;
-    height: 900px;
+    height: 1010px;
     border-radius: 5px;
 
     /* background: url('img/trianglify-lowres3.png') no-repeat center / cover; */
@@ -415,11 +415,11 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 .wind_text{
     display: flex;
     flex-direction: column;
-    margin-right: 20px;
 }
 .wind_headline, #details > span{
     display: inline-block;
@@ -435,7 +435,6 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     height: 40px;
     transform: rotate(45deg);
     fill: white;
-    margin-top: 15px;
 }
 
 
@@ -452,8 +451,8 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
 #slidemenu{
     grid-column: 1/4;
     grid-row: 2/3;
-    margin-top: 13px;
     overflow: hidden;
+    align-items: center;
 }
 #menu >span{
     display: inline-block;
@@ -480,7 +479,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
   
   
   #slidemenu label{
-    width: 20%;
+    width: fit-content;
     text-align: center;
     display: block;
     float: left;
@@ -499,7 +498,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
 
   
   /*Bar Style*/
-  
+/*   
   .slider_bar {
     width: 100%;
     height: 5px;
@@ -517,25 +516,55 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
   }
   
   /*Animations*/
-  #slidemenu label, .slider_bar  .bar {
+  /* #slidemenu label, .slider_bar  .bar {
     transition: all 365ms ease-in-out;
     -webkit-transition: all 365ms ease-in-out;
     -moz-transition: all 365ms ease-in-out;
   }
   
-  /*Toggle*/
+  Toggle
   
   #slidemenu .slide-toggle:checked + label{
     opacity: 1;
-  }
-  
+  } */
+  #slidemenu{
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+        align-items: center;
+    }
+    #slidemenu label{
+        margin-left:10px;
+        width: unset;
+    }
+    #slidemenu label span{
+        border-radius: 15px;
+        background-color: rgba(255, 255, 255, 0.88);
+        color: #000;
+        width: max-content;
+    }
+    #slidemenu label span:hover{
+        cursor: pointer;
+        background-color:#00c8ffda ;
+        color: #fff;
+        transition: .2s ease all;
+        border-color: #00c8ffda;
 
+    }
+  #slidemenu #slide-item-1:checked + label span, #slidemenu #slide-item-2:checked + label span,#slidemenu #slide-item-3:checked + label span,#slidemenu #slide-item-4:checked + label span,#slidemenu #slide-item-5:checked + label span{
+    cursor: pointer;
+    background-color:#00c8ffda;
+    color: #fff;
+    transition: .2s ease all;
+    border-color: #00c8ffda;
+}
   
-  #slidemenu #slide-item-1:checked ~ .slider_bar .bar{ margin-left: 0; }
+  /* #slidemenu #slide-item-1:checked ~ .slider_bar .bar{ margin-left: 0; }
   #slidemenu #slide-item-2:checked ~ .slider_bar  .bar{ margin-left: 20%; }
   #slidemenu #slide-item-3:checked ~ .slider_bar  .bar{ margin-left: 40%; }
   #slidemenu #slide-item-4:checked ~ .slider_bar  .bar{ margin-left: 60%; }
-  #slidemenu #slide-item-5:checked ~ .slider_bar  .bar{ margin-left: 80%; }
+  #slidemenu #slide-item-5:checked ~ .slider_bar  .bar{ margin-left: 80%; } */
 /*===============================CHART===========================================*/
 
 
@@ -953,37 +982,8 @@ label.day:hover{
         display: none;
     }
     
-    #slidemenu{
-        
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    
-    }
-    #slidemenu label{
-        margin-left:10px;
-        width: auto;
-    }
-    #slidemenu label span{
-        border-radius: 15px;
-        background-color: rgba(255, 255, 255, 0.88);
-        color: #000;
-    }
-    #slidemenu label span:hover{
-        cursor: pointer;
-        background-color:#00c8ffda ;
-        color: #fff;
-        transition: .2s ease all;
-        border-color: #00c8ffda;
 
-    }
-    #slidemenu #slide-item-1:checked + label span, #slidemenu #slide-item-2:checked + label span,#slidemenu #slide-item-3:checked + label span,#slidemenu #slide-item-4:checked + label span,#slidemenu #slide-item-5:checked + label span{
-        cursor: pointer;
-        background-color:#00c8ffda;
-        color: #fff;
-        transition: .2s ease all;
-        border-color: #00c8ffda;
-    }
+
     #legal{
         text-align: center;
     }
@@ -1001,28 +1001,19 @@ label.day:hover{
     }
 
     #display{
-        margin-bottom: 60px;
-        grid-template-columns: 1fr;
-        grid-template-rows: minmax(250px, 350px) repeat(2, minmax(250px, 350px)) 250px 300px;
+        display: block;
     }
     .slider_wrap{
         margin-bottom: 40px;
     }
-
     .loading{
         width: 87%;
         left: unset;
     }
     /*display*/
 
-    #display > div{
-        grid-column: 1/2;
-    }
-    #sunr{
-        margin: 60px 10px 3vw 10px !important;
-    }
     .wind_headline, #details > span{
-        margin: 25px 10px 3vw 10px;
+        margin: 19.5px 10px;
     }
     .propability{
         margin-top: 6vw;
@@ -1031,7 +1022,6 @@ label.day:hover{
         clip-path: circle(0.1% at 56.4% 2%);
     }
     .settings_item:nth-of-type(2) >.settings-subitem {
-
         justify-content: space-evenly;
     }
     .wind_text{
@@ -1039,38 +1029,38 @@ label.day:hover{
     }
     #current, #other, #details{
         margin: 0 auto;
-        padding: 0;
+        padding: 15px 0;
         width: 75%;
         border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
-    #current{
+    /* #current{
         grid-row: 1/2;
-        margin-bottom: 28px;
-    }
+    } */
     #other{
-        grid-row: 2/3;
         border-left: none;
+        margin-bottom: 50px;
+        padding-bottom: 30px;
     }
-    #details{
+    /* #details{
         grid-row: 3/4;
-    }
+    } */
     .backto{
         width: 100px;
         padding-top: 65px;
         margin: 0 30px 15px 0;
     }
-    #slidemenu{
-        grid-row: 4/5;
+    /* #slidemenu{
+        /* grid-row: 4/5; 
         height: fit-content;
         margin: 10% 0;
-    }
+    } */
     .chart-container{
         width: 2000px;
     }
     #slidemenu label{
         margin-bottom: 15px;
     }
-    .chart_area{
-        grid-row: 5/6;
-    }
+     .chart_area{
+        height: 275px;
+    } 
 } 

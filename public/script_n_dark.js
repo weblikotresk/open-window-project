@@ -4,7 +4,57 @@ function convertSeconds(seconds){
   date.setTime(seconds * 1000);
   return date.toISOString().slice(11,16);
 }
-
+function windIntensity(wind_speed, lang, units){
+  switch(units){
+    case 'us':
+    case 'uk2':
+      wind_speed = wind_speed/2,237
+      break;
+    case 'ca':
+      wind_speed = wind_speed/3.6
+      break;
+  }
+  console.log(wind_speed);
+  if(wind_speed <= 0.2){
+    return localization[lang].windIntensity.calm
+  }
+  else if(0.2< wind_speed && wind_speed <= 1.5){
+    return localization[lang].windIntensity.light 
+  }
+  else if(1.5< wind_speed && wind_speed <= 3.3){
+    return localization[lang].windIntensity.breeze  
+  }
+  else if(3.3< wind_speed && wind_speed <= 5.4){
+    return localization[lang].windIntensity.gbreeze  
+  }
+  else if(5.4< wind_speed && wind_speed <= 7.9){
+    return localization[lang].windIntensity.moderate  
+  }
+  else if(7.9< wind_speed && wind_speed <= 10.7){
+    return localization[lang].windIntensity.fresh  
+  }
+  else if(10.7< wind_speed && wind_speed <= 13.8){
+    return localization[lang].windIntensity.strong 
+  }
+  else if(13.8< wind_speed && wind_speed <= 17.1){
+    return localization[lang].windIntensity.high 
+  }
+  else if(17.1< wind_speed && wind_speed <= 20.7){
+    return localization[lang].windIntensity.gale 
+  }
+  else if(20.7< wind_speed && wind_speed <= 24.4){
+    return localization[lang].windIntensity.sgale 
+  }
+  else if(24.4< wind_speed && wind_speed <= 28.4){
+    return localization[lang].windIntensity.storm 
+  }
+  else if(28.4< wind_speed && wind_speed <= 32.6){
+    return localization[lang].windIntensity.vstorm 
+  }
+  else{
+    return localization[lang].windIntensity.hurricane 
+  }
+}
 function videoBack(name){
   
   let date = new Date(),
@@ -90,11 +140,13 @@ let localization = {
     uv:'Интенсивность УФ ',
     uvint:'Интенсивность УФ: ',
     clouds:'Облачное покрытие',
+    temp:'Температура',
     wind:'Ветер',
     sunr:'Рассвет: ',
     suns:'Закат: ', 
     pres:'Давление: ',
     hum:'Влажность',
+    dwp:'Точка росы',
     date:'DD.MM',
     curr:'Текущая погода',
     local:'Язык',
@@ -146,19 +198,35 @@ let localization = {
         pres_units:' мм рт.ст.',
       },
     },
+    windIntensity:{
+      calm:'Штиль, ',
+      light:'Тихий, ',
+      breeze:'Лёгкий, ',
+      gbreeze:'Слабый, ',
+      moderate:'Умеренный, ',
+      fresh:'Свежий, ',
+      strong:'Сильный, ',
+      high:'Крепкий, ',
+      gale:'Очень крепкий, ',
+      sgale:'Шторм, ',
+      storm:'Сильный шторм, ',
+      vstorm:'Жестокий шторм, ',
+      hurricane:'Ураган, ',
+    },
   }, 
   'en':{
     app_temp:'Feels like: ',
     pop:'Precipation',
     uvint:'UV intensity: ',
     uv:'UV',
-    
+    temp:'Temparature',
     clouds:'Cloud coverage',
     wind:'Wind',
     sunr:'Sunrise: ',
     suns:'Sunset: ', 
     pres:'Pressure: ',
     hum:'Humidity',
+    dwp:'Dew point',
     date:'MM.DD',
     curr:'Current mode',
     local:'Language',
@@ -209,6 +277,21 @@ let localization = {
         wind_units:'mph',
         pres_units:' mb'
       },
+    },
+    windIntensity:{
+      calm:'Calm, ',
+      light:'Light air, ',
+      breeze:'Light breeze, ',
+      gbreeze:'Gentle breeze, ',
+      moderate:'Moderate breeze, ',
+      fresh:'Fresh breeze, ',
+      strong:'Strong breeze, ',
+      high:'High wind, ',
+      gale:'Gale, ',
+      sgale:'Strong gale, ',
+      storm:'Storm, ',
+      vstorm:'Violent storm, ',
+      hurricane:'Hurricane, ',
     },
   },
 
@@ -321,8 +404,7 @@ function load(request_data = localStorage){
             withCredentials: true,
             headers:{
                 'Content-Type':'application/json',
-                'X-Requested-With': 'XMLHttpRequest' 
-    
+                'X-Requested-With': 'XMLHttpRequest',
             }
            }
            const response = await fetch(api_url, options);
@@ -333,7 +415,7 @@ function load(request_data = localStorage){
             
             function compass(event){
               var alpha;
-              const delta = 45;
+              const delta = 225;
               if(wind_mode == 'currently'){
                 if (event.absolute) {
                   alpha = event.alpha;
@@ -348,6 +430,7 @@ function load(request_data = localStorage){
                 alpha = alpha + delta - rdata[wind_mode].windBearing;
               document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
               }else{
+                
                 if (event.absolute) {
                   alpha = 360 - event.alpha;
                 } else if (event.hasOwnProperty('webkitCompassHeading')) {
@@ -392,8 +475,10 @@ function load(request_data = localStorage){
           }
           //slidemenu manage which chart to summon onclick on slidemenu
            function slidemenu(value, option){
-
             switch(value){
+              case 'temp':
+                chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, option);
+              break;
               case 'wind':
                 chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, option);
               break;
@@ -497,18 +582,52 @@ function load(request_data = localStorage){
           }
           //using chart.js library
             let ctx = document.getElementById('myChart').getContext('2d');
-            let chart = new Chart(ctx, {
+          let bor_width, chartColors;
+              if(option == 'temperature'){
+                bor_width = 6
+                chartColors= {
+                  blue:'rgb(153, 206, 255)',
+                  yellow:'rgb(224, 209, 0)',
+                  red:'rgb(255, 99, 51)',
+                };
+              }else{
+                bor_width = 3;
+              }
+            let gradient =null;
+
+            
+             let chart = new Chart(ctx, {
                 type: 'line',
           
                 data: {
                     labels: chart_labels,
                     datasets: [{
-          
                         label: '',
-                        pointBackgroundColor: option_color,
+                        fill:true,
                         backgroundColor: option_back,
-                        borderColor: option_color,
-                        data: chart_data
+                        borderColor: function(context) {
+                          var chartArea = context.chart.chartArea;
+                          if (!chartArea) {
+                            // This case happens on initial chart load
+                            return null;
+                          }
+                          if(option == 'temperature'){
+                            if (gradient === null) {
+                              // Create the gradient because this is either the first render
+                              // or the size of the chart has changed
+                              let ctx = context.chart.ctx;
+                              gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                              gradient.addColorStop(0, chartColors.blue);
+                              gradient.addColorStop(0.5, chartColors.yellow);
+                              gradient.addColorStop(1, chartColors.red);}
+                          }
+                          else{
+                            gradient = option_color;
+                          }
+                          return gradient;
+                        },
+                        data: chart_data,
+                        borderWidth:bor_width
                     }]
                 },
           
@@ -558,7 +677,7 @@ function load(request_data = localStorage){
                      showAllTooltips: true,
                      tooltips:{
                          
-                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
                         displayColors: false,
                         bodyFontSize: 18,
                         bodyAlign:'center',
@@ -660,9 +779,6 @@ function load(request_data = localStorage){
               icon.src=`https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.currently.icon}.svg`;
               icon.alt='';
               icon.className='icon';
-
-              
-             
             
             document.querySelector('.temp_val').innerHTML = Math.round(rdata.currently.temperature) + localization[lang].units[units].temp;
             
@@ -676,20 +792,21 @@ function load(request_data = localStorage){
             document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-            document.querySelector('.wind_speed').innerHTML = getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
+            document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.currently.windSpeed, lang, units) + getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
             wind_arrow('currently');
             document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
             document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
             document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.currently.pressure + localization[lang].units[units].pres_units;
             document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(rdata.currently.humidity*100) + '%';  
-
+            document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.currently.dewPoint) + localization[lang].units[units].temp;
             let label_arr = document.querySelectorAll('#slidemenu > label > span');
             //labels for slidemenu
-            label_arr[0].innerHTML = localization[lang].wind;
-            label_arr[1].innerHTML = localization[lang].hum;
-            label_arr[2].innerHTML = localization[lang].uv;
-            label_arr[3].innerHTML = localization[lang].clouds;
-            label_arr[4].innerHTML = localization[lang].pop;
+            label_arr[0].innerHTML = localization[lang].temp;
+            label_arr[1].innerHTML = localization[lang].wind;
+            label_arr[2].innerHTML = localization[lang].hum;
+            label_arr[3].innerHTML = localization[lang].uv;
+            label_arr[4].innerHTML = localization[lang].clouds;
+            label_arr[5].innerHTML = localization[lang].pop;
             
             //backto button removal
             if(document.getElementsByClassName('backto')[0] != null){
@@ -697,7 +814,7 @@ function load(request_data = localStorage){
             }
             
             radio_events('');
-            chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, 0);
+            chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, '');
             document.getElementById('days-fake').checked = true;
            }
            //when current function ended it's work, we remove loading window
@@ -774,16 +891,17 @@ function load(request_data = localStorage){
                 document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[i].uvIndex;
                 document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-                document.querySelector('.wind_speed').innerHTML = getCardinalDirection(rdata.daily.data[i].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
+                document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[i].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[i].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
                 wind_arrow(`daily`, i);
           
                   document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
                   document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
                   document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[i].pressure + localization[lang].units[units].pres_units;
                   document.querySelector('#hum').innerHTML =localization[lang].hum+ ': ' + Math.round(rdata.daily.data[i].humidity*100) + '%';
+                  document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[i].dewPoint) + localization[lang].units[units].temp;
 
                 radio_events(i);
-                chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, i);
+                chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, i);
                   
               }); 
             }
