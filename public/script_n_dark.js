@@ -380,7 +380,7 @@ if(load_text[0] != undefined){
 }}, 5000);
 
 
-window.onload = load();
+
 //we set default parameter for the load function as localStorage default values,
 //if function runs for the first time, else we load there 
 //values that were chosen earlier and were put in the localStorage
@@ -914,4 +914,5 @@ function load(request_data = localStorage){
       load_text[1].innerHTML = localization['en'].geo_error;
     }
 }
+window.onload = load();
 document.getElementById('location').onclick = load;
