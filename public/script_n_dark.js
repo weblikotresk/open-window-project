@@ -915,4 +915,4 @@ function loaded(request_data = localStorage){
     }
 }
 window.onload = loaded();
-document.getElementById('location').onclick = load;
+document.getElementById('location').onclick = loaded;
