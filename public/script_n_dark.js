@@ -914,5 +914,5 @@ function load(request_data = localStorage){
       load_text[1].innerHTML = localization['en'].geo_error;
     }
 }
-window.onload = load();
+window.addEventListener('load', load);
 document.getElementById('location').onclick = load;
