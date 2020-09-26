@@ -1,8 +1,8 @@
 
 function convertSeconds(seconds){
-  let date = new Date();
-  date.setTime(seconds * 1000);
-  return date.toISOString().slice(11,16);
+  let time = new Date();
+  time.setTime(seconds * 1000);
+  return time.toISOString().slice(11,16);
 }
 function windIntensity(wind_speed, lang, units){
   switch(units){

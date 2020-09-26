@@ -5,6 +5,9 @@
     scroll-behavior: smooth;
     
 }
+video {
+    pointer-events: none;
+  }
 html,body {
     width:100vw;
 }
