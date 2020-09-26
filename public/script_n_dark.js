@@ -924,6 +924,8 @@ function loaded(request_data = localStorage){
                   }
                 };
 
+                
+                //padding: 0 25px 25px;
 
                 document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.daily.data[i].precipProbability*100) + '%';
                 document.querySelector('.propability').prepend(curr_icon);
@@ -953,7 +955,7 @@ function loaded(request_data = localStorage){
                 document.querySelector('#sunr').prepend(curr_icon);
 
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunset.svg';
                 document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
                 document.querySelector('#suns').prepend(curr_icon);
 

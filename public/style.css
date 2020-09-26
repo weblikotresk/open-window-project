@@ -402,8 +402,8 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
 
 }
 .curr_icon{
-    height: 1.7rem;
-    margin: 0 7px -7px 0;
+    height: 1.5rem;
+    margin: 0 7px -7px -7px;
 }
 
 /*-----------------------DETAILS-----------------------*/
@@ -431,11 +431,11 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     display: inline-block;
     margin: 40px 10px 0;
 
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 400;
 }
 .wind_speed{
-    margin-bottom: 25px;
+    margin: 15px 0 25px 0;
 }
 .wind_dir{
     height: 40px;
@@ -498,7 +498,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
   
   #slidemenu label span{
     display: block;
-    padding: 10px;    
+    padding: 9px;    
   }
   
 
@@ -584,8 +584,9 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     width: 100%;
     grid-column: 1/4;
     grid-row: 3/4;
-    height: 100%;
+    height: 90%;
     overflow-x: scroll;
+    margin: auto;
 }
 .chart_area::-webkit-scrollbar {
     width: 16px;
@@ -893,6 +894,10 @@ label.day:hover{
         width:84%;
         margin: 0 auto;
     }
+    .chart_area{
+        margin: auto;
+        height: 80%;
+    }
     .days_wrap{
         width: 100%;
     }
@@ -921,14 +926,10 @@ label.day:hover{
 }
 
 @media screen and (max-width:850px){
-
-    #display{
-        margin-bottom: 100px;
-    }#days{
+    #days{
         padding-left: 5px;
     }
     .slider_wrap, .days_slider, .chart_area{
-
         width: 100%;
     }
 }
@@ -939,6 +940,8 @@ label.day:hover{
     #weather{
         grid-template-rows: repeat(3, 2fr) 1fr 1fr;
         grid-template-columns: 1fr 1fr;
+
+        max-height: 1840px;
 
         height: auto;
         text-align: center;
@@ -971,6 +974,10 @@ label.day:hover{
     #slidemenu{
         grid-column: 1/3;
         grid-row: 3/4;
+        margin: 25px auto 0;
+    }
+    #slidemenu label span {
+        padding: 11px;
     }
     .chart_area{
         grid-column: 1/3;
@@ -982,13 +989,14 @@ label.day:hover{
 
     .slider_wrap{
         grid-row: 4/5;
-        margin-top: -35px;
     }
     .slider_bar{
         display: none;
     }
     
-
+    .curr_icon{
+        height: 1.85rem;
+    }
 
     #legal{
         text-align: center;
@@ -1033,10 +1041,13 @@ label.day:hover{
     .wind_text{
         margin-right: 15px;
     }
+    .wind_speed{
+        margin: 0 0 25px 0;
+    }
     #current, #other, #details{
         margin: 0 auto;
         padding: 15px 0;
-        width: 75%;
+        width: 95%;
         border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
     /* #current{
