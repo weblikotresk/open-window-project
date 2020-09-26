@@ -578,7 +578,7 @@ function loaded(request_data = localStorage){
             coef = 30;
           }else{
             coef = 3;
-            tooltip_pos = 'bottom';
+            //tooltip_pos = 'bottom';
           }
           //using chart.js library
             let ctx = document.getElementById('myChart').getContext('2d');
