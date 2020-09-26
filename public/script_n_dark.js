@@ -56,7 +56,7 @@ function windIntensity(wind_speed, lang, units){
   }
 }
 function videoBack(name){
-  
+
   let date = new Date(),
    time = date.getHours(),
    month = date.getMonth()+1;
@@ -296,6 +296,7 @@ let localization = {
   },
 
 };
+
 function getCardinalDirection(angle, directions) {
   let val = Math.floor((angle / 45) + 0.5);
   return directions[(val % 8)];
@@ -396,8 +397,8 @@ function loaded(request_data = localStorage){
            let lat = position.coords.latitude,
            lon = position.coords.longitude,
            lang = request_data.lang,
-           units = request_data.units,
-           wind = request_data.wind;
+           units = request_data.units;
+           //wind = request_data.wind;
            const api_url = `weather/${lat},${lon}/${lang}/${units}`;
            const options = {
             method: "GET",
@@ -779,26 +780,60 @@ function loaded(request_data = localStorage){
               icon.src=`https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.currently.icon}.svg`;
               icon.alt='';
               icon.className='icon';
-            
+            let curr_icon = document.createElement('img');
+            curr_icon.src='https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
+            curr_icon.alt ='';
+            curr_icon.className = 'curr_icon';
             document.querySelector('.temp_val').innerHTML = Math.round(rdata.currently.temperature) + localization[lang].units[units].temp;
-            
             document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(rdata.currently.apparentTemperature) +localization[lang].units[units].temp ;
             document.querySelector('.condition').innerHTML = rdata.currently.summary;
             document.querySelector('.condition').prepend(icon);
- 
+
             document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.hourly.data[0].precipProbability*100) + '%';
+            document.querySelector('.propability').prepend(curr_icon);
 
-
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/uv.svg';
             document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
+            document.querySelector('.uv').prepend(curr_icon);
+
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/coverage.svg';
             document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
+            document.querySelector('.clouds').prepend(curr_icon);
+
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/wind.svg';
             document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
+            document.querySelector('.wind_text > h3').prepend(curr_icon);
+
             document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.currently.windSpeed, lang, units) + getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
             wind_arrow('currently');
+
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
             document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
+            document.querySelector('#sunr').prepend(curr_icon);
+            
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunset.svg';
             document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
+            document.querySelector('#suns').prepend(curr_icon);
+
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/pressure.svg';
             document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.currently.pressure + localization[lang].units[units].pres_units;
+            document.querySelector('#pres').prepend(curr_icon);
+
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/humidity.svg';
             document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(rdata.currently.humidity*100) + '%';  
+            document.querySelector('#hum').prepend(curr_icon);
+
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/dewpoint.svg';
             document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.currently.dewPoint) + localization[lang].units[units].temp;
+            document.querySelector('#dew').prepend(curr_icon);
             let label_arr = document.querySelectorAll('#slidemenu > label > span');
             //labels for slidemenu
             label_arr[0].innerHTML = localization[lang].temp;
@@ -872,7 +907,10 @@ function loaded(request_data = localStorage){
                 document.querySelector('.condition').innerHTML = rdata.daily.data[i].summary;
                 document.querySelector('.condition').prepend(icon);
                 
-                
+                let curr_icon = document.createElement('img');
+                curr_icon.src='https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
+                curr_icon.alt ='';
+                curr_icon.className = 'curr_icon';
                 if(document.getElementsByClassName('backto')[0] == null){
                   backToCurrent();
                 }else{
@@ -888,17 +926,51 @@ function loaded(request_data = localStorage){
 
 
                 document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.daily.data[i].precipProbability*100) + '%';
+                document.querySelector('.propability').prepend(curr_icon);
+
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/uv.svg';
                 document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[i].uvIndex;
+                document.querySelector('.uv').prepend(curr_icon);
+
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/coverage.svg';
                 document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
+                document.querySelector('.clouds').prepend(curr_icon);
+
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/wind.svg';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
+                document.querySelector('.wind_text > h3').prepend(curr_icon);
+
+                
                 document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[i].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[i].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
                 wind_arrow(`daily`, i);
           
-                  document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
-                  document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
-                  document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[i].pressure + localization[lang].units[units].pres_units;
-                  document.querySelector('#hum').innerHTML =localization[lang].hum+ ': ' + Math.round(rdata.daily.data[i].humidity*100) + '%';
-                  document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[i].dewPoint) + localization[lang].units[units].temp;
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
+                document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
+                document.querySelector('#sunr').prepend(curr_icon);
+
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
+                document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
+                document.querySelector('#suns').prepend(curr_icon);
+
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/pressure.svg';
+                document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[i].pressure + localization[lang].units[units].pres_units;
+                document.querySelector('#pres').prepend(curr_icon);
+                
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/humidity.svg';
+                document.querySelector('#hum').innerHTML =localization[lang].hum+ ': ' + Math.round(rdata.daily.data[i].humidity*100) + '%';
+                document.querySelector('#hum').prepend(curr_icon);
+                
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/dewpoint.svg';
+                document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[i].dewPoint) + localization[lang].units[units].temp;
+                document.querySelector('#dew').prepend(curr_icon);
 
                 radio_events(i);
                 chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, i);
