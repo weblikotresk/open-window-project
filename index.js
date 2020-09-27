@@ -29,7 +29,4 @@ app.get('/weather/:latlon/:lang/:units', async (req, res)=>{
     const json = await response.json();
     res.setHeader('Cache-Control','max-age=65');
     res.json(json);
-    console.log(response.headers);
-
-
 });
