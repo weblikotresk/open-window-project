@@ -941,7 +941,7 @@ label.day:hover{
         grid-template-rows: repeat(3, 2fr) 1fr 1fr;
         grid-template-columns: 1fr 1fr;
 
-        max-height: 1840px;
+        /* max-height: 1840px; */
 
         height: auto;
         text-align: center;
