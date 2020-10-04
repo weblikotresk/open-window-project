@@ -104,111 +104,6 @@ body{
     -moz-box-shadow: 0px 0px 12px 1px rgba(0,0,0,0.31);
     box-shadow: 0px 0px 12px 1px rgba(0,0,0,0.31);
 }
-/*===========================INTRO===========================================*/
-*{
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0) !important; 
-    -webkit-focus-ring-color: rgba(255, 255, 255, 0) !important; 
-    outline: none !important;
-}
-
-.splide{
-    transition: .25s all ease;
-}
-.splide__slide{
-    display: block;
-    text-align: center;
-    height: 90vh;
-}
-.splide__arrows{
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    z-index: 100;
-}
-.splide__arrow--next{
-    background-color: transparent;
-    border: none;
-}
-
-.splide__arrow--next> svg{
-    fill: rgba(255, 255, 255, 0.8);
-}
-.splide__arrow--next:hover{
-    cursor: pointer;
-}
-.splide__arrow--next:hover> svg{
-    fill: rgba(255, 255, 255, 0.8);
-}
-.splide__arrow--next[disabled]{
-    opacity: 0;
-    transition: .15s all ease-in;
-}
-
-.splide__arrow--prev{
-    display: none;
-}
-
-.splide__pagination{
-    text-align: center;
-    padding: 0;
-    width: 100%;
-    position: relative;
-    bottom: -25px;
-}
-
-.splide > ul > li > button{
-    display: block;
-    content: "";
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    border: 1px solid white;
-    margin-right: 5px;
-    background-color: transparent;
-} 
-.splide > ul > li > button:hover{
-    cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.75);
-}
-.splide > ul > li > button:focus, .splide > ul > li > button[aria-current ='true']{
-    width: 17px;
-    height: 17px;
-    background-color: white;
-    margin-right:3px;
-} 
-.slider_item_head, .slider_item_subhead{
-    width: 90%;
-    margin: 25px auto 35px auto;
-}
-.slider_item_head{
-    margin-top: 50px;
-}
-.skip{
-    padding: 25px;
-    font-size: 20px;
-    border: 1px solid #fff;
-    margin: 0 auto;
-    text-align: center;
-    width: fit-content;
-    border-radius: 10px;
-    transition: .25s all  ease-in-out;
-    font-weight: 700;
-}
-.skip:hover{
-    cursor: pointer;
-    color: #000;
-    background-color: #fff;
-}
-.slider_img{
-    display: block;
-    margin: 85px auto;
-}
-.splide_remove{
-    opacity: 0;
-    z-index: -100;
-}
-
-
 /*===========================DISPLAY=========================================*/
 #display{
     grid-area: display;
@@ -1128,16 +1023,6 @@ label.day:hover{
     .loading{
         width: 87%;
         left: unset;
-    }
-    .slider_item_head{
-        font-size: 20px;
-    }
-    .slider_item_subhead{
-        font-size: 18px;
-    }
-    .slider_img {
-        width: 90%;
-        margin: 20px auto 0 auto;
     }
     /*display*/
 
