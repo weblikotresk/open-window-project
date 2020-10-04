@@ -381,6 +381,20 @@ if(load_text[0] != undefined){
 }}, 5000);
 
 
+//Intro
+new Splide( '.splide' ).mount();
+		new Splide( '.splide', {
+      type: 'loop',
+      pagination:true,
+    });
+    let skip = document.getElementsByClassName('skip');
+    for(let i = 0;i<skip.length;i++){
+      skip[i].onclick = ()=>{
+        let splidevar = document.getElementsByClassName('splide')[0];
+        splidevar.classList.add('splide_remove');
+      }
+    }
+
 
 //we set default parameter for the load function as localStorage default values,
 //if function runs for the first time, else we load there 
@@ -853,9 +867,9 @@ function loaded(request_data = localStorage){
             document.getElementById('days-fake').checked = true;
            }
            //when current function ended it's work, we remove loading window
-           if(load_text[0] != undefined){
-           document.getElementsByClassName('loading')[0].remove();
-           }
+          //  if(load_text[0] != undefined){
+          //  document.getElementsByClassName('loading')[0].remove();
+          //  }
 
            current();
           
