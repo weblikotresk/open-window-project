@@ -100,8 +100,8 @@ function videoBack(name){
       videobg.classList.add('no_opacity');
   
       let mp4 = document.createElement('source');
-      mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.mp4`;
-      mp4.type = 'video/mp4';
+      mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.m4v`;
+      mp4.type = 'video/m4v';
       videobg.appendChild(mp4);
       let webm = document.createElement('source');
       webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm${name + postfix}.webm`;
@@ -118,8 +118,8 @@ function videoBack(name){
     }else{
       //first creation
       let mp4 = document.createElement('source');
-      mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.mp4`;
-      mp4.type = 'video/mp4';
+      mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.m4v`;
+      mp4.type = 'video/m4v';
       let webm = document.createElement('source');
       webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm/${name + postfix}.webm`;
       webm.type = 'video/webm';
