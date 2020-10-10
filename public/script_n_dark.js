@@ -310,21 +310,20 @@ function getCardinalDirection(angle, directions) {
 
 let settingsIcon = document.querySelector('#settings > svg'),
 closeBtn = document.getElementById('close_settings'),
-show_tools = false,
 lat = '37.42158889770508',
 lon = '-122.08370208740234';
 
 //Settings 
 //Settings are using localStorage, so we store everything there
 
-if(localStorage.back == undefined){
+if(localStorage.tools == undefined){
   //default localStorage
   localStorage.lang = 'ru';
   localStorage.units = 'si';
   localStorage.wind = 'off';
   localStorage.back = 'vid';
   localStorage.location = 'off';
-  show_tools = true;
+  localStorage.tools= 'true';
   if(window.mobileAndTabletCheck()){
     localStorage.wind = 'on';
   }
@@ -411,7 +410,6 @@ async function getWeather(latitude, longitude, language, unit, city){
         'X-Requested-With': 'XMLHttpRequest',
     }
   }
-  console.log(city);
   const response = await fetch(api_url, options);
   const rdata = await response.json();
   return [rdata, city];
@@ -445,7 +443,6 @@ function loaded(request_data = localStorage){
           return response.json();
         })
         .then((data) => {
-          console.log(data);
         promise = getWeather(lat, lon, lang, units,data);
         promise.then(result=>{
           wrapper(result);
@@ -822,6 +819,7 @@ function loaded(request_data = localStorage){
               maxWidth:250,
               onHidden(instance) {
                 instance.destroy();
+                localStorage.tools = 'false';
             },
           });
           }
@@ -990,7 +988,7 @@ function loaded(request_data = localStorage){
               if(load_text[0] != undefined){
               document.getElementsByClassName('loading')[0].remove();
               //setTimeout(()=>, 2000);
-              if(show_tools){
+              if(localStorage.tools == 'true'){
                 firstInstance();
               }
             }
