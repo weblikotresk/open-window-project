@@ -24,7 +24,7 @@ html,body {
     opacity: 0;
 }
 html{
-    height: 100vh;
+    /* height: 100vh; */
     margin: 0;
 }
 
@@ -268,16 +268,43 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-.close_settings{
+#close_settings{
     fill: #fff;
     position: absolute;
     height: 25px;
     top:15px;
     right: 15px;
 } 
-.close_settings:hover{
+#close_settings:hover{
     cursor: pointer;
 }
+.tippy-box[data-theme~='normal'] {
+    background: rgb(51,51,180);
+    background: -moz-linear-gradient(25deg, rgba(51,51,180,1) 16%, rgba(0,212,255,1) 100%);
+    background: -webkit-linear-gradient(25deg, rgba(51,51,180,1) 16%, rgba(0,212,255,1) 100%);
+    background: linear-gradient(25deg, rgba(51,51,180,1) 16%, rgba(0,212,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3333b4",endColorstr="#00d4ff",GradientType=1);
+    -webkit-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3333b4",endColorstr="#00d4ff",GradientType=1);
+    color: white;
+    font-family: 'Rubik', sans-serif;
+}
+.tippy-box[data-theme~='normal'][data-placement^='top'] > .tippy-arrow::before {
+    border-top-color: rgb(0, 204, 255);
+
+}
+.tippy-box[data-theme~='normal'][data-placement^='bottom'] > .tippy-arrow::before {
+    border-bottom-color: rgb(0, 204, 255);
+
+}
+.tippy-box[data-theme~='normal'][data-placement^='left'] > .tippy-arrow::before {
+    border-left-color: rgb(0, 204, 255);
+
+}
+.tippy-box[data-theme~='normal'][data-placement^='right'] > .tippy-arrow::before {
+    border-right-color: rgb(0, 204, 255);
+
+}
+  
 .settings_item, .sources, .wind-settings{
     margin-bottom: 15px;
 }
@@ -399,7 +426,12 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     width: 60px;
     display: block;
     margin: 15px auto 10px auto;
+}
 
+.city{
+    display: block;
+    margin:15px auto 0 auto;
+    width: 90%;
 }
 .curr_icon{
     height: 1.5rem;
@@ -630,7 +662,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.75);
 }
 .pop{
-    background-color: rgba(85, 193, 255);
+    background-color: rgb(85, 193, 255);
     font-size: 17px;
     margin-bottom: 10px;
 

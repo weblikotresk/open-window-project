@@ -1,3 +1,8 @@
+window.mobileAndTabletCheck = function() {
+  let check = false;
+  (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+  return check;
+};
 
 function convertSeconds(seconds){
   let time = new Date();
@@ -104,7 +109,7 @@ function videoBack(name){
       mp4.type = 'video/m4v';
       videobg.appendChild(mp4);
       let webm = document.createElement('source');
-      webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm${name + postfix}.webm`;
+      webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm/${name + postfix}.webm`;
       webm.type = 'video/webm';
       videobg.appendChild(webm);
       document.querySelector('#videoBG').classList.add('no_opacity');
@@ -213,6 +218,7 @@ let localization = {
       vstorm:'Жестокий шторм, ',
       hurricane:'Ураган, ',
     },
+    tooltips:['Здесь вы можете настроить сайт согласно вашим предпочтениям: изменить язык, единицы измерения и т.д.','Нажав на любую из этих иконок, вы сможете увидеть прогноз погоды в данный день.','Также для просмотра прогноза погоды вы можете использовать диаграмму.', 'Нажав на эту иконку, вы сможете узнать прогноз погоды для вашего населённого пункта.']
   }, 
   'en':{
     app_temp:'Feels like: ',
@@ -293,22 +299,35 @@ let localization = {
       vstorm:'Violent storm, ',
       hurricane:'Hurricane, ',
     },
+    tooltips:['Here you can customize the site according to your preferences: change the language, units of measurement, etc.','If you click on any of these icons, you will see the weather forecast for that day.','You can also use the chart to view the weather forecast.',"If you'll click on this icon, you'll see the weather forecast for your location."],
   },
-
 };
 
 function getCardinalDirection(angle, directions) {
   let val = Math.floor((angle / 45) + 0.5);
   return directions[(val % 8)];
 }
+
+let settingsIcon = document.querySelector('#settings > svg'),
+closeBtn = document.getElementById('close_settings'),
+show_tools = false,
+lat = '37.42158889770508',
+lon = '-122.08370208740234';
+
 //Settings 
 //Settings are using localStorage, so we store everything there
+
 if(localStorage.back == undefined){
   //default localStorage
   localStorage.lang = 'ru';
   localStorage.units = 'si';
   localStorage.wind = 'off';
   localStorage.back = 'vid';
+  localStorage.location = 'off';
+  show_tools = true;
+  if(window.mobileAndTabletCheck()){
+    localStorage.wind = 'on';
+  }
 }
 
 let settingsInputs =[];
@@ -355,8 +374,7 @@ settingsInputs[3] =  document.querySelectorAll('.back-input');
   }
 
 
-let settingsIcon = document.querySelector('#settings > svg'),
-closeBtn = document.getElementsByClassName('close_settings')[0];
+
 settingsIcon.addEventListener('click', ()=>{
   //open the settings window
   document.getElementsByClassName('settings_window')[0].style.zIndex = 2;
@@ -382,71 +400,102 @@ if(load_text[0] != undefined){
 
 
 
-//we set default parameter for the load function as localStorage default values,
-//if function runs for the first time, else we load there 
-//values that were chosen earlier and were put in the localStorage
+//getWeather gets forecast for specific coords and turns output into promiise
+async function getWeather(latitude, longitude, language, unit, city){
+  const api_url = `weather/${latitude},${longitude}/${language}/${unit}`;
+  const options = {
+    method: "GET",
+    withCredentials: true,
+    headers:{
+        'Content-Type':'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+    }
+  }
+  console.log(city);
+  const response = await fetch(api_url, options);
+  const rdata = await response.json();
+  return [rdata, city];
+}
+
 function loaded(request_data = localStorage){
-
+  //location btn fix
+  let promise;
+  if(localStorage != request_data){
+    request_data = localStorage;
+  }
     if('geolocation' in navigator){
-        navigator.geolocation.getCurrentPosition(async position =>{
-          //location btn fix
-          if(localStorage != request_data){
-            request_data = localStorage;
-          }
-          //setting vars that will go to the api
-           let lat = position.coords.latitude,
-           lon = position.coords.longitude,
-           lang = request_data.lang,
-           units = request_data.units;
-           //wind = request_data.wind;
-           const api_url = `weather/${lat},${lon}/${lang}/${units}`;
-           const options = {
-            method: "GET",
-            withCredentials: true,
-            headers:{
-                'Content-Type':'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-            }
-           }
-           const response = await fetch(api_url, options);
-           const rdata = await response.json();
-           console.log(rdata);
-           //rdata is raw data response from the api
+      let lang = request_data.lang,
+          units = request_data.units;
+      function getPreciseLocation() {
+        return new Promise(function (resolve, reject) {
+          navigator.geolocation.getCurrentPosition(function (position) {
+            let return_data;
+            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=${lang}`).then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              return_data = data;
+              resolve([position.coords.latitude, position.coords.longitude, lang, units, return_data]);
+            });
+          });
+        });
+      }
+      if(localStorage.location == 'off'){
+        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${lang}`).then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+        promise = getWeather(lat, lon, lang, units,data);
+        promise.then(result=>{
+          wrapper(result);
+        });
+        })
+      }else{
+        promise = getPreciseLocation().then(result =>getWeather(result[0], result[1], result[2],result[3], result[4]));
+        promise.then(result=>{
+          wrapper(result);
+        });
+      }
+      function wrapper(rdata){
+      //rdata is raw data response from the api and promise getWeather
+      let city = rdata[1];
+      rdata = rdata[0];
+      console.log(city, rdata);
 
-            
-            function compass(event){
-              var alpha;
-              const delta = 225;
-              if(wind_mode == 'currently'){
-                if (event.absolute) {
-                  alpha = event.alpha;
-                } else if (event.hasOwnProperty('webkitCompassHeading')) {
-                  // get absolute orientation for Safari/iOS
-                  alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
-                } else {
-                    console.log('Could not retrieve absolute orientation');
-                    //alert(localization[lang].compass_f);
-                    alpha = rdata[wind_mode].windBearing + 45;
-                }
-                alpha = alpha + delta - rdata[wind_mode].windBearing;
-              document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
-              }else{
-                
-                if (event.absolute) {
-                  alpha = 360 - event.alpha;
-                } else if (event.hasOwnProperty('webkitCompassHeading')) {
-                  // get absolute orientation for Safari/iOS
-                  alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
-                } else {
-                    //alert(localization[lang].compass_f);
-                    alpha = wind_mode.windBearing + 45;
-                }
-                alpha = alpha + delta - wind_mode.windBearing;
-              document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
+          function compass(event){
+            var alpha;
+            const delta = 225;
+            if(wind_mode == 'currently'){
+              if (event.absolute) {
+                alpha = event.alpha;
+              } else if (event.hasOwnProperty('webkitCompassHeading')) {
+                // get absolute orientation for Safari/iOS
+                alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
+              } else {
+                  console.log('Could not retrieve absolute orientation');
+                  //alert(localization[lang].compass_f);
+                  alpha = rdata[wind_mode].windBearing + 45;
               }
+              alpha = alpha + delta - rdata[wind_mode].windBearing;
+            document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
+            }else{
               
+              if (event.absolute) {
+                alpha = 360 - event.alpha;
+              } else if (event.hasOwnProperty('webkitCompassHeading')) {
+                // get absolute orientation for Safari/iOS
+                alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
+              } else {
+                  //alert(localization[lang].compass_f);
+                  alpha = wind_mode.windBearing + 45;
+              }
+              alpha = alpha + delta - wind_mode.windBearing;
+            document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
             }
-
+            
+          }
+    
           let wind_mode ='currently';
           function wind_arrow(mode, i){
             //mode = currently, daily, hourly
@@ -475,7 +524,7 @@ function loaded(request_data = localStorage){
             }
           }
           //slidemenu manage which chart to summon onclick on slidemenu
-           function slidemenu(value, option){
+            function slidemenu(value, option){
             switch(value){
               case 'temp':
                 chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, option);
@@ -500,7 +549,7 @@ function loaded(request_data = localStorage){
           //radio_events removes events for slidemenu and sets new eventListeners
           function radio_events(option){
             let radio_arr = document.getElementsByClassName('slide-toggle');
-             radio_arr[0].checked = true;
+              radio_arr[0].checked = true;
             remove_events();
             for(let i = 0; i<radio_arr.length;i++){
               radio_arr[i].addEventListener('click', ()=>{
@@ -508,9 +557,9 @@ function loaded(request_data = localStorage){
             }
           }
           let water_drop = document.createElement('img');
-           water_drop.src = 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
-           water_drop.className = 'pop_drop';
-
+            water_drop.src = 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
+            water_drop.className = 'pop_drop';
+    
           function chart_summon(option, option_color, option_back, axis_l, mode){
             //restart chart
             document.getElementById('myChart').remove();
@@ -522,7 +571,7 @@ function loaded(request_data = localStorage){
           let chart_data = [],
           max_chart =0,
           chart_labels = [];
-
+    
           if(mode=='' || mode ==0){
             for(let i =0; i<24;i++){
               //current data
@@ -547,7 +596,7 @@ function loaded(request_data = localStorage){
           else if(mode != ''){
             for(let i = 0; i<rdata.hourly.data.length;i++){
               if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
-               
+                
                 for(let j =0; j<24;j++){
                   //hourly
           
@@ -557,8 +606,8 @@ function loaded(request_data = localStorage){
                   document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
                   document.querySelectorAll('.hour > .sky' )[j].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
           
-                 document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
-                 if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                  document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
+                  if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
                   chart_data[j] = Math.round(rdata.hourly.data[i+j][option]*100);
                 }else{
                   chart_data[j] = Math.round(rdata.hourly.data[i+j][option]);
@@ -595,9 +644,9 @@ function loaded(request_data = localStorage){
                 bor_width = 3;
               }
             let gradient =null;
-
+    
             
-             let chart = new Chart(ctx, {
+              let chart = new Chart(ctx, {
                 type: 'line',
           
                 data: {
@@ -644,11 +693,11 @@ function loaded(request_data = localStorage){
                         xAxes: [{
           
                             gridLines: {
-                                 color: "rgba(255, 255, 255, 0.25)",
-                                 zeroLineColor: 'rgba(255, 255, 255, 0.25)',
-                                 drawBorder:false,
+                                  color: "rgba(255, 255, 255, 0.25)",
+                                  zeroLineColor: 'rgba(255, 255, 255, 0.25)',
+                                  drawBorder:false,
           
-                                 
+                                  
                                 },
                             ticks:{
                                 fontColor:'#fff',
@@ -675,9 +724,9 @@ function loaded(request_data = localStorage){
                     legend: {
                         display: false,
                     },
-                     showAllTooltips: true,
-                     tooltips:{
-                         
+                      showAllTooltips: true,
+                      tooltips:{
+                          
                         backgroundColor: 'rgba(0, 0, 0, 0)',
                         displayColors: false,
                         bodyFontSize: 18,
@@ -688,10 +737,10 @@ function loaded(request_data = localStorage){
                         
                         bodyFontFamily:"'Rubik', sans-serif",
                         callbacks: {
-                           label: function(tooltipItem, data) { return tooltipItem.yLabel + axis_l; },
+                            label: function(tooltipItem, data) { return tooltipItem.yLabel + axis_l; },
                             title: function() {return null},
-                         }
-                     }
+                          }
+                      }
                 }
             });
             
@@ -748,121 +797,210 @@ function loaded(request_data = localStorage){
             new_nav.remove();
             document.getElementById('display').appendChild(newest_nav);
           }
-          //end of function declaration part
+          function cityName(){
+            if(document.querySelector('.city') == null){
+              let text = document.createElement('span');
+              text.classList.add('city');
+              text.innerHTML = city.city + ', ' + city.countryName;
+              let block = document.getElementById('current');
+              block.append(text);
+            }else{
+              document.querySelector('.city').innerHTML = city.city + ', ' + city.countryName;
+            }
 
-           //setting_headlines 
-           let settings_headlines = document.querySelectorAll('.wind-subitem_label > h3');
-           settings_headlines[0].innerHTML = localization[lang].local;
-           settings_headlines[1].innerHTML =localization[lang].uni;
-           settings_headlines[2].innerHTML = localization[lang].wind_dir_h;
-           settings_headlines[3].innerHTML = localization[lang].back;
-           settings_headlines[4].innerHTML = localization[lang].source;
-           document.querySelector('.settings_block > span').innerHTML = localization[lang].tochange;
-           document.querySelector('.wind-settings  p').innerHTML = localization[lang].wind_dir;
-           document.querySelector('.settings_item  p').innerHTML = localization[lang].back_p;
-           let wind_options = document.querySelectorAll('.turn_wind');
-           wind_options[0].innerHTML = localization[lang].on;
-           wind_options[1].innerHTML = localization[lang].off;
+          }
+          function fourthInstance(){
+            let target = document.querySelector('#location');
+            tippy(target, {
+              content: localization[lang].tooltips[3],
+              theme:'normal',
+              sticky: true,
+              arrow: true,
+              showOnCreate: true,
+              placement: 'bottom',
+              delay:500,
+              maxWidth:250,
+              onHidden(instance) {
+                instance.destroy();
+            },
+          });
+          }
+          function thirdInstance(){
+            let target = document.querySelector('#slidemenu > label');
+            tippy(target, {
+              content: localization[lang].tooltips[2],
+              theme:'normal',
+              sticky: true,
+              arrow: true,
+              showOnCreate: true,
+              placement: 'top',
+              delay:500,
+              maxWidth:250,
+    
+              onHidden(instance) {
+                instance.destroy();
+                window.scrollTo(0,0);
+                fourthInstance();
+            },
+          });
+          }
+          function secondInstance(){
+            tippy(document.getElementsByClassName('day')[0], {
+              content: localization[lang].tooltips[1],
+              theme:'normal',
+              sticky: true,
+              arrow: true,
+              showOnCreate: true,
+              placement: 'top',
+              delay:500,
+              maxWidth:250,
+              onHidden(instance) {
+                instance.destroy();
+                window.scrollBy(0,-document.documentElement.clientHeight*0.5);
+                thirdInstance();
+            },
+          });
+          }
+          function firstInstance(){
+            const instance = tippy(settingsIcon, {
+              content: localization[lang].tooltips[0],
+              theme:'normal',
+              sticky: true,
+              arrow: true,
+              showOnCreate: true,
+              placement: 'bottom',
+              delay:500,
+              maxWidth:250,
+    
+              onHidden(instance) {
+                instance.destroy();
+                window.scrollBy(0, document.documentElement.clientHeight*1.5);
+                secondInstance();
+              }
+            });
+          }     
+          //end of function declaration part
+    
+            //setting_headlines 
+            let settings_headlines = document.querySelectorAll('.wind-subitem_label > h3');
+            settings_headlines[0].innerHTML = localization[lang].local;
+            settings_headlines[1].innerHTML =localization[lang].uni;
+            settings_headlines[2].innerHTML = localization[lang].wind_dir_h;
+            settings_headlines[3].innerHTML = localization[lang].back;
+            settings_headlines[4].innerHTML = localization[lang].source;
+            document.querySelector('.settings_block > span').innerHTML = localization[lang].tochange;
+            document.querySelector('.wind-settings  p').innerHTML = localization[lang].wind_dir;
+            document.querySelector('.settings_item  p').innerHTML = localization[lang].back_p;
+            let wind_options = document.querySelectorAll('.turn_wind');
+            wind_options[0].innerHTML = localization[lang].on;
+            wind_options[1].innerHTML = localization[lang].off;
           let back_options = document.querySelectorAll('.back-label > span');
           back_options[0].innerHTML = localization[lang].img;
           back_options[1].innerHTML = localization[lang].vid;
-           
+            
           //legal fix lmao
-           if(moment().format('YYYY') == 2020){
+            if(moment().format('YYYY') == 2020){
             document.querySelector('#legal > p>span').innerHTML = moment().format('YYYY')
-           }else{
+            }else{
             document.querySelector('#legal > p> span').innerHTML = '2020-' + moment().format('YYYY');
-           }
-           //current function delivers rdata to every block that needs it
-           let current = function current(){
-            videoBack(rdata.currently.icon);
+            }
+               
+            //current function delivers rdata to every block that needs it
+            
+            let current = function current(){
+              videoBack(rdata.currently.icon);
               let icon = document.createElement('img');
               icon.src=`https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.currently.icon}.svg`;
               icon.alt='';
               icon.className='icon';
-            let curr_icon = document.createElement('img');
-            curr_icon.src='https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
-            curr_icon.alt ='';
-            curr_icon.className = 'curr_icon';
-            document.querySelector('.temp_val').innerHTML = Math.round(rdata.currently.temperature) + localization[lang].units[units].temp;
-            document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(rdata.currently.apparentTemperature) +localization[lang].units[units].temp ;
-            document.querySelector('.condition').innerHTML = rdata.currently.summary;
-            document.querySelector('.condition').prepend(icon);
+              let curr_icon = document.createElement('img');
+              curr_icon.src='https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
+              curr_icon.alt ='';
+              curr_icon.className = 'curr_icon';
+              document.querySelector('.temp_val').innerHTML = Math.round(rdata.currently.temperature) + localization[lang].units[units].temp;
+              document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(rdata.currently.apparentTemperature) +localization[lang].units[units].temp ;
+              document.querySelector('.condition').innerHTML = rdata.currently.summary;
+              document.querySelector('.condition').prepend(icon);
+      
+              document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.hourly.data[0].precipProbability*100) + '%';
+              document.querySelector('.propability').prepend(curr_icon);
+      
+              curr_icon = curr_icon.cloneNode(true);
+              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/uv.svg';
+              document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
+              document.querySelector('.uv').prepend(curr_icon);
+      
+              curr_icon = curr_icon.cloneNode(true);
+              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/coverage.svg';
+              document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
+              document.querySelector('.clouds').prepend(curr_icon);
+      
+              curr_icon = curr_icon.cloneNode(true);
+              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/wind.svg';
+              document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
+              document.querySelector('.wind_text > h3').prepend(curr_icon);
+      
+              document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.currently.windSpeed, lang, units) + getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
+              wind_arrow('currently');
+      
+              curr_icon = curr_icon.cloneNode(true);
+              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
+              document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
+              document.querySelector('#sunr').prepend(curr_icon);
+              
+              curr_icon = curr_icon.cloneNode(true);
+              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunset.svg';
+              document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
+              document.querySelector('#suns').prepend(curr_icon);
+      
+              curr_icon = curr_icon.cloneNode(true);
+              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/pressure.svg';
+              document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.currently.pressure + localization[lang].units[units].pres_units;
+              document.querySelector('#pres').prepend(curr_icon);
+      
+              curr_icon = curr_icon.cloneNode(true);
+              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/humidity.svg';
+              document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(rdata.currently.humidity*100) + '%';  
+              document.querySelector('#hum').prepend(curr_icon);
+      
+              curr_icon = curr_icon.cloneNode(true);
+              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/dewpoint.svg';
+              document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.currently.dewPoint) + localization[lang].units[units].temp;
+              document.querySelector('#dew').prepend(curr_icon);
+              let label_arr = document.querySelectorAll('#slidemenu > label > span');
+              //labels for slidemenu
+              label_arr[0].innerHTML = localization[lang].temp;
+              label_arr[1].innerHTML = localization[lang].wind;
+              label_arr[2].innerHTML = localization[lang].hum;
+              label_arr[3].innerHTML = localization[lang].uv;
+              label_arr[4].innerHTML = localization[lang].clouds;
+              label_arr[5].innerHTML = localization[lang].pop;
+              
+              //backto button removal
+              if(document.getElementsByClassName('backto')[0] != null){
+                document.getElementsByClassName('backto')[0].remove();
+              }
+              
+              radio_events('');
+              chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, '');
+              document.getElementById('days-fake').checked = true;
+              }
 
-            document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.hourly.data[0].precipProbability*100) + '%';
-            document.querySelector('.propability').prepend(curr_icon);
-
-            curr_icon = curr_icon.cloneNode(true);
-            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/uv.svg';
-            document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
-            document.querySelector('.uv').prepend(curr_icon);
-
-            curr_icon = curr_icon.cloneNode(true);
-            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/coverage.svg';
-            document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
-            document.querySelector('.clouds').prepend(curr_icon);
-
-            curr_icon = curr_icon.cloneNode(true);
-            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/wind.svg';
-            document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-            document.querySelector('.wind_text > h3').prepend(curr_icon);
-
-            document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.currently.windSpeed, lang, units) + getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
-            wind_arrow('currently');
-
-            curr_icon = curr_icon.cloneNode(true);
-            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
-            document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
-            document.querySelector('#sunr').prepend(curr_icon);
-            
-            curr_icon = curr_icon.cloneNode(true);
-            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunset.svg';
-            document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
-            document.querySelector('#suns').prepend(curr_icon);
-
-            curr_icon = curr_icon.cloneNode(true);
-            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/pressure.svg';
-            document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.currently.pressure + localization[lang].units[units].pres_units;
-            document.querySelector('#pres').prepend(curr_icon);
-
-            curr_icon = curr_icon.cloneNode(true);
-            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/humidity.svg';
-            document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(rdata.currently.humidity*100) + '%';  
-            document.querySelector('#hum').prepend(curr_icon);
-
-            curr_icon = curr_icon.cloneNode(true);
-            curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/dewpoint.svg';
-            document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.currently.dewPoint) + localization[lang].units[units].temp;
-            document.querySelector('#dew').prepend(curr_icon);
-            let label_arr = document.querySelectorAll('#slidemenu > label > span');
-            //labels for slidemenu
-            label_arr[0].innerHTML = localization[lang].temp;
-            label_arr[1].innerHTML = localization[lang].wind;
-            label_arr[2].innerHTML = localization[lang].hum;
-            label_arr[3].innerHTML = localization[lang].uv;
-            label_arr[4].innerHTML = localization[lang].clouds;
-            label_arr[5].innerHTML = localization[lang].pop;
-            
-            //backto button removal
-            if(document.getElementsByClassName('backto')[0] != null){
-              document.getElementsByClassName('backto')[0].remove();
+              //when current function ended it's work, we remove loading window
+              if(load_text[0] != undefined){
+              document.getElementsByClassName('loading')[0].remove();
+              //setTimeout(()=>, 2000);
+              if(show_tools){
+                firstInstance();
+              }
             }
             
-            radio_events('');
-            chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, '');
-            document.getElementById('days-fake').checked = true;
-           }
-           //when current function ended it's work, we remove loading window
-           if(load_text[0] != undefined){
-           document.getElementsByClassName('loading')[0].remove();
-           }
-
-           current();
-          
-           //daily forecast
-           
-             for(let i = 0;i<8;i++){
-               let pop_icon = water_drop.cloneNode(true);
+            current();
+            cityName();
+            //daily forecast
+            
+            for(let i = 0;i<8;i++){
+                let pop_icon = water_drop.cloneNode(true);
             document.querySelectorAll('.day > .pop' )[i].innerHTML = Math.round(rdata.daily.data[i].precipProbability*100) +'%';
             document.querySelectorAll('.day > .pop' )[i].prepend(pop_icon);
             document.querySelectorAll('.day > .sky')[i].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.daily.data[i].icon}.svg`;
@@ -891,18 +1029,18 @@ function loaded(request_data = localStorage){
                 document.getElementsByClassName('app_temp')[0].after(backto);
               }
             }
-
+    
             for(let i = 0;i<days.length-1;i++){
               days[i].addEventListener('click', ()=>{
                 videoBack(rdata.daily.data[i].icon);
-
+    
               document.getElementById('slide-item-1').checked = 'checked';
                 let icon = document.createElement('img');
                 icon.src=`https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.daily.data[i].icon}.svg`;
                 icon.alt='';
                 icon.className='icon';
                 document.querySelector('.temp_val').innerHTML = Math.round(rdata.daily.data[i].temperatureMax) +localization[lang].units[units].temp ;
-           
+            
                 document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +' ' + Math.round(rdata.daily.data[i].apparentTemperatureMax) +localization[lang].units[units].temp ;
                 document.querySelector('.condition').innerHTML = rdata.daily.data[i].summary;
                 document.querySelector('.condition').prepend(icon);
@@ -923,28 +1061,28 @@ function loaded(request_data = localStorage){
                     backToCurrent();
                   }
                 };
-
+    
                 
                 //padding: 0 25px 25px;
-
+    
                 document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.daily.data[i].precipProbability*100) + '%';
                 document.querySelector('.propability').prepend(curr_icon);
-
+    
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/uv.svg';
                 document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[i].uvIndex;
                 document.querySelector('.uv').prepend(curr_icon);
-
+    
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/coverage.svg';
                 document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
                 document.querySelector('.clouds').prepend(curr_icon);
-
+    
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/wind.svg';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
                 document.querySelector('.wind_text > h3').prepend(curr_icon);
-
+    
                 
                 document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[i].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[i].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
                 wind_arrow(`daily`, i);
@@ -953,12 +1091,12 @@ function loaded(request_data = localStorage){
                 curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
                 document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
                 document.querySelector('#sunr').prepend(curr_icon);
-
+    
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunset.svg';
                 document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
                 document.querySelector('#suns').prepend(curr_icon);
-
+    
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/pressure.svg';
                 document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[i].pressure + localization[lang].units[units].pres_units;
@@ -973,15 +1111,13 @@ function loaded(request_data = localStorage){
                 curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/dewpoint.svg';
                 document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[i].dewPoint) + localization[lang].units[units].temp;
                 document.querySelector('#dew').prepend(curr_icon);
-
+    
                 radio_events(i);
                 chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, i);
                   
               }); 
             }
-           });
-    
-       
+      }    
     }else{
       //if browser doesn't support geolocation, we make special error notification
       load_text[0].innerHTML = localization['ru'].geo_error;
@@ -989,4 +1125,8 @@ function loaded(request_data = localStorage){
     }
 }
 document.onload = loaded();
-document.getElementById('location').onclick = loaded;
+document.getElementById('location').onclick = ()=>{
+  localStorage.location = 'on';
+  loaded();
+  
+};
