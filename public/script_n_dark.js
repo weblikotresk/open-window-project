@@ -872,7 +872,7 @@ function loaded(request_data = localStorage){
     
               onHidden(instance) {
                 instance.destroy();
-                window.scrollBy(0, document.documentElement.clientHeight*1.5);
+                window.scrollBy(0, document.body.scrollHeight);
                 secondInstance();
               }
             });
