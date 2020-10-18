@@ -1125,6 +1125,6 @@ function loaded(request_data = localStorage){
 window.onload = loaded();
 document.getElementById('location').onclick = ()=>{
   localStorage.location = 'on';
-  loaded();
+  loaded;
   
 };
