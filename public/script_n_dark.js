@@ -1122,7 +1122,7 @@ function loaded(request_data = localStorage){
       load_text[1].innerHTML = localization['en'].geo_error;
     }
 }
-document.onload = loaded();
+window.onload = loaded();
 document.getElementById('location').onclick = ()=>{
   localStorage.location = 'on';
   loaded();
