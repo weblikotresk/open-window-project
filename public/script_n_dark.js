@@ -1126,6 +1126,6 @@ window.onload = loaded();
 document.getElementById('location').onclick = ()=>{
   localStorage.location = 'on';
   console.log('bruh');
-  loaded;
+  loaded();
   
 };
