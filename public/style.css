@@ -978,9 +978,6 @@ label.day:hover{
     }
 }
 @media screen and (max-width:700px){
-    body{
-        right: 5px;
-    }
     #videoBG{
         left: -33.33%;
     }
@@ -1081,9 +1078,6 @@ label.day:hover{
     }
     .settings_window{
         clip-path: circle(0.1% at 48.4% 6.7%);
-    }
-    .search_window{
-        left: -4vw;
     }
     .settings_item:nth-of-type(2) >.settings-subitem {
         justify-content: space-evenly;

@@ -528,6 +528,9 @@ function loaded(request_data = localStorage){
               }
               else{
                 if(createTools){
+                  if(document.querySelector('.not_found') != undefined){
+                    document.querySelector('.not_found').remove();
+                  }
                   let auto_wrapper = document.createElement('div');
                   auto_wrapper.className = 'auto_wrapper';
                   document.getElementsByClassName('search_window')[0].append(auto_wrapper);
@@ -565,7 +568,9 @@ function loaded(request_data = localStorage){
                   Focusing('auto_item', 'city_input');
                 }
                 else if(input_field.value !=''){
-                  
+                  if(document.querySelector('.not_found') != undefined){
+                    document.querySelector('.not_found').remove();
+                  }
                     let items = document.querySelectorAll('.auto_item');
                     for(let j=0;j<items.length;j++){
                       items[j].remove();
