@@ -3,7 +3,6 @@ window.mobileAndTabletCheck = function() {
   (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
   return check;
 };
-
 function convertSeconds(seconds){
   let time = new Date();
   time.setTime(seconds * 1000);
@@ -173,6 +172,8 @@ let localization = {
     off:'Выключить',
     compass_error:'Ваш браузер не поддерживает получение данных компаса. Пожалуйста, обновите его до последней версии и попробуйте снова.',
     compass_f:'Сервис не смог получить информацию компаса. Обновите ваш браузер до последней версии и попробуйте снова.',
+    search_place:'Название города...',
+    not_found:'По вашему запросу ничего не было найдено. Пожалуйста, попробуйте ещё раз.',
     'Mon':'Пн,',
     'Tue':'Вт,',
     'Wed':'Ср,',
@@ -253,6 +254,8 @@ let localization = {
     off:'Off',
     compass_error:'Compass heading is not available in your browser. Consider update it to the last version and try again.',
     compass_f:'Could not retrieve absolute orientation. Consider update your browser to the last version and try again.',
+    search_place:'City name...',
+    not_found:'Nothing has been found. Please, try again.',
     'Mon':'Mon,',
     'Tue':'Tue,',
     'Wed':'Wed,',
@@ -311,7 +314,9 @@ function getCardinalDirection(angle, directions) {
 let settingsIcon = document.querySelector('#settings > svg'),
 closeBtn = document.getElementById('close_settings'),
 lat = '37.42158889770508',
-lon = '-122.08370208740234';
+lon = '-122.08370208740234',
+searchIcon = document.querySelector('#search > img'),
+closeSearch = document.querySelector('#close_search');
 
 //Settings 
 //Settings are using localStorage, so we store everything there
@@ -386,7 +391,17 @@ closeBtn.addEventListener('click', ()=>{
     setTimeout(()=>{document.getElementsByClassName('settings_window')[0].style.zIndex = -2;location.reload();
     return false;}, 550);
 });
-
+searchIcon.addEventListener('click', ()=>{
+  //open the search window
+  document.getElementsByClassName('search_window')[0].style.zIndex = 2;
+  document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(200%)';
+});
+closeSearch.addEventListener('click', ()=>{
+  //close the search window
+    document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
+    setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;;
+    return false;}, 550);
+});
 //Loading window
 let load_text = document.getElementsByClassName('loading_support');
 load_text[0].innerHTML = localization['ru'].loading;
@@ -398,7 +413,28 @@ if(load_text[0] != undefined){
 }}, 5000);
 
 
+function cityName(city){
+  console.log(city.locality);
+  if(document.querySelector('.city') == null){
+    let text = document.createElement('span');
+    text.classList.add('city');
+    if(city.city == ''){
+      text.innerHTML = city.locality + ', ' + city.countryName;
+    }else{
+      text.innerHTML = city.city + ', ' + city.countryName;
+    }
+    let block = document.getElementById('current');
+    block.append(text);
+  }
+  else if(city.city == ''){
+    document.querySelector('.city').innerHTML = city.locality + ', ' + city.countryName;
+  }
+  else{
+    document.querySelector('.city').innerHTML = city.city + ', ' + city.countryName;
+  
+  }
 
+}
 //getWeather gets forecast for specific coords and turns output into promiise
 async function getWeather(latitude, longitude, language, unit, city){
   const api_url = `weather/${latitude},${longitude}/${language}/${unit}`;
@@ -415,15 +451,164 @@ async function getWeather(latitude, longitude, language, unit, city){
   return [rdata, city];
 }
 
+
 function loaded(request_data = localStorage){
   //location btn fix
   let promise;
   if(localStorage != request_data){
     request_data = localStorage;
   }
+
     if('geolocation' in navigator){
       let lang = request_data.lang,
           units = request_data.units;
+          let input_field = document.getElementById('city_input');
+          let createTools = true;
+          let city_data=[];
+          let city_promise;
+          input_field.setAttribute('placeholder', localization[lang].search_place);
+        function Focusing(blocks, input){
+          var divs = document.getElementsByClassName(blocks),
+          selectedDiv = 0,
+          i;
+    
+          for(i = 0; i < divs.length; i++){
+            divs[i].onmouseover = (function(i){
+              return function(){
+                divs[selectedDiv].style.backgroundColor = '';
+                selectedDiv = i;
+                divs[selectedDiv].style.backgroundColor = '#68F';
+              }
+            })(i);
+          }
+    
+          divs[selectedDiv].style.backgroundColor = '#68F';
+          
+          document.getElementById(input).onkeydown = function(e){
+            var x = 0;
+            if(e.key == "ArrowUp")
+                x = -1;
+            else if(e.key == "ArrowDown")
+                x = 1;
+              else if(e.key == "Enter"){
+                divs[selectedDiv].click();
+                document.getElementById(input).focus();
+              } 
+            else
+              return;
+            divs[selectedDiv].style.backgroundColor = '';
+            selectedDiv = ((selectedDiv+x)%divs.length);
+            selectedDiv = selectedDiv < 0 ? 
+              divs.length+selectedDiv : selectedDiv;
+            divs[selectedDiv].style.backgroundColor = '#68F'; 
+          };
+    
+        }
+        function Cities(){
+            fetch(`https://api.teleport.org/api/cities/?search=${input_field.value}&limit=10`)
+            .then((response)=>{
+              return response.json();
+            })
+            .then((data)=>{
+              //console.log(data._embedded['city:search-results']);
+              if(data.count == 0){
+                let items = document.querySelectorAll('.auto_item');
+                  for(let j=0;j<items.length;j++){
+                    items[j].remove();
+                  }
+                  if(document.querySelector('.not_found') != undefined){
+                    document.querySelector('.not_found').remove();
+                  }
+                  city_data=[];
+                  let auto_item = document.createElement('label');
+                  auto_item.className = 'not_found';
+                  auto_item.setAttribute('name', '')
+                  auto_item.innerHTML = localization[lang].not_found;
+                  document.querySelector('.auto_wrapper').append(auto_item);
+              }
+              else{
+                if(createTools){
+                  let auto_wrapper = document.createElement('div');
+                  auto_wrapper.className = 'auto_wrapper';
+                  document.getElementsByClassName('search_window')[0].append(auto_wrapper);
+                  createTools=false;
+                  
+                  for(let i = 0;i<data._embedded['city:search-results'].length;i++){
+                    city_data[i] = data._embedded['city:search-results'][i].matching_full_name;
+                    document.querySelector('.auto_wrapper').insertAdjacentHTML('afterbegin',`
+                    <input type='radio' name='search_res' id='search_${i}'>
+                    <label for='search_${i}'><span class='auto_item'>${city_data[i]}</span></label>`);
+                    let search_res = document.getElementById(`search_${i}`);
+                    search_res.onclick =()=>{ 
+
+                      fetch(data._embedded['city:search-results'][i]._links["city:item"].href).then((response)=>{
+                        return response.json();
+                      }).then((data)=>{
+                        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${data.location.latlon.latitude}&longitude=${data.location.latlon.longitude}&localityLanguage=${lang}`).then((response) => {
+                            return response.json();
+                          })
+                          .then((city) => {
+                            city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
+                            city_promise.then(data_set=>{
+                              console.log(data_set);
+                              document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
+                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;
+                              return false;}, 550);
+                              wrapper(data_set);
+                              cityName(data_set[1]);
+                            });
+                          });
+                        
+                        console.log(data.location.latlon)
+                      })}
+                    }
+                  Focusing('auto_item', 'city_input');
+                }
+                else if(input_field.value !=''){
+                  
+                    let items = document.querySelectorAll('.auto_item');
+                    for(let j=0;j<items.length;j++){
+                      items[j].remove();
+                    }
+                    city_data=[];
+                    for(let i = 0;i<data._embedded['city:search-results'].length;i++){
+                      city_data[i] = data._embedded['city:search-results'][i].matching_full_name;
+                      document.querySelector('.auto_wrapper').insertAdjacentHTML('afterbegin',`
+                      <input type='radio' name='search_res' id='search_${i}'>
+                      <label for='search_${i}'><span class='auto_item'>${city_data[i]}</span></label>`);
+                      let search_res = document.getElementById(`search_${i}`);
+                      search_res.onclick =()=>{ 
+                        fetch(data._embedded['city:search-results'][i]._links["city:item"].href).then((response)=>{
+                          return response.json();
+                        }).then((data)=>{
+                          fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${data.location.latlon.latitude}&longitude=${data.location.latlon.longitude}&localityLanguage=${lang}`).then((response) => {
+                              return response.json();
+                            })
+                            .then((city) => {
+                              city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
+                              city_promise.then(data_set=>{
+                                document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
+                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;
+                              return false;}, 550);
+                                console.log(data_set);
+                                wrapper(data_set);
+                                cityName(data_set[1]);
+                              });
+                            });
+                          
+                          console.log(data.location.latlon)
+                        })}
+                      }
+                    Focusing('auto_item', 'city_input');
+                } 
+                else{
+                  document.querySelector('.auto_wrapper').remove();
+                  createTools = true;
+                }
+              }
+            });
+        }
+        input_field.oninput= Cities;
       function getPreciseLocation() {
         return new Promise(function (resolve, reject) {
           navigator.geolocation.getCurrentPosition(function (position) {
@@ -445,13 +630,15 @@ function loaded(request_data = localStorage){
         .then((data) => {
         promise = getWeather(lat, lon, lang, units,data);
         promise.then(result=>{
+          cityName(result[1]);
           wrapper(result);
         });
         })
       }else{
         promise = getPreciseLocation().then(result =>getWeather(result[0], result[1], result[2],result[3], result[4]));
-        promise.then(result=>{
-          wrapper(result);
+        promise.then(data_set=>{
+          cityName(data_set[1]);
+          wrapper(data_set);
         });
       }
       function wrapper(rdata){
@@ -794,18 +981,7 @@ function loaded(request_data = localStorage){
             new_nav.remove();
             document.getElementById('display').appendChild(newest_nav);
           }
-          function cityName(){
-            if(document.querySelector('.city') == null){
-              let text = document.createElement('span');
-              text.classList.add('city');
-              text.innerHTML = city.city + ', ' + city.countryName;
-              let block = document.getElementById('current');
-              block.append(text);
-            }else{
-              document.querySelector('.city').innerHTML = city.city + ', ' + city.countryName;
-            }
-
-          }
+          
           function fourthInstance(){
             let target = document.querySelector('#location');
             tippy(target, {
@@ -994,7 +1170,6 @@ function loaded(request_data = localStorage){
             }
             
             current();
-            cityName();
             //daily forecast
             
             for(let i = 0;i<8;i++){
