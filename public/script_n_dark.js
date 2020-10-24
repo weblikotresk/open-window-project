@@ -398,7 +398,7 @@ searchIcon.addEventListener('click', ()=>{
 });
 closeSearch.addEventListener('click', ()=>{
   //close the search window
-    document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
+    document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 55.6% 28.2%)'; 
     setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;;
     return false;}, 550);
 });
@@ -511,23 +511,28 @@ function loaded(request_data = localStorage){
             })
             .then((data)=>{
               //console.log(data._embedded['city:search-results']);
-              if(data.count == 0){
+              if(data.count == 0 || input_field.value==' '){
                 let items = document.querySelectorAll('.auto_item');
+                let auto_wrapper = document.createElement('div');
+                  auto_wrapper.className = 'auto_wrapper';
+                  document.getElementsByClassName('search_window')[0].append(auto_wrapper);
                   for(let j=0;j<items.length;j++){
                     items[j].remove();
                   }
                   if(document.querySelector('.not_found') != undefined){
                     document.querySelector('.not_found').remove();
                   }
+                  
                   city_data=[];
-                  let auto_item = document.createElement('label');
+                  let auto_item = document.createElement('span');
                   auto_item.className = 'not_found';
-                  auto_item.setAttribute('name', '')
+                  //auto_item.setAttribute('name', '')
                   auto_item.innerHTML = localization[lang].not_found;
+                  console.log(auto_item);
                   document.querySelector('.auto_wrapper').append(auto_item);
               }
               else{
-                if(createTools){
+                if(createTools && input_field.value!=' ' && input_field.value !=''){
                   if(document.querySelector('.not_found') != undefined){
                     document.querySelector('.not_found').remove();
                   }
@@ -538,7 +543,7 @@ function loaded(request_data = localStorage){
                   
                   for(let i = 0;i<data._embedded['city:search-results'].length;i++){
                     city_data[i] = data._embedded['city:search-results'][i].matching_full_name;
-                    document.querySelector('.auto_wrapper').insertAdjacentHTML('afterbegin',`
+                    document.querySelector('.auto_wrapper').insertAdjacentHTML('beforeend',`
                     <input type='radio' name='search_res' id='search_${i}'>
                     <label for='search_${i}'><span class='auto_item'>${city_data[i]}</span></label>`);
                     let search_res = document.getElementById(`search_${i}`);
@@ -554,7 +559,7 @@ function loaded(request_data = localStorage){
                             city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
                             city_promise.then(data_set=>{
                               console.log(data_set);
-                              document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
+                              document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
                               setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;
                               return false;}, 550);
                               wrapper(data_set);
@@ -567,7 +572,7 @@ function loaded(request_data = localStorage){
                     }
                   Focusing('auto_item', 'city_input');
                 }
-                else if(input_field.value !=''){
+                else if(input_field.value !='' && input_field.value!=' '){
                   if(document.querySelector('.not_found') != undefined){
                     document.querySelector('.not_found').remove();
                   }
@@ -578,7 +583,7 @@ function loaded(request_data = localStorage){
                     city_data=[];
                     for(let i = 0;i<data._embedded['city:search-results'].length;i++){
                       city_data[i] = data._embedded['city:search-results'][i].matching_full_name;
-                      document.querySelector('.auto_wrapper').insertAdjacentHTML('afterbegin',`
+                      document.querySelector('.auto_wrapper').insertAdjacentHTML('beforeend',`
                       <input type='radio' name='search_res' id='search_${i}'>
                       <label for='search_${i}'><span class='auto_item'>${city_data[i]}</span></label>`);
                       let search_res = document.getElementById(`search_${i}`);
@@ -592,7 +597,7 @@ function loaded(request_data = localStorage){
                             .then((city) => {
                               city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
                               city_promise.then(data_set=>{
-                                document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
+                                document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
                               setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;
                               return false;}, 550);
                                 console.log(data_set);
@@ -605,7 +610,10 @@ function loaded(request_data = localStorage){
                         })}
                       }
                     Focusing('auto_item', 'city_input');
-                } 
+                 }
+                //else if (input_field.value==' '){
+                //   alert('bruuh');
+                // }
                 else{
                   document.querySelector('.auto_wrapper').remove();
                   createTools = true;

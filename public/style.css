@@ -212,9 +212,9 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
 -moz-box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
 box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     cursor: default;
-    left: -2vw;
+   
     padding: 25px 10px;
-    clip-path: circle(0.1% at 60.3% 4.5%);
+    clip-path: circle(1.1% at 55.6% 28.2%);
     z-index: -3;
 }
 #city_input{
@@ -965,6 +965,9 @@ label.day:hover{
     .days_wrap{
         margin-left: 0;
         padding-left: 0;
+    }
+    .search_window{
+        left: -2vw;
     }
 
 }
