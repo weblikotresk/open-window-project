@@ -173,7 +173,7 @@ body{
     clip-path: circle(100%);
     z-index: 2;
 }
-.settings_window, .search_window{
+.settings_window{
     clip-path: circle(0.1% at 49.3% 4.5%);
     width: 100%;
     height: fit-content;
