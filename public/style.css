@@ -215,7 +215,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
    
     padding: 25px 10px;
     clip-path: circle(1.1% at 55.6% 28.2%);
-    z-index: -3;
+    z-index: -2;
 }
 #city_input{
     padding: 7px;

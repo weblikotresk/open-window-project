@@ -11,7 +11,7 @@ app.listen(process.env.PORT || 5000);
 app.use(express.static('public', {
     etag: true, // Just being explicit about the default.
     lastModified: true,  // Just being explicit about the default.
-    
+    //acceptEncoding:'gzip',
   }));
 app.use(express.json());
 

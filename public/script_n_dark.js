@@ -86,11 +86,11 @@ function videoBack(name){
   if(localStorage.back != 'vid'){
     document.querySelector('#videoBG').remove();
     let img_bg = document.createElement('img');
-    img_bg.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/back/${name + postfix}.png`;
+    img_bg.src = `https://d3aid59h00lu28.cloudfront.net/img/back/${name + postfix}.png`;
     img_bg.id = 'videoBG';
     document.body.prepend(img_bg);
     
-  console.log(`https://open-window-videos.s3.eu-west-2.amazonaws.com/img/back/${name + postfix}.png`);
+  console.log(`https://d3aid59h00lu28.cloudfront.net/img/back/${name + postfix}.png`);
   }
   else{
     if(document.querySelector('#videoBG > source') !=null){
@@ -104,11 +104,11 @@ function videoBack(name){
       videobg.classList.add('no_opacity');
   
       let mp4 = document.createElement('source');
-      mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.m4v`;
+      mp4.src = `https://d3aid59h00lu28.cloudfront.net/videos/${name + postfix}.m4v`;
       mp4.type = 'video/m4v';
       videobg.appendChild(mp4);
       let webm = document.createElement('source');
-      webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm/${name + postfix}.webm`;
+      webm.src = `https://d3aid59h00lu28.cloudfront.net/videos/webm/${name + postfix}.webm`;
       webm.type = 'video/webm';
       videobg.appendChild(webm);
       document.querySelector('#videoBG').classList.add('no_opacity');
@@ -122,10 +122,10 @@ function videoBack(name){
     }else{
       //first creation
       let mp4 = document.createElement('source');
-      mp4.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/${name + postfix}.m4v`;
+      mp4.src = `https://d3aid59h00lu28.cloudfront.net/videos/${name + postfix}.m4v`;
       mp4.type = 'video/m4v';
       let webm = document.createElement('source');
-      webm.src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/videos/webm/${name + postfix}.webm`;
+      webm.src = `https://d3aid59h00lu28.cloudfront.net/videos/webm/${name + postfix}.webm`;
       webm.type = 'video/webm';
       document.querySelector('#videoBG').appendChild(mp4);
       document.querySelector('#videoBG').appendChild(webm);
@@ -505,7 +505,7 @@ function loaded(request_data = localStorage){
     
         }
         function Cities(){
-            fetch(`https://api.teleport.org/api/cities/?search=${input_field.value}&limit=10`)
+            fetch(`https://api.teleport.org/api/cities/?search=${input_field.value}&limit=8`)
             .then((response)=>{
               return response.json();
             })
@@ -560,7 +560,7 @@ function loaded(request_data = localStorage){
                             city_promise.then(data_set=>{
                               console.log(data_set);
                               document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
-                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;
+                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -2;
                               return false;}, 550);
                               wrapper(data_set);
                               cityName(data_set[1]);
@@ -598,7 +598,7 @@ function loaded(request_data = localStorage){
                               city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
                               city_promise.then(data_set=>{
                                 document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
-                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;
+                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -2;
                               return false;}, 550);
                                 console.log(data_set);
                                 wrapper(data_set);
@@ -754,7 +754,7 @@ function loaded(request_data = localStorage){
             }
           }
           let water_drop = document.createElement('img');
-            water_drop.src = 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
+            water_drop.src = 'https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
             water_drop.className = 'pop_drop';
     
           function chart_summon(option, option_color, option_back, axis_l, mode){
@@ -781,7 +781,7 @@ function loaded(request_data = localStorage){
               document.querySelectorAll('.hour > .pop' )[i].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
               document.querySelectorAll('.hour > .pop' )[i].prepend(pop_icon);
               document.querySelectorAll('.hour > .temp' )[i].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
-              document.querySelectorAll('.hour > .sky' )[i].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.hourly.data[i].icon}.svg`;
+              document.querySelectorAll('.hour > .sky' )[i].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg`;
               document.querySelectorAll('.hour > .time' )[i].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
               chart_labels[i] = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
               //max_chart later makes chart go higher than it's maximum value
@@ -801,7 +801,7 @@ function loaded(request_data = localStorage){
                   document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
                   document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
                   document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
-                  document.querySelectorAll('.hour > .sky' )[j].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
+                  document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
           
                   document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
                   if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
@@ -1097,11 +1097,11 @@ function loaded(request_data = localStorage){
             let current = function current(){
               videoBack(rdata.currently.icon);
               let icon = document.createElement('img');
-              icon.src=`https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.currently.icon}.svg`;
+              icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.currently.icon}.svg`;
               icon.alt='';
               icon.className='icon';
               let curr_icon = document.createElement('img');
-              curr_icon.src='https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
+              curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
               curr_icon.alt ='';
               curr_icon.className = 'curr_icon';
               document.querySelector('.temp_val').innerHTML = Math.round(rdata.currently.temperature) + localization[lang].units[units].temp;
@@ -1113,17 +1113,17 @@ function loaded(request_data = localStorage){
               document.querySelector('.propability').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
-              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/uv.svg';
+              curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/uv.svg';
               document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
               document.querySelector('.uv').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
-              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/coverage.svg';
+              curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/coverage.svg';
               document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
               document.querySelector('.clouds').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
-              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/wind.svg';
+              curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/wind.svg';
               document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
               document.querySelector('.wind_text > h3').prepend(curr_icon);
       
@@ -1131,27 +1131,27 @@ function loaded(request_data = localStorage){
               wind_arrow('currently');
       
               curr_icon = curr_icon.cloneNode(true);
-              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
+              curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
               document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
               document.querySelector('#sunr').prepend(curr_icon);
               
               curr_icon = curr_icon.cloneNode(true);
-              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunset.svg';
+              curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
               document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
               document.querySelector('#suns').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
-              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/pressure.svg';
+              curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/pressure.svg';
               document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.currently.pressure + localization[lang].units[units].pres_units;
               document.querySelector('#pres').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
-              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/humidity.svg';
+              curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/humidity.svg';
               document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(rdata.currently.humidity*100) + '%';  
               document.querySelector('#hum').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
-              curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/dewpoint.svg';
+              curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/dewpoint.svg';
               document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.currently.dewPoint) + localization[lang].units[units].temp;
               document.querySelector('#dew').prepend(curr_icon);
               let label_arr = document.querySelectorAll('#slidemenu > label > span');
@@ -1189,7 +1189,7 @@ function loaded(request_data = localStorage){
                 let pop_icon = water_drop.cloneNode(true);
             document.querySelectorAll('.day > .pop' )[i].innerHTML = Math.round(rdata.daily.data[i].precipProbability*100) +'%';
             document.querySelectorAll('.day > .pop' )[i].prepend(pop_icon);
-            document.querySelectorAll('.day > .sky')[i].src = `https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.daily.data[i].icon}.svg`;
+            document.querySelectorAll('.day > .sky')[i].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
             document.querySelectorAll('.day > .temp')[i].innerHTML = Math.round(rdata.daily.data[i].temperatureMax) +localization[lang].units[units].temp;
             //date
             
@@ -1222,7 +1222,7 @@ function loaded(request_data = localStorage){
     
               document.getElementById('slide-item-1').checked = 'checked';
                 let icon = document.createElement('img');
-                icon.src=`https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/${rdata.daily.data[i].icon}.svg`;
+                icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
                 icon.alt='';
                 icon.className='icon';
                 document.querySelector('.temp_val').innerHTML = Math.round(rdata.daily.data[i].temperatureMax) +localization[lang].units[units].temp ;
@@ -1232,7 +1232,7 @@ function loaded(request_data = localStorage){
                 document.querySelector('.condition').prepend(icon);
                 
                 let curr_icon = document.createElement('img');
-                curr_icon.src='https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/water.svg';
+                curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
                 curr_icon.alt ='';
                 curr_icon.className = 'curr_icon';
                 if(document.getElementsByClassName('backto')[0] == null){
@@ -1255,17 +1255,17 @@ function loaded(request_data = localStorage){
                 document.querySelector('.propability').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/uv.svg';
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/uv.svg';
                 document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[i].uvIndex;
                 document.querySelector('.uv').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/coverage.svg';
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/coverage.svg';
                 document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
                 document.querySelector('.clouds').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/wind.svg';
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/wind.svg';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
                 document.querySelector('.wind_text > h3').prepend(curr_icon);
     
@@ -1274,27 +1274,27 @@ function loaded(request_data = localStorage){
                 wind_arrow(`daily`, i);
           
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunrise.svg';
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
                 document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
                 document.querySelector('#sunr').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/sunset.svg';
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
                 document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
                 document.querySelector('#suns').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/pressure.svg';
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/pressure.svg';
                 document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[i].pressure + localization[lang].units[units].pres_units;
                 document.querySelector('#pres').prepend(curr_icon);
                 
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/humidity.svg';
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/humidity.svg';
                 document.querySelector('#hum').innerHTML =localization[lang].hum+ ': ' + Math.round(rdata.daily.data[i].humidity*100) + '%';
                 document.querySelector('#hum').prepend(curr_icon);
                 
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://open-window-videos.s3.eu-west-2.amazonaws.com/img/icons/dewpoint.svg';
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/dewpoint.svg';
                 document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[i].dewPoint) + localization[lang].units[units].temp;
                 document.querySelector('#dew').prepend(curr_icon);
     
