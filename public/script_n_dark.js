@@ -393,13 +393,13 @@ closeBtn.addEventListener('click', ()=>{
 });
 searchIcon.addEventListener('click', ()=>{
   //open the search window
-  document.getElementsByClassName('search_window')[0].style.zIndex = 2;
+  document.getElementsByClassName('search_window')[0].style.zIndex = 5;
   document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(200%)';
 });
 closeSearch.addEventListener('click', ()=>{
   //close the search window
     document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 55.6% 28.2%)'; 
-    setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -3;;
+    setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
     return false;}, 550);
 });
 //Loading window
@@ -560,7 +560,7 @@ function loaded(request_data = localStorage){
                             city_promise.then(data_set=>{
                               console.log(data_set);
                               document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
-                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -2;
+                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
                               return false;}, 550);
                               wrapper(data_set);
                               cityName(data_set[1]);
@@ -598,7 +598,7 @@ function loaded(request_data = localStorage){
                               city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
                               city_promise.then(data_set=>{
                                 document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
-                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -2;
+                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
                               return false;}, 550);
                                 console.log(data_set);
                                 wrapper(data_set);
