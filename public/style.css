@@ -198,6 +198,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
     width: 100%;
     height: fit-content;
     top: 0;
+    left: 0;
     position: absolute;
     color: #fff;
     background: rgb(51,51,180);
@@ -229,6 +230,7 @@ box-shadow: 3px 3px 7px 0px rgba(0,0,0,0.51);
 #city_input::placeholder{
     color: #fff;
     font-family: 'Rubik', sans-serif;
+    
 }
 .auto_item, .not_found{
     display: block;

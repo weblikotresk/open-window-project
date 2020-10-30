@@ -100,6 +100,7 @@ function videoBack(name){
       videobg.setAttribute('autoplay', true);
       videobg.setAttribute('muted', true);
       videobg.setAttribute('loop', true);
+      videobg.setAttribute('poster', `https://d3aid59h00lu28.cloudfront.net/img/back/${name + postfix}.png`);
       videobg.id= 'videoBG';
       videobg.classList.add('no_opacity');
   
@@ -174,6 +175,7 @@ let localization = {
     compass_f:'Сервис не смог получить информацию компаса. Обновите ваш браузер до последней версии и попробуйте снова.',
     search_place:'Название города...',
     not_found:'По вашему запросу ничего не было найдено. Пожалуйста, попробуйте ещё раз.',
+    undefined:'Не определено (полярный день/ночь)',
     'Mon':'Пн,',
     'Tue':'Вт,',
     'Wed':'Ср,',
@@ -219,7 +221,11 @@ let localization = {
       vstorm:'Жестокий шторм, ',
       hurricane:'Ураган, ',
     },
-    tooltips:['Здесь вы можете настроить сайт согласно вашим предпочтениям: изменить язык, единицы измерения и т.д.','Нажав на любую из этих иконок, вы сможете увидеть прогноз погоды в данный день.','Также для просмотра прогноза погоды вы можете использовать диаграмму.', 'Нажав на эту иконку, вы сможете узнать прогноз погоды для вашего населённого пункта.']
+    tooltips:[`Здесь вы можете настроить сайт согласно вашим предпочтениям: изменить язык, единицы измерения и т.д.`,
+    `Нажав на любую из этих иконок, вы сможете увидеть прогноз погоды в данный день.`,
+    `Также для просмотра прогноза погоды вы можете использовать диаграмму.`,
+     `Нажав на эту иконку, вы сможете узнать прогноз погоды для вашего населённого пункта.`,
+    `Нажав на эту иконку, вы сможете найти прогноз погоды для многих населённых пунктов планеты.`]
   }, 
   'en':{
     app_temp:'Feels like: ',
@@ -256,6 +262,7 @@ let localization = {
     compass_f:'Could not retrieve absolute orientation. Consider update your browser to the last version and try again.',
     search_place:'City name...',
     not_found:'Nothing has been found. Please, try again.',
+    undefined:'Undefined (polar day/night)',
     'Mon':'Mon,',
     'Tue':'Tue,',
     'Wed':'Wed,',
@@ -302,7 +309,11 @@ let localization = {
       vstorm:'Violent storm, ',
       hurricane:'Hurricane, ',
     },
-    tooltips:['Here you can customize the site according to your preferences: change the language, units of measurement, etc.','If you click on any of these icons, you will see the weather forecast for that day.','You can also use the chart to view the weather forecast.',"If you'll click on this icon, you'll see the weather forecast for your location."],
+    tooltips:[`Here you can customize the site according to your preferences: change the language, units of measurement, etc.`,
+    `If you click on any of these icons, you will see the weather forecast for that day.`,
+    `You can also use the chart to view the weather forecast.`,
+    `If you'll click on this icon, you'll see the weather forecast for your location.`,
+    `By clicking on this icon, you can find the weather forecast for many localities on the planet.`],
   },
 };
 
@@ -510,7 +521,6 @@ function loaded(request_data = localStorage){
               return response.json();
             })
             .then((data)=>{
-              //console.log(data._embedded['city:search-results']);
               if(data.count == 0 || input_field.value==' '){
                 let items = document.querySelectorAll('.auto_item');
                 let auto_wrapper = document.createElement('div');
@@ -522,13 +532,10 @@ function loaded(request_data = localStorage){
                   if(document.querySelector('.not_found') != undefined){
                     document.querySelector('.not_found').remove();
                   }
-                  
                   city_data=[];
                   let auto_item = document.createElement('span');
                   auto_item.className = 'not_found';
-                  //auto_item.setAttribute('name', '')
                   auto_item.innerHTML = localization[lang].not_found;
-                  console.log(auto_item);
                   document.querySelector('.auto_wrapper').append(auto_item);
               }
               else{
@@ -611,11 +618,10 @@ function loaded(request_data = localStorage){
                       }
                     Focusing('auto_item', 'city_input');
                  }
-                //else if (input_field.value==' '){
-                //   alert('bruuh');
-                // }
                 else{
-                  document.querySelector('.auto_wrapper').remove();
+                  if(document.querySelector('.auto_wrapper')!=undefined){
+                    document.querySelector('.auto_wrapper').remove();
+                  }
                   createTools = true;
                 }
               }
@@ -659,7 +665,7 @@ function loaded(request_data = localStorage){
       let city = rdata[1];
       rdata = rdata[0];
       console.log(city, rdata);
-
+        
           function compass(event){
             var alpha;
             const delta = 225;
@@ -814,8 +820,6 @@ function loaded(request_data = localStorage){
                   max_chart = chart_data[j];
                 }
                 }
-                  
-                  
               }
             }
           }
@@ -837,6 +841,22 @@ function loaded(request_data = localStorage){
                   yellow:'rgb(224, 209, 0)',
                   red:'rgb(255, 99, 51)',
                 };
+                let min_t = 0;
+                for(let i = 0;i<chart_data.length;i++){
+                  if(min_t>chart_data[i]){
+                    min_t = chart_data[i];
+                  }
+                }
+                if(min_t<0){
+                  option_back = 'rgba(81, 177, 255, 0.25)'
+                  // chartColors= {
+                  //   blue:'rgb(153, 206, 255)',
+                  //   yellow:'rgb(224, 209, 0)',
+                  //   red:'rgb(255, 99, 51)',
+                  // };
+                }else{
+                  option_back = 'rgba(255, 81, 81, 0.25)'
+                }
               }else{
                 bor_width = 3;
               }
@@ -994,7 +1014,23 @@ function loaded(request_data = localStorage){
             new_nav.remove();
             document.getElementById('display').appendChild(newest_nav);
           }
-          
+          function fifthInstance(){
+            let target = document.querySelector('#search');
+            tippy(target, {
+              content: localization[lang].tooltips[4],
+              theme:'normal',
+              sticky: true,
+              arrow: true,
+              showOnCreate: true,
+              placement: 'bottom',
+              delay:500,
+              maxWidth:250,
+              onHidden(instance) {
+                instance.destroy();
+                localStorage.tools = 'false';
+            },
+          });
+          }
           function fourthInstance(){
             let target = document.querySelector('#location');
             tippy(target, {
@@ -1008,7 +1044,7 @@ function loaded(request_data = localStorage){
               maxWidth:250,
               onHidden(instance) {
                 instance.destroy();
-                localStorage.tools = 'false';
+                fifthInstance();
             },
           });
           }
@@ -1130,14 +1166,24 @@ function loaded(request_data = localStorage){
               document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.currently.windSpeed, lang, units) + getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
               wind_arrow('currently');
       
+              
+
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
-              document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
+              if(rdata.daily.data[0].sunriseTime === undefined){
+                document.querySelector('#sunr').innerHTML = localization[lang].undefined;
+              }else{
+                document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
+              }
               document.querySelector('#sunr').prepend(curr_icon);
               
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
-              document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
+              if(rdata.daily.data[0].sunsetTime === undefined){
+                document.querySelector('#suns').innerHTML = localization[lang].undefined;
+              }else{
+                document.querySelector('#suns').innerHTML = localization[lang].suns  +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
+              }
               document.querySelector('#suns').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
