@@ -1319,14 +1319,24 @@ function loaded(request_data = localStorage){
                 document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[i].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[i].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
                 wind_arrow(`daily`, i);
           
+                if(rdata.daily.data[0].sunriseTime === undefined){
+                  document.querySelector('#sunr').innerHTML = localization[lang].undefined;
+                }else{
+                  document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
+                }
+                document.querySelector('#sunr').prepend(curr_icon);
+                
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
-                document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
                 document.querySelector('#sunr').prepend(curr_icon);
     
+                if(rdata.daily.data[0].sunsetTime === undefined){
+                  document.querySelector('#suns').innerHTML = localization[lang].undefined;
+                }else{
+                  document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
+                }
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
-                document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
                 document.querySelector('#suns').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
