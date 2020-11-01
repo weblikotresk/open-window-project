@@ -69,7 +69,7 @@ function videoBack(name){
   if(name == 'clear-day' || name == 'rain'){
     if((month >=9)&&(month<=11)){
       postfix= '-autumn';
-    }else if((month >=11)||(month<=3)){
+    }else if((month >11)||(month<=2)){
       postfix= '-winter';
     }else if((month >=3)&&(month<=5)){
       postfix ='-spring';
@@ -79,7 +79,7 @@ function videoBack(name){
   }else{
     postfix = '';
   }
-  if((time <= 18 || time <= 5)&& (month >=11)||(month<=3) && name == 'snow'){
+  if((time <= 18 || time <= 5) && name == 'snow'){
     name = name + '_n';
   }
  
@@ -1131,6 +1131,7 @@ function loaded(request_data = localStorage){
             //current function delivers rdata to every block that needs it
             
             let current = function current(){
+              console.log(rdata.currently.icon);
               videoBack(rdata.currently.icon);
               let icon = document.createElement('img');
               icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.currently.icon}.svg`;
@@ -1314,29 +1315,25 @@ function loaded(request_data = localStorage){
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/wind.svg';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
                 document.querySelector('.wind_text > h3').prepend(curr_icon);
-    
-                
                 document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[i].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[i].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
                 wind_arrow(`daily`, i);
-          
+
+                curr_icon = curr_icon.cloneNode(true);
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
                 if(rdata.daily.data[0].sunriseTime === undefined){
                   document.querySelector('#sunr').innerHTML = localization[lang].undefined;
                 }else{
                   document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
                 }
                 document.querySelector('#sunr').prepend(curr_icon);
-                
+
                 curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
-                document.querySelector('#sunr').prepend(curr_icon);
-    
+                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
                 if(rdata.daily.data[0].sunsetTime === undefined){
                   document.querySelector('#suns').innerHTML = localization[lang].undefined;
                 }else{
                   document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
                 }
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
                 document.querySelector('#suns').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
