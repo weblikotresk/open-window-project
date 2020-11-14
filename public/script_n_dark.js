@@ -79,11 +79,12 @@ function videoBack(name){
   }else{
     postfix = '';
   }
-  if((time <= 18 || time <= 5) && name == 'snow'){
-    name = name + '_n';
-  }
+ 
  
   if(localStorage.back != 'vid'){
+    if((time <= 18 || time <= 5) && name == 'snow'){
+      name = name + '_n';
+    }
     document.querySelector('#videoBG').remove();
     let img_bg = document.createElement('img');
     img_bg.src = `https://d3aid59h00lu28.cloudfront.net/img/back/${name + postfix}.png`;
@@ -134,8 +135,6 @@ function videoBack(name){
       setTimeout(()=>document.querySelector('#videoBG').classList.remove('no_opacity'), 400);
     }
   }
-  
-
 }
 
 let localization = {
@@ -462,7 +461,13 @@ async function getWeather(latitude, longitude, language, unit, city){
   return [rdata, city];
 }
 
-
+window.onscroll = ()=>{
+  if(window.pageYOffset>800){
+    document.getElementsByClassName('anchor_wrapper')[0].classList.add('hide_anchor');
+  }else{
+    document.getElementsByClassName('anchor_wrapper')[0].classList.remove('hide_anchor');
+  }
+};
 function loaded(request_data = localStorage){
   //location btn fix
   let promise;
@@ -478,6 +483,7 @@ function loaded(request_data = localStorage){
           let city_data=[];
           let city_promise;
           input_field.setAttribute('placeholder', localization[lang].search_place);
+          
         function Focusing(blocks, input){
           var divs = document.getElementsByClassName(blocks),
           selectedDiv = 0,
@@ -769,6 +775,7 @@ function loaded(request_data = localStorage){
             let chart_block = document.createElement('canvas');
             chart_block.id = 'myChart';
             document.getElementsByClassName('chart-container')[0].append(chart_block);
+
             console.log('chart was created');
             //chart
           let chart_data = [],
@@ -832,7 +839,7 @@ function loaded(request_data = localStorage){
             //tooltip_pos = 'bottom';
           }
           //using chart.js library
-            let ctx = document.getElementById('myChart').getContext('2d');
+          let ctx = document.getElementById('myChart').getContext('2d');
           let bor_width, chartColors;
               if(option == 'temperature'){
                 bor_width = 6
@@ -843,17 +850,17 @@ function loaded(request_data = localStorage){
                 };
                 let min_t = 0;
                 for(let i = 0;i<chart_data.length;i++){
-                  if(min_t>chart_data[i]){
-                    min_t = chart_data[i];
+                  if(chart_data[i]<0){
+                    min_t++;
                   }
                 }
-                if(min_t<0){
-                  option_back = 'rgba(81, 177, 255, 0.25)'
-                  // chartColors= {
-                  //   blue:'rgb(153, 206, 255)',
-                  //   yellow:'rgb(224, 209, 0)',
-                  //   red:'rgb(255, 99, 51)',
-                  // };
+                if(min_t>chart_data.length/2){
+                  option_back = 'rgba(56, 75, 243, 0.3)'
+                  chartColors= {
+                    blue:'rgb(56, 75, 243)',
+                    yellow:'rgb(39, 184, 242)',
+                    red:'rgb(24, 190, 140)',
+                  };
                 }else{
                   option_back = 'rgba(255, 81, 81, 0.25)'
                 }
@@ -961,6 +968,95 @@ function loaded(request_data = localStorage){
                 }
             });
             
+        //   Chart.pluginService.register({
+        //     beforeInit: function(chart) {
+        //         // We get the chart data
+        //         var data = chart.config.data;
+        
+        //         // For every dataset ...
+        //         // for (var i = 0; i < data.datasets.length; i++) {
+        
+        //         //     // For every label ...
+        //              for (var j = 0; j < data.labels.length; j++) {
+        
+        //                 // We get the dataset's function and calculate the value
+        //                 var fct = data.datasets[0].function,
+        //                     x = data.labels[j],
+        //                     y = fct(x);
+        //                 // Then we add the value to the dataset data
+        //                 data.datasets[0].data.push(y);
+        //              }
+                
+        //     }
+        // });
+        //   let ctx_sun = document.getElementById('Sun_graph').getContext('2d');
+        //   var myData = [];
+        //     for(var j = 0; j < 55; j++) {
+        //         myData.push(j*Math.PI/54);
+        //     } 
+        //   let sun_chart = new Chart(ctx_sun, {
+        //     type: 'line',
+        //     data: {
+        //       labels: myData,
+        //       datasets: [
+        //       {
+        //           function: function(x) { return 2*Math.sin(x)/5 },
+        //           data: [],
+        //           borderColor: "rgba(153, 102, 255, 1)",
+        //           fill: true,
+        //           order:2
+        //       },
+        //     {
+        //       labels: myData,
+        //       type: "scatter",
+        //       data: [{
+        //         x: 3*Math.PI/54,
+        //         y: 2*Math.sin(3*Math.PI/54)/5
+        //         }],
+        //         borderColor: "rgba(255, 238, 0, 1)",
+        //       //pointStyle:'star',
+        //       borderWidth:15,
+        //       fill: true,
+        //       order:1
+        //     }]
+        //   },
+        //     options: {
+        //       legend: {
+        //         display: false,
+        //     },
+        //       showAllTooltips: false,
+        //       tooltips:{
+        //         enabled:false,
+                  
+
+                
+        //       },
+              
+        //         scales: {
+        //             yAxes: [{
+        //               display:false,
+                            
+        //                     gridLines: { color: "rgba(255, 255, 255, 0)",
+        //                   zeroLineColor: 'rgba(255, 255, 255, 0.25)' },
+          
+        //                 ticks: {
+        //                     beginAtZero: true,
+        //                     max:1
+        //                 }
+        //             }],xAxes:[{
+        //               gridLines: { color: "rgba(255, 255, 255, 0)",
+        //               zeroLineColor: 'rgba(255, 255, 255, 0)' },
+        //               ticks: {
+        //                 //display: false,
+        //                 maxTicksLimit:1,
+        //                 stepSize:Math.PI
+        //                  //this will remove only the label
+        //             }
+        //             }]
+        //         }
+        //     }
+        // });
+
           }
           //plugin that lets keep all tooltips always shown
           Chart.pluginService.register({
@@ -1131,7 +1227,14 @@ function loaded(request_data = localStorage){
             //current function delivers rdata to every block that needs it
             
             let current = function current(){
-              console.log(rdata.currently.icon);
+              if(window.matchMedia('(max-width: 700px)').matches && window.matchMedia('(max-width: 550px)').matches == false ){
+                document.getElementById('details').style.marginTop = '-40px';
+                document.getElementById('other').style.marginTop = '-40px';
+              }else if(window.matchMedia('(max-width: 550px)').matches){
+                document.getElementById('other').style.marginTop = '0';
+                document.getElementById('details').style.marginTop = '0';
+              }
+
               videoBack(rdata.currently.icon);
               let icon = document.createElement('img');
               icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.currently.icon}.svg`;
@@ -1223,6 +1326,12 @@ function loaded(request_data = localStorage){
               //when current function ended it's work, we remove loading window
               if(load_text[0] != undefined){
               document.getElementsByClassName('loading')[0].remove();
+              document.getElementById('display').style.opacity='1';
+              document.getElementById('legal').style.opacity='1';
+              document.getElementById('days_wrap').style.opacity='1';
+              document.getElementsByClassName('slider_wrap')[0].style.opacity=1;
+              document.getElementsByClassName('anchor_wrapper')[0].classList.remove('hide_anchor');
+              
               //setTimeout(()=>, 2000);
               if(localStorage.tools == 'true'){
                 firstInstance();
@@ -1244,7 +1353,7 @@ function loaded(request_data = localStorage){
             if(document.getElementsByClassName('weekday')[i] != null){
               document.getElementsByClassName('weekday')[i].remove();
             }
-            document.querySelectorAll('.day > .date')[i].innerHTML = localization[lang][date.format('ddd')]+' ' + date.format(localization[lang].date);
+            document.querySelectorAll('.day > .date')[i].innerHTML = localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date);
             }
             
             
@@ -1256,10 +1365,12 @@ function loaded(request_data = localStorage){
               backto.className='backto';
               backto.innerHTML = localization[lang].curr;
               backto.onclick = current;
-              if(window.matchMedia('(max-width: 500px)').matches){
+              if(window.matchMedia('(max-width: 550px)').matches){
                 document.getElementsByClassName('day')[0].before(backto);
               }else{
                 document.getElementsByClassName('app_temp')[0].after(backto);
+                document.getElementById('other').style.marginTop = '0'
+                document.getElementById('details').style.marginTop = '0'
               }
             }
     
@@ -1366,6 +1477,5 @@ function loaded(request_data = localStorage){
 window.onload = loaded();
 document.getElementById('location').onclick = ()=>{
   localStorage.location = 'on';
-  console.log('bruh');
   loaded(localStorage);
 };
