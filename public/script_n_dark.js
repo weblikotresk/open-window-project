@@ -858,7 +858,7 @@ function loaded(request_data = localStorage){
                   option_back = 'rgba(56, 75, 243, 0.3)'
                   chartColors= {
                     blue:'rgb(56, 75, 243)',
-                    yellow:'rgb(39, 184, 242)',
+                    yellow:'rgb(33, 214, 250)',
                     red:'rgb(24, 190, 140)',
                   };
                 }else{
@@ -1346,7 +1346,7 @@ function loaded(request_data = localStorage){
             document.querySelectorAll('.day > .pop' )[i].innerHTML = Math.round(rdata.daily.data[i].precipProbability*100) +'%';
             document.querySelectorAll('.day > .pop' )[i].prepend(pop_icon);
             document.querySelectorAll('.day > .sky')[i].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
-            document.querySelectorAll('.day > .temp')[i].innerHTML = Math.round(rdata.daily.data[i].temperatureMax) +localization[lang].units[units].temp;
+            document.querySelectorAll('.day > .temp')[i].innerHTML = `<div class="temp_max">${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div><div class="temp_min">${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>`;
             //date
             
             let date = moment(rdata.daily.data[i].time*1000);

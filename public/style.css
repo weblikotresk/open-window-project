@@ -786,6 +786,15 @@ label.day:hover{
     -moz-box-shadow: 2px 3px 7px 0px  rgba(0,0,0,0.95);
     box-shadow: 2px 3px 7px 0px rgba(0,0, 0, 0.95);
 }
+.temp_max{
+    border-bottom:1px solid rgba(218, 218, 218, 0.7);
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+.temp_min{
+    color: rgb(229, 229, 229);
+    font-size: 1.15rem;
+}
 .scrollArrow{
     background-color: #fff;
     position: absolute;
