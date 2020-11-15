@@ -67,7 +67,7 @@ function videoBack(name){
 
   let postfix;
   if(name == 'clear-day' || name == 'rain'){
-    if((month >=9)&&(month<=11)){
+    if((month >=9)&&(month<11)){
       postfix= '-autumn';
     }else if((month >=11)||(month<=2)){
       postfix= '-winter';
