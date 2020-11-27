@@ -800,7 +800,7 @@ function loaded(request_data = localStorage){
           //radio_events removes events for slidemenu and sets new eventListeners
           function radio_events(option){
             let radio_arr = document.getElementsByClassName('slide-toggle');
-              radio_arr[0].checked = true;
+            radio_arr[0].checked = true;
             remove_events();
             for(let i = 0; i<radio_arr.length;i++){
               radio_arr[i].addEventListener('click', ()=>{
@@ -1535,7 +1535,7 @@ function loaded(request_data = localStorage){
                 document.querySelector('#dew').prepend(curr_icon);
                 console.log('to graphs: ',day_number*1000);
                 
-                radio_events(day_number);
+                radio_events(day_number*1000);
                 chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, day_number*1000);
 
             }
