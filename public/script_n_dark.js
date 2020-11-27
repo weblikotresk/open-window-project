@@ -1,3 +1,4 @@
+
 window.mobileAndTabletCheck = function() {
   let check = false;
   (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
@@ -59,7 +60,7 @@ function windIntensity(wind_speed, lang, units){
     return localization[lang].windIntensity.hurricane 
   }
 }
-function videoBack(name){
+function videoBack(name, temp){
 
   let date = new Date(),
    time = date.getHours(),
@@ -67,9 +68,9 @@ function videoBack(name){
 
   let postfix;
   if(name == 'clear-day' || name == 'rain'){
-    if((month >=9)&&(month<11)){
+    if((month >=9)&&(month<11)|| (month==11&& temp>0)){
       postfix= '-autumn';
-    }else if((month >=11)||(month<=2)){
+    }else if((month >=11)||(month<=2)&& temp<0){
       postfix= '-winter';
     }else if((month >=3)&&(month<=5)){
       postfix ='-spring';
@@ -175,6 +176,8 @@ let localization = {
     search_place:'Название города...',
     not_found:'По вашему запросу ничего не было найдено. Пожалуйста, попробуйте ещё раз.',
     undefined:'Не определено (полярный день/ночь)',
+    updated:'Ваши данные на ',
+    refresh:'Обновить ⭮',
     'Mon':'Пн,',
     'Tue':'Вт,',
     'Wed':'Ср,',
@@ -262,6 +265,8 @@ let localization = {
     search_place:'City name...',
     not_found:'Nothing has been found. Please, try again.',
     undefined:'Undefined (polar day/night)',
+    updated:'Your data is on',
+    refresh:'Refresh ⭮',
     'Mon':'Mon,',
     'Tue':'Tue,',
     'Wed':'Wed,',
@@ -327,6 +332,8 @@ lat = '37.42158889770508',
 lon = '-122.08370208740234',
 searchIcon = document.querySelector('#search > img'),
 closeSearch = document.querySelector('#close_search');
+
+
 
 //Settings 
 //Settings are using localStorage, so we store everything there
@@ -445,7 +452,7 @@ function cityName(city){
   }
 
 }
-//getWeather gets forecast for specific coords and turns output into promiise
+//getWeather gets forecast for specific coords and turns output into promise
 async function getWeather(latitude, longitude, language, unit, city){
   const api_url = `weather/${latitude},${longitude}/${language}/${unit}`;
   const options = {
@@ -456,9 +463,30 @@ async function getWeather(latitude, longitude, language, unit, city){
         'X-Requested-With': 'XMLHttpRequest',
     }
   }
-  const response = await fetch(api_url, options);
-  const rdata = await response.json();
-  return [rdata, city];
+  let today=new Date();
+  today=today.getTime();
+  let cached_objects= localStorage.getItem('cached_data');
+  cached_objects = JSON.parse(cached_objects);
+  console.log(cached_objects);
+  if(cached_objects==null || today>cached_objects[0].daily.data[6].time*1000 || city.locality!=cached_objects[1].locality){
+    //после 6-дневного
+    console.log('после 6-дневного');
+    const response = await fetch(api_url, options);
+    const rdata = await response.json();
+    return [rdata, city, 8, 169]; 
+   }else if (today-cached_objects[0].currently.time*1000>28800000){
+     //до 6-дневного после 8-ми часов
+     document.getElementById('updating').classList.toggle('updating_closed');
+     let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
+     let hour_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/3600000);
+    // console.log('до 6-дневного после 8-ми часов');
+     return [cached_objects[0], cached_objects[1], days_counter ,hour_counter];
+   }else if (today-cached_objects[0].currently.time*1000<28800000){
+    let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+2;
+    let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
+    console.log('до 6-дневного до 8-ми часов', days_counter);
+    return [cached_objects[0], cached_objects[1], 7,160];
+  }
 }
 
 window.onscroll = ()=>{
@@ -478,12 +506,12 @@ function loaded(request_data = localStorage){
     if('geolocation' in navigator){
       let lang = request_data.lang,
           units = request_data.units;
-          let input_field = document.getElementById('city_input');
-          let createTools = true;
-          let city_data=[];
-          let city_promise;
+          let input_field = document.getElementById('city_input'),
+           createTools = true,
+           city_data=[],
+           city_promise;
           input_field.setAttribute('placeholder', localization[lang].search_place);
-          
+
         function Focusing(blocks, input){
           var divs = document.getElementsByClassName(blocks),
           selectedDiv = 0,
@@ -648,6 +676,7 @@ function loaded(request_data = localStorage){
           });
         });
       }
+      //loading starts here
       if(localStorage.location == 'off'){
         fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${lang}`).then((response) => {
           return response.json();
@@ -668,10 +697,23 @@ function loaded(request_data = localStorage){
       }
       function wrapper(rdata){
       //rdata is raw data response from the api and promise getWeather
-      let city = rdata[1];
+      localStorage.setItem('cached_data', JSON.stringify(rdata));
+      let city = rdata[1],
+      days_counter= rdata[2],
+      hour_counter=rdata[3];
       rdata = rdata[0];
+      let data_time= convertSeconds(rdata.currently.time+rdata.offset*3600);
+      let data_date = moment(rdata.currently.time*1000);
+      document.getElementsByClassName('updating')[0].innerHTML = `
+      <span>${localization[lang].updated}${data_time}, ${data_date.format('DD[.]MM[.]YYYY')}</span>
+      <span>${localization[lang].refresh}</span>
+      `;
+      document.getElementsByClassName('updating_footer')[0].innerHTML = `
+      <span>${localization[lang].updated}${data_time}, ${data_date.format('DD[.]MM[.]YYYY')}</span>
+      <span>${localization[lang].refresh}</span>
+      `;
+      console.log(document.getElementsByClassName('updating')[0].innerHTML);
       console.log(city, rdata);
-        
           function compass(event){
             var alpha;
             const delta = 225;
@@ -768,68 +810,145 @@ function loaded(request_data = localStorage){
           let water_drop = document.createElement('img');
             water_drop.src = 'https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
             water_drop.className = 'pop_drop';
-    
+
+          function hourSetter(mode, option){
+            let create_hours=true,
+            chart_data = [],
+            max_chart =0,
+            chart_labels = [];
+            if(document.querySelector('.hour')==null){
+              console.log('create');
+              create_hours=true;
+            }else{
+              create_hours=false;
+            }
+            if(mode<1000 && mode!=0){
+              let j = 0;
+              for(let i =mode; i<mode+24;i++){
+                //current data
+                if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                  chart_data[j] = Math.round(rdata.hourly.data[i][option]*100);
+                }else{
+                  chart_data[j] = Math.round(rdata.hourly.data[i][option]);
+                }
+                let pop_icon = water_drop.cloneNode(true);
+                if(create_hours){
+  
+                  document.querySelector("#hours").insertAdjacentHTML('beforeend',`
+                  <div class="hour">
+                    <div class="pop">${Math.round(rdata.hourly.data[i].precipProbability*100)}%</div>
+                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg" alt="${rdata.hourly.data[i].icon}" class="sky">
+                        <div class="temp">${Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp}</div>
+                        <div class="time">${convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600)}</div>
+                  </div>
+                  `);
+                  document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                  j++;
+                }else{
+                  document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
+                  document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
+                  document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg`;
+                  document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
+                  document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                  j++;
+                }
+                chart_labels[j-1] = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
+                //console.log(chart_labels);
+                //max_chart makes chart go higher it's maximum value
+                if(max_chart < chart_data[j-1]){
+                  max_chart = chart_data[j-1];
+                }
+              }
+            }else if (mode==0){
+                  for(let j =0; j<24;j++){
+                    //current (for real)
+                    let pop_icon = water_drop.cloneNode(true);
+                    if(create_hours){
+                      console.log('prependin');
+                      document.querySelector("#hours").insertAdjacentHTML('beforeend',`
+                      <div class="hour">
+                        <div class="pop">${Math.round(rdata.hourly.data[j].precipProbability*100)}%</div>
+                            <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[j].icon}.svg" alt="${rdata.hourly.data[j].icon}" class="sky">
+                            <div class="temp">${Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp}</div>
+                            <div class="time">${convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600)}</div>
+                      </div>
+                      `);
+                      document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                    }else{
+                      document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[j].precipProbability*100) +'%';
+                      document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp;
+                      document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[j].icon}.svg`;
+                      document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600);
+                      document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                    }
+                    if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                    chart_data[j] = Math.round(rdata.hourly.data[j][option]*100);
+                  }else{
+                    chart_data[j] = Math.round(rdata.hourly.data[j][option]);
+                  }
+                  chart_labels[j] = convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600);
+                  if(max_chart < chart_data[j]){
+                    max_chart = chart_data[j];
+                  }
+                  }
+            }
+            else if(mode>1000){
+              mode=mode/1000;
+              for(let i = mode; i<rdata.hourly.data.length;i++){
+                if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
+                  console.log(i, mode);
+                  for(let j =0; j<24;j++){
+                    //hourly for daily
+  
+                    let pop_icon = water_drop.cloneNode(true);
+                    if(create_hours){
+                      console.log('prepending');
+                      document.querySelector("#hours").insertAdjacentHTML('beforeend',`
+                      <div class="hour">
+                        <div class="pop">${Math.round(rdata.hourly.data[i+j].precipProbability*100)}%</div>
+                            <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg" alt="${rdata.hourly.data[i+j].icon}" class="sky">
+                            <div class="temp">${Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp}</div>
+                            <div class="time">${convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600)}</div>
+                      </div>
+                      `);
+                      document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                    }else{
+                      document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
+                      document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
+                      document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
+                      document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
+                      document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                    }
+                    if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                    chart_data[j] = Math.round(rdata.hourly.data[i+j][option]*100);
+                  }else{
+                    chart_data[j] = Math.round(rdata.hourly.data[i+j][option]);
+                  }
+                  chart_labels[j] = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
+                  if(max_chart < chart_data[j]){
+                    max_chart = chart_data[j];
+                  }
+                  }
+                }
+              }
+            }
+            return [chart_data, max_chart, chart_labels];
+          }
           function chart_summon(option, option_color, option_back, axis_l, mode){
             //restart chart
+            
             document.getElementById('myChart').remove();
             let chart_block = document.createElement('canvas');
             chart_block.id = 'myChart';
             document.getElementsByClassName('chart-container')[0].append(chart_block);
 
             console.log('chart was created');
+
             //chart
-          let chart_data = [],
-          max_chart =0,
-          chart_labels = [];
-    
-          if(mode=='' || mode ==0){
-            for(let i =0; i<24;i++){
-              //current data
-              if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
-                chart_data[i] = Math.round(rdata.hourly.data[i][option]*100);
-              }else{
-                chart_data[i] = Math.round(rdata.hourly.data[i][option]);
-              }
-              let pop_icon = water_drop.cloneNode(true);
-              document.querySelectorAll('.hour > .pop' )[i].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
-              document.querySelectorAll('.hour > .pop' )[i].prepend(pop_icon);
-              document.querySelectorAll('.hour > .temp' )[i].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
-              document.querySelectorAll('.hour > .sky' )[i].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg`;
-              document.querySelectorAll('.hour > .time' )[i].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
-              chart_labels[i] = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
-              //max_chart later makes chart go higher than it's maximum value
-              if(max_chart < chart_data[i]){
-                max_chart = chart_data[i];
-              }
-            }
-          }
-          else if(mode != ''){
-            for(let i = 0; i<rdata.hourly.data.length;i++){
-              if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
-                
-                for(let j =0; j<24;j++){
-                  //hourly
-          
-                  let pop_icon = water_drop.cloneNode(true);
-                  document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
-                  document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
-                  document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
-                  document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
-          
-                  document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
-                  if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
-                  chart_data[j] = Math.round(rdata.hourly.data[i+j][option]*100);
-                }else{
-                  chart_data[j] = Math.round(rdata.hourly.data[i+j][option]);
-                }
-                chart_labels[j] = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
-                if(max_chart < chart_data[j]){
-                  max_chart = chart_data[j];
-                }
-                }
-              }
-            }
-          }
+          let hour_ret=hourSetter(mode, option),
+          chart_data = hour_ret[0],
+          max_chart =hour_ret[1],
+          chart_labels = hour_ret[2];
           //coef helps max_chart to fix chart maximum
           let coef =0;
           if(max_chart > 70){
@@ -967,96 +1086,6 @@ function loaded(request_data = localStorage){
                       }
                 }
             });
-            
-        //   Chart.pluginService.register({
-        //     beforeInit: function(chart) {
-        //         // We get the chart data
-        //         var data = chart.config.data;
-        
-        //         // For every dataset ...
-        //         // for (var i = 0; i < data.datasets.length; i++) {
-        
-        //         //     // For every label ...
-        //              for (var j = 0; j < data.labels.length; j++) {
-        
-        //                 // We get the dataset's function and calculate the value
-        //                 var fct = data.datasets[0].function,
-        //                     x = data.labels[j],
-        //                     y = fct(x);
-        //                 // Then we add the value to the dataset data
-        //                 data.datasets[0].data.push(y);
-        //              }
-                
-        //     }
-        // });
-        //   let ctx_sun = document.getElementById('Sun_graph').getContext('2d');
-        //   var myData = [];
-        //     for(var j = 0; j < 55; j++) {
-        //         myData.push(j*Math.PI/54);
-        //     } 
-        //   let sun_chart = new Chart(ctx_sun, {
-        //     type: 'line',
-        //     data: {
-        //       labels: myData,
-        //       datasets: [
-        //       {
-        //           function: function(x) { return 2*Math.sin(x)/5 },
-        //           data: [],
-        //           borderColor: "rgba(153, 102, 255, 1)",
-        //           fill: true,
-        //           order:2
-        //       },
-        //     {
-        //       labels: myData,
-        //       type: "scatter",
-        //       data: [{
-        //         x: 3*Math.PI/54,
-        //         y: 2*Math.sin(3*Math.PI/54)/5
-        //         }],
-        //         borderColor: "rgba(255, 238, 0, 1)",
-        //       //pointStyle:'star',
-        //       borderWidth:15,
-        //       fill: true,
-        //       order:1
-        //     }]
-        //   },
-        //     options: {
-        //       legend: {
-        //         display: false,
-        //     },
-        //       showAllTooltips: false,
-        //       tooltips:{
-        //         enabled:false,
-                  
-
-                
-        //       },
-              
-        //         scales: {
-        //             yAxes: [{
-        //               display:false,
-                            
-        //                     gridLines: { color: "rgba(255, 255, 255, 0)",
-        //                   zeroLineColor: 'rgba(255, 255, 255, 0.25)' },
-          
-        //                 ticks: {
-        //                     beginAtZero: true,
-        //                     max:1
-        //                 }
-        //             }],xAxes:[{
-        //               gridLines: { color: "rgba(255, 255, 255, 0)",
-        //               zeroLineColor: 'rgba(255, 255, 255, 0)' },
-        //               ticks: {
-        //                 //display: false,
-        //                 maxTicksLimit:1,
-        //                 stepSize:Math.PI
-        //                  //this will remove only the label
-        //             }
-        //             }]
-        //         }
-        //     }
-        // });
-
           }
           //plugin that lets keep all tooltips always shown
           Chart.pluginService.register({
@@ -1226,7 +1255,12 @@ function loaded(request_data = localStorage){
                
             //current function delivers rdata to every block that needs it
             
-            let current = function current(){
+            function current(i){
+              console.log(i);
+              let option= rdata.currently;
+              if(i>0){
+                option=rdata.hourly.data[i];
+              }
               if(window.matchMedia('(max-width: 700px)').matches && window.matchMedia('(max-width: 550px)').matches == false ){
                 document.getElementById('details').style.marginTop = '-40px';
                 document.getElementById('other').style.marginTop = '-40px';
@@ -1234,19 +1268,19 @@ function loaded(request_data = localStorage){
                 document.getElementById('other').style.marginTop = '0';
                 document.getElementById('details').style.marginTop = '0';
               }
-
-              videoBack(rdata.currently.icon);
+              
+              videoBack(option.icon, option.temperature);
               let icon = document.createElement('img');
-              icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.currently.icon}.svg`;
-              icon.alt='';
+              icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${option.icon}.svg`;
+              icon.alt=option.icon;
               icon.className='icon';
               let curr_icon = document.createElement('img');
               curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
               curr_icon.alt ='';
               curr_icon.className = 'curr_icon';
-              document.querySelector('.temp_val').innerHTML = Math.round(rdata.currently.temperature) + localization[lang].units[units].temp;
-              document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(rdata.currently.apparentTemperature) +localization[lang].units[units].temp ;
-              document.querySelector('.condition').innerHTML = rdata.currently.summary;
+              document.querySelector('.temp_val').innerHTML = Math.round(option.temperature) + localization[lang].units[units].temp;
+              document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(option.apparentTemperature) +localization[lang].units[units].temp ;
+              document.querySelector('.condition').innerHTML = option.summary;
               document.querySelector('.condition').prepend(icon);
       
               document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.hourly.data[0].precipProbability*100) + '%';
@@ -1254,12 +1288,12 @@ function loaded(request_data = localStorage){
       
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/uv.svg';
-              document.querySelector('.uv').innerHTML =localization[lang].uvint +  rdata.currently.uvIndex;
+              document.querySelector('.uv').innerHTML =localization[lang].uvint +  option.uvIndex;
               document.querySelector('.uv').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/coverage.svg';
-              document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(rdata.currently.cloudCover*100) + '%';
+              document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(option.cloudCover*100) + '%';
               document.querySelector('.clouds').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
@@ -1267,7 +1301,7 @@ function loaded(request_data = localStorage){
               document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
               document.querySelector('.wind_text > h3').prepend(curr_icon);
       
-              document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.currently.windSpeed, lang, units) + getCardinalDirection(rdata.currently.windBearing, localization[lang].directions) + ', ' + rdata.currently.windSpeed +' '+ localization[lang].units[units].wind_units;
+              document.querySelector('.wind_speed').innerHTML = windIntensity(option.windSpeed, lang, units) + getCardinalDirection(option.windBearing, localization[lang].directions) + ', ' + option.windSpeed +' '+ localization[lang].units[units].wind_units;
               wind_arrow('currently');
       
               
@@ -1292,17 +1326,17 @@ function loaded(request_data = localStorage){
       
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/pressure.svg';
-              document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.currently.pressure + localization[lang].units[units].pres_units;
+              document.querySelector('#pres').innerHTML =localization[lang].pres + option.pressure + localization[lang].units[units].pres_units;
               document.querySelector('#pres').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/humidity.svg';
-              document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(rdata.currently.humidity*100) + '%';  
+              document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(option.humidity*100) + '%';  
               document.querySelector('#hum').prepend(curr_icon);
       
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/dewpoint.svg';
-              document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.currently.dewPoint) + localization[lang].units[units].temp;
+              document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(option.dewPoint) + localization[lang].units[units].temp;
               document.querySelector('#dew').prepend(curr_icon);
               let label_arr = document.querySelectorAll('#slidemenu > label > span');
               //labels for slidemenu
@@ -1318,10 +1352,10 @@ function loaded(request_data = localStorage){
                 document.getElementsByClassName('backto')[0].remove();
               }
               
-              radio_events('');
-              chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, '');
+              radio_events(i);
+              chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, i);
               document.getElementById('days-fake').checked = true;
-              }
+            }
 
               //when current function ended it's work, we remove loading window
               if(load_text[0] != undefined){
@@ -1337,34 +1371,78 @@ function loaded(request_data = localStorage){
                 firstInstance();
               }
             }
-            
-            current();
+            current(169-hour_counter);
             //daily forecast
-            
-            for(let i = 0;i<8;i++){
-                let pop_icon = water_drop.cloneNode(true);
-            document.querySelectorAll('.day > .pop' )[i].innerHTML = Math.round(rdata.daily.data[i].precipProbability*100) +'%';
-            document.querySelectorAll('.day > .pop' )[i].prepend(pop_icon);
-            document.querySelectorAll('.day > .sky')[i].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
-            document.querySelectorAll('.day > .temp')[i].innerHTML = `<div class="temp_max">${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div><div class="temp_min">${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>`;
-            //date
-            
-            let date = moment(rdata.daily.data[i].time*1000);
-            if(document.getElementsByClassName('weekday')[i] != null){
-              document.getElementsByClassName('weekday')[i].remove();
+            let create_days=true;
+            if(8-days_counter==0 && document.querySelector('.day')!=null){
+              create_days=false;
+            }else{
+              create_days=true;
             }
-            document.querySelectorAll('.day > .date')[i].innerHTML = localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date);
+            for(let i=8-days_counter;i<8;i++){
+              let date = moment(rdata.daily.data[i].time*1000);
+              if(create_days){
+                if(i!=7){
+                  document.querySelector('#days').insertAdjacentHTML('beforeend', `
+                <input type="radio" name="days-radio" id="days-${i+1}" class="days_radio">
+                <label for="days-${i+1}" class="day">
+                        <div class="pop">
+                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
+                        </div>
+                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg" alt="${rdata.daily.data[i].icon}" class="sky">
+                        <div class="temp">
+                          <div class="temp_max">
+                            ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
+                          <div class="temp_min">
+                            ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
+                        </div>
+                        <div class="date">${localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date)}</div>
+                </label>`);
+                }else{
+                  document.querySelector('#days').insertAdjacentHTML('beforeend', `
+                  <div class="day">
+                    <div class="pop">
+                    <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
+                    </div>
+                    <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg" alt="${rdata.daily.data[i].icon}" class="sky">
+                    <div class="temp">
+                      <div class="temp_max">
+                        ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
+                      <div class="temp_min">
+                        ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
+                    </div>
+                    <div class="date">${localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date)}</div>
+                  </div>`);
+                }
+              }else{
+                if(i==7){
+                  break;
+                }
+                document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
+                document.querySelectorAll('.day > .sky')[i].src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
+                document.querySelectorAll('.day > .sky')[i].alt = rdata.daily.data[i].icon;
+                document.querySelectorAll('.day > .temp')[i].innerHTML=`
+                <div class="temp_max">
+                  ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
+                <div class="temp_min">
+                  ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
+                `;
+                document.querySelectorAll('.date')[i].innerHTML=localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date);
+
+              }
+              
+              if(document.getElementsByClassName('weekday')[i] != null){
+                document.getElementsByClassName('weekday')[i].remove();
+              }
             }
-            
-            
-            // forecast with hours and graphs on click on the day
-            let days = document.getElementsByClassName('day');
             //onclick backto we go to the current weather
             function backToCurrent(){
               let backto =document.createElement('div');
               backto.className='backto';
               backto.innerHTML = localization[lang].curr;
-              backto.onclick = current;
+              backto.onclick=()=>{
+                current(169-hour_counter);
+              } 
               if(window.matchMedia('(max-width: 550px)').matches){
                 document.getElementsByClassName('day')[0].before(backto);
               }else{
@@ -1373,20 +1451,17 @@ function loaded(request_data = localStorage){
                 document.getElementById('details').style.marginTop = '0'
               }
             }
-    
-            for(let i = 0;i<days.length-1;i++){
-              days[i].addEventListener('click', ()=>{
-                videoBack(rdata.daily.data[i].icon);
-    
+            function daysSetter(day_number){
+              videoBack(rdata.daily.data[day_number].icon, rdata.daily.data[day_number].temperatureMax);
               document.getElementById('slide-item-1').checked = 'checked';
                 let icon = document.createElement('img');
-                icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
+                icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[day_number].icon}.svg`;
                 icon.alt='';
                 icon.className='icon';
-                document.querySelector('.temp_val').innerHTML = Math.round(rdata.daily.data[i].temperatureMax) +localization[lang].units[units].temp ;
+                document.querySelector('.temp_val').innerHTML = Math.round(rdata.daily.data[day_number].temperatureMax) +localization[lang].units[units].temp ;
             
-                document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +' ' + Math.round(rdata.daily.data[i].apparentTemperatureMax) +localization[lang].units[units].temp ;
-                document.querySelector('.condition').innerHTML = rdata.daily.data[i].summary;
+                document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +' ' + Math.round(rdata.daily.data[day_number].apparentTemperatureMax) +localization[lang].units[units].temp ;
+                document.querySelector('.condition').innerHTML = rdata.daily.data[day_number].summary;
                 document.querySelector('.condition').prepend(icon);
                 
                 let curr_icon = document.createElement('img');
@@ -1406,35 +1481,32 @@ function loaded(request_data = localStorage){
                   }
                 };
     
-                
-                //padding: 0 25px 25px;
-    
-                document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.daily.data[i].precipProbability*100) + '%';
+                document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.daily.data[day_number].precipProbability*100) + '%';
                 document.querySelector('.propability').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/uv.svg';
-                document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[i].uvIndex;
+                document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[day_number].uvIndex;
                 document.querySelector('.uv').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/coverage.svg';
-                document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[i].cloudCover*100) + '%';
+                document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[day_number].cloudCover*100) + '%';
                 document.querySelector('.clouds').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/wind.svg';
                 document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
                 document.querySelector('.wind_text > h3').prepend(curr_icon);
-                document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[i].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[i].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[i].windSpeed +' '+ localization[lang].units[units].wind_units;
-                wind_arrow(`daily`, i);
+                document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[day_number].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[day_number].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[day_number].windSpeed +' '+ localization[lang].units[units].wind_units;
+                wind_arrow(`daily`, day_number);
 
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
                 if(rdata.daily.data[0].sunriseTime === undefined){
                   document.querySelector('#sunr').innerHTML = localization[lang].undefined;
                 }else{
-                  document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[i].sunriseTime +rdata.offset*3600);
+                  document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[day_number].sunriseTime +rdata.offset*3600);
                 }
                 document.querySelector('#sunr').prepend(curr_icon);
 
@@ -1443,29 +1515,44 @@ function loaded(request_data = localStorage){
                 if(rdata.daily.data[0].sunsetTime === undefined){
                   document.querySelector('#suns').innerHTML = localization[lang].undefined;
                 }else{
-                  document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[i].sunsetTime +rdata.offset*3600);
+                  document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[day_number].sunsetTime +rdata.offset*3600);
                 }
                 document.querySelector('#suns').prepend(curr_icon);
     
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/pressure.svg';
-                document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[i].pressure + localization[lang].units[units].pres_units;
+                document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[day_number].pressure + localization[lang].units[units].pres_units;
                 document.querySelector('#pres').prepend(curr_icon);
                 
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/humidity.svg';
-                document.querySelector('#hum').innerHTML =localization[lang].hum+ ': ' + Math.round(rdata.daily.data[i].humidity*100) + '%';
+                document.querySelector('#hum').innerHTML =localization[lang].hum+ ': ' + Math.round(rdata.daily.data[day_number].humidity*100) + '%';
                 document.querySelector('#hum').prepend(curr_icon);
                 
                 curr_icon = curr_icon.cloneNode(true);
                 curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/dewpoint.svg';
-                document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[i].dewPoint) + localization[lang].units[units].temp;
+                document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[day_number].dewPoint) + localization[lang].units[units].temp;
                 document.querySelector('#dew').prepend(curr_icon);
-    
-                radio_events(i);
-                chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, i);
-                  
-              }); 
+                console.log('to graphs: ',day_number*1000);
+                
+                radio_events(day_number);
+                chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, day_number*1000);
+
+            }
+            // forecast with hours and graphs on click on the day
+            let days = document.getElementsByClassName('day');
+            console.log(days_counter);
+            let day_numberi=8-days_counter;
+            // if(8-days_counter==0){
+            //   days_counter++;
+            // }
+            for(let j=0;j<days.length-1;j++){
+              
+              
+              
+              days[j].addEventListener('click',()=>{
+                daysSetter(8-days_counter+j);}
+              ); 
             }
       }    
     }else{
@@ -1479,3 +1566,12 @@ document.getElementById('location').onclick = ()=>{
   localStorage.location = 'on';
   loaded(localStorage);
 };
+document.getElementsByClassName('updating')[0].onclick=()=>{
+  localStorage.removeItem('cached_data');
+  loaded(localStorage);
+  document.getElementsByClass('updating')[0].classList.toggle('updating_closed');
+}
+document.getElementsByClassName('updating_footer')[0].onclick=()=>{
+  localStorage.removeItem('cached_data');
+  loaded(localStorage);
+}

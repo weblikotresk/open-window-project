@@ -795,11 +795,39 @@ label.day:hover{
     color: rgb(229, 229, 229);
     font-size: 1.15rem;
 }
+.updating{
+    font-family: 'Rubik', sans-serif;
+    width: 100%;
+    text-align: center;
+    position: fixed;
+    background-color: rgb(0, 200, 255);
+    padding: 10px 0;
+    z-index: 10;
+    color: white;
+    transition: .3s all ease;
+}
+.updating> span{
+    display: block;
+    margin: 0 auto;
+}
+.updating_footer{
+    margin-bottom: 10px;
+}
+.updating_footer>span{
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+.updating_closed{
+    opacity: 0;
+    top: -50%;
+    z-index: -20;
+}
 .scrollArrow{
     background-color: #fff;
     position: absolute;
     top: 50%;
-    z-index: 1000;
+    z-index: 10;
 }
 .days_radio{
     display: none;
