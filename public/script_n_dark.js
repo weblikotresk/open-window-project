@@ -466,9 +466,7 @@ function isCache(){
 }
 //getWeather gets forecast for specific coords and turns output into promise
 async function getWeather(latitude, longitude, language, unit, city){
-  let cache_result = isCache();
-  let cached_objects = cache_result[2], today = cache_result[1];
-  console.log(cache_result[2]);
+  let cache_result = isCache(), cached_objects = cache_result[2], today = cache_result[1];
   const api_url = `weather/${latitude},${longitude}/${language}/${unit}`;
   const options = {
     method: "GET",
@@ -520,7 +518,8 @@ function loaded(request_data = localStorage){
            createTools = true,
            city_data=[],
            city_promise;
-          input_field.setAttribute('placeholder', localization[lang].search_place);
+          input_field.setAttribute('placeholder', localization[lang].search_place),
+          cache_results=isCache();
 
         function Focusing(blocks, input){
           var divs = document.getElementsByClassName(blocks),
@@ -698,9 +697,9 @@ function loaded(request_data = localStorage){
           wrapper(result);
         });
         })
-      }else if(isCache[0]){
-        let cached_objects=isCache[2];
-          if (isCache[1]-cached_objects[0].currently.time*1000>28800000){
+      }else if(cache_results[0]){
+        let cached_objects=cache_results[2], today = cache_results[1];
+          if (today-cached_objects[0].currently.time*1000>28800000){
             //до 6-дневного после 8-ми часов
             document.getElementById('updating').classList.toggle('updating_closed');
             let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
@@ -1588,7 +1587,7 @@ function loaded(request_data = localStorage){
       load_text[1].innerHTML = localization['en'].geo_error;
     }
 }
-  window.onload = loaded();
+window.onload = loaded();
 
 
 document.getElementById('location').onclick = ()=>{
