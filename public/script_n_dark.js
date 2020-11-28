@@ -1592,6 +1592,7 @@ window.onload = loaded();
 
 
 document.getElementById('location').onclick = ()=>{
+  localStorage.removeItem('cached_data');
   localStorage.location = 'on';
   loaded(localStorage);
 };
