@@ -517,9 +517,10 @@ function loaded(request_data = localStorage){
           let input_field = document.getElementById('city_input'),
            createTools = true,
            city_data=[],
-           city_promise;
-          input_field.setAttribute('placeholder', localization[lang].search_place),
-          cache_results=isCache();
+           city_promise,
+           cache_results=isCache();
+          input_field.setAttribute('placeholder', localization[lang].search_place);
+          
 
         function Focusing(blocks, input){
           var divs = document.getElementsByClassName(blocks),
