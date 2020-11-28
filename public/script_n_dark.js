@@ -452,8 +452,23 @@ function cityName(city){
   }
 
 }
+function isCache(){
+  let today=new Date();
+  today=today.getTime();
+  let cached_objects= localStorage.getItem('cached_data');
+  cached_objects = JSON.parse(cached_objects);
+  console.log(cached_objects);
+  if(cached_objects==null || today>cached_objects[0].daily.data[6].time*1000){
+    return [false];
+  }else{
+    return [true, today, cached_objects];
+  }
+}
 //getWeather gets forecast for specific coords and turns output into promise
 async function getWeather(latitude, longitude, language, unit, city){
+  let cache_result = isCache();
+  let cached_objects = cache_result[2], today = cache_result[1];
+  console.log(cache_result[2]);
   const api_url = `weather/${latitude},${longitude}/${language}/${unit}`;
   const options = {
     method: "GET",
@@ -463,12 +478,7 @@ async function getWeather(latitude, longitude, language, unit, city){
         'X-Requested-With': 'XMLHttpRequest',
     }
   }
-  let today=new Date();
-  today=today.getTime();
-  let cached_objects= localStorage.getItem('cached_data');
-  cached_objects = JSON.parse(cached_objects);
-  console.log(cached_objects);
-  if(cached_objects==null || today>cached_objects[0].daily.data[6].time*1000 || city.locality!=cached_objects[1].locality){
+  if(cache_result[0]==false || city.locality!=cached_objects[1].locality){
     //после 6-дневного
     console.log('после 6-дневного');
     const response = await fetch(api_url, options);
@@ -485,7 +495,7 @@ async function getWeather(latitude, longitude, language, unit, city){
     let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+2;
     let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
     console.log('до 6-дневного до 8-ми часов', days_counter);
-    return [cached_objects[0], cached_objects[1], 7,160];
+    return [cached_objects[0], cached_objects[1],days_counter,hour_counter];
   }
 }
 
@@ -688,6 +698,23 @@ function loaded(request_data = localStorage){
           wrapper(result);
         });
         })
+      }else if(isCache[0]){
+        let cached_objects=isCache[2];
+          if (isCache[1]-cached_objects[0].currently.time*1000>28800000){
+            //до 6-дневного после 8-ми часов
+            document.getElementById('updating').classList.toggle('updating_closed');
+            let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
+            let hour_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/3600000);
+           // console.log('до 6-дневного после 8-ми часов');
+           cityName(cached_objects[1]);
+           wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
+          }else{
+           let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+2;
+           let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
+           console.log('до 6-дневного до 8-ми часов', days_counter);
+           cityName(cached_objects[1]);
+           wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
+         }
       }else{
         promise = getPreciseLocation().then(result =>getWeather(result[0], result[1], result[2],result[3], result[4]));
         promise.then(data_set=>{
@@ -1561,7 +1588,9 @@ function loaded(request_data = localStorage){
       load_text[1].innerHTML = localization['en'].geo_error;
     }
 }
-window.onload = loaded();
+  window.onload = loaded();
+
+
 document.getElementById('location').onclick = ()=>{
   localStorage.location = 'on';
   loaded(localStorage);
