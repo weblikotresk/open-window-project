@@ -487,10 +487,10 @@ async function getWeather(latitude, longitude, language, unit, city){
      document.getElementById('updating').classList.toggle('updating_closed');
      let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
      let hour_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/3600000);
-    // console.log('до 6-дневного после 8-ми часов');
+     console.log('до 6-дневного после 8-ми часов', hour_counter);
      return [cached_objects[0], cached_objects[1], days_counter ,hour_counter];
    }else if (today-cached_objects[0].currently.time*1000<28800000){
-    let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+2;
+    let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
     let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
     console.log('до 6-дневного до 8-ми часов', days_counter);
     return [cached_objects[0], cached_objects[1],days_counter,hour_counter];
@@ -702,10 +702,10 @@ function loaded(request_data = localStorage){
         let cached_objects=cache_results[2], today = cache_results[1];
           if (today-cached_objects[0].currently.time*1000>28800000){
             //до 6-дневного после 8-ми часов
-            document.getElementById('updating').classList.toggle('updating_closed');
+            document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
             let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
-            let hour_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/3600000);
-           // console.log('до 6-дневного после 8-ми часов');
+            let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
+            console.log('до 6-дневного после 8-ми часов', hour_counter);
            cityName(cached_objects[1]);
            wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
           }else{
@@ -919,7 +919,7 @@ function loaded(request_data = localStorage){
                   }
                   }
             }
-            else if(mode>1000){
+            else if(mode>=1000){
               mode=mode/1000;
               for(let i = mode; i<rdata.hourly.data.length;i++){
                 if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
@@ -1407,6 +1407,7 @@ function loaded(request_data = localStorage){
               create_days=true;
             }
             for(let i=8-days_counter;i<8;i++){
+              console.log(i);
               let date = moment(rdata.daily.data[i].time*1000);
               if(create_days){
                 if(i!=7){
@@ -1599,9 +1600,12 @@ document.getElementById('location').onclick = ()=>{
 document.getElementsByClassName('updating')[0].onclick=()=>{
   localStorage.removeItem('cached_data');
   loaded(localStorage);
-  document.getElementsByClass('updating')[0].classList.toggle('updating_closed');
+  document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
 }
 document.getElementsByClassName('updating_footer')[0].onclick=()=>{
   localStorage.removeItem('cached_data');
   loaded(localStorage);
+  if( document.getElementsByClassName('updating')[0].classList.contains('updating_closed')==false){
+    document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
+  }
 }
