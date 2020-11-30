@@ -369,7 +369,7 @@ input[type='radio']{
     font-family: 'Rubik', sans-serif;
 }
 .tippy-box[data-theme~='normal'][data-placement^='top'] > .tippy-arrow::before {
-    border-top-color: rgb(0, 204, 255);
+    border-top-color: #00ccff;
 
 }
 .tippy-box[data-theme~='normal'][data-placement^='bottom'] > .tippy-arrow::before {

@@ -7,7 +7,15 @@ require('dotenv').config()
 
 app.use(compression());
 app.listen(process.env.PORT || 5000);
-
+// app.use (function (req, res, next) {
+//   if (req.secure) {
+//           // request was via https, so do no special handling
+//           next();
+//   } else {
+//           // request was via http, so redirect to https
+//           res.redirect('https://' + req.headers.host + req.url);
+//   }
+// });
 app.use(express.static('public', {
     etag: true, // Just being explicit about the default.
     lastModified: true,  // Just being explicit about the default.

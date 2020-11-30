@@ -510,88 +510,139 @@ function loaded(request_data = localStorage){
   if(localStorage != request_data){
     request_data = localStorage;
   }
+  //service worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').then(function(registration) {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
+  if('geolocation' in navigator){
+    let lang = request_data.lang,
+        units = request_data.units;
+        let input_field = document.getElementById('city_input'),
+          createTools = true,
+          city_data=[],
+          city_promise,
+          cache_results=isCache();
+        input_field.setAttribute('placeholder', localization[lang].search_place);
+        
 
-    if('geolocation' in navigator){
-      let lang = request_data.lang,
-          units = request_data.units;
-          let input_field = document.getElementById('city_input'),
-           createTools = true,
-           city_data=[],
-           city_promise,
-           cache_results=isCache();
-          input_field.setAttribute('placeholder', localization[lang].search_place);
-          
-
-        function Focusing(blocks, input){
-          var divs = document.getElementsByClassName(blocks),
-          selectedDiv = 0,
-          i;
-    
-          for(i = 0; i < divs.length; i++){
-            divs[i].onmouseover = (function(i){
-              return function(){
-                divs[selectedDiv].style.backgroundColor = '';
-                selectedDiv = i;
-                divs[selectedDiv].style.backgroundColor = '#68F';
-              }
-            })(i);
-          }
-    
-          divs[selectedDiv].style.backgroundColor = '#68F';
-          
-          document.getElementById(input).onkeydown = function(e){
-            var x = 0;
-            if(e.key == "ArrowUp")
-                x = -1;
-            else if(e.key == "ArrowDown")
-                x = 1;
-              else if(e.key == "Enter"){
-                divs[selectedDiv].click();
-                document.getElementById(input).focus();
-              } 
-            else
-              return;
-            divs[selectedDiv].style.backgroundColor = '';
-            selectedDiv = ((selectedDiv+x)%divs.length);
-            selectedDiv = selectedDiv < 0 ? 
-              divs.length+selectedDiv : selectedDiv;
-            divs[selectedDiv].style.backgroundColor = '#68F'; 
-          };
-    
+      function Focusing(blocks, input){
+        var divs = document.getElementsByClassName(blocks),
+        selectedDiv = 0,
+        i;
+  
+        for(i = 0; i < divs.length; i++){
+          divs[i].onmouseover = (function(i){
+            return function(){
+              divs[selectedDiv].style.backgroundColor = '';
+              selectedDiv = i;
+              divs[selectedDiv].style.backgroundColor = '#68F';
+            }
+          })(i);
         }
-        function Cities(){
-            fetch(`https://api.teleport.org/api/cities/?search=${input_field.value}&limit=8`)
-            .then((response)=>{
-              return response.json();
-            })
-            .then((data)=>{
-              if(data.count == 0 || input_field.value==' '){
-                let items = document.querySelectorAll('.auto_item');
+  
+        divs[selectedDiv].style.backgroundColor = '#68F';
+        
+        document.getElementById(input).onkeydown = function(e){
+          var x = 0;
+          if(e.key == "ArrowUp")
+              x = -1;
+          else if(e.key == "ArrowDown")
+              x = 1;
+            else if(e.key == "Enter"){
+              divs[selectedDiv].click();
+              document.getElementById(input).focus();
+            } 
+          else
+            return;
+          divs[selectedDiv].style.backgroundColor = '';
+          selectedDiv = ((selectedDiv+x)%divs.length);
+          selectedDiv = selectedDiv < 0 ? 
+            divs.length+selectedDiv : selectedDiv;
+          divs[selectedDiv].style.backgroundColor = '#68F'; 
+        };
+  
+      }
+      function Cities(){
+          fetch(`https://api.teleport.org/api/cities/?search=${input_field.value}&limit=8`)
+          .then((response)=>{
+            return response.json();
+          })
+          .then((data)=>{
+            if(data.count == 0 || input_field.value==' '){
+              let items = document.querySelectorAll('.auto_item');
+              let auto_wrapper = document.createElement('div');
+                auto_wrapper.className = 'auto_wrapper';
+                document.getElementsByClassName('search_window')[0].append(auto_wrapper);
+                for(let j=0;j<items.length;j++){
+                  items[j].remove();
+                }
+                if(document.querySelector('.not_found') != undefined){
+                  document.querySelector('.not_found').remove();
+                }
+                city_data=[];
+                let auto_item = document.createElement('span');
+                auto_item.className = 'not_found';
+                auto_item.innerHTML = localization[lang].not_found;
+                document.querySelector('.auto_wrapper').append(auto_item);
+            }
+            else{
+              if(createTools && input_field.value!=' ' && input_field.value !=''){
+                if(document.querySelector('.not_found') != undefined){
+                  document.querySelector('.not_found').remove();
+                }
                 let auto_wrapper = document.createElement('div');
-                  auto_wrapper.className = 'auto_wrapper';
-                  document.getElementsByClassName('search_window')[0].append(auto_wrapper);
+                auto_wrapper.className = 'auto_wrapper';
+                document.getElementsByClassName('search_window')[0].append(auto_wrapper);
+                createTools=false;
+                
+                for(let i = 0;i<data._embedded['city:search-results'].length;i++){
+                  city_data[i] = data._embedded['city:search-results'][i].matching_full_name;
+                  document.querySelector('.auto_wrapper').insertAdjacentHTML('beforeend',`
+                  <input type='radio' name='search_res' id='search_${i}'>
+                  <label for='search_${i}'><span class='auto_item'>${city_data[i]}</span></label>`);
+                  let search_res = document.getElementById(`search_${i}`);
+                  search_res.onclick =()=>{ 
+
+                    fetch(data._embedded['city:search-results'][i]._links["city:item"].href).then((response)=>{
+                      return response.json();
+                    }).then((data)=>{
+                      fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${data.location.latlon.latitude}&longitude=${data.location.latlon.longitude}&localityLanguage=${lang}`).then((response) => {
+                          return response.json();
+                        })
+                        .then((city) => {
+                          city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
+                          city_promise.then(data_set=>{
+                            console.log(data_set);
+                            document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
+                            setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
+                            return false;}, 550);
+                            wrapper(data_set);
+                            cityName(data_set[1]);
+                          });
+                        });
+                      
+                      console.log(data.location.latlon)
+                    })}
+                  }
+                Focusing('auto_item', 'city_input');
+              }
+              else if(input_field.value !='' && input_field.value!=' '){
+                if(document.querySelector('.not_found') != undefined){
+                  document.querySelector('.not_found').remove();
+                }
+                  let items = document.querySelectorAll('.auto_item');
                   for(let j=0;j<items.length;j++){
                     items[j].remove();
                   }
-                  if(document.querySelector('.not_found') != undefined){
-                    document.querySelector('.not_found').remove();
-                  }
                   city_data=[];
-                  let auto_item = document.createElement('span');
-                  auto_item.className = 'not_found';
-                  auto_item.innerHTML = localization[lang].not_found;
-                  document.querySelector('.auto_wrapper').append(auto_item);
-              }
-              else{
-                if(createTools && input_field.value!=' ' && input_field.value !=''){
-                  if(document.querySelector('.not_found') != undefined){
-                    document.querySelector('.not_found').remove();
-                  }
-                  let auto_wrapper = document.createElement('div');
-                  auto_wrapper.className = 'auto_wrapper';
-                  document.getElementsByClassName('search_window')[0].append(auto_wrapper);
-                  createTools=false;
-                  
                   for(let i = 0;i<data._embedded['city:search-results'].length;i++){
                     city_data[i] = data._embedded['city:search-results'][i].matching_full_name;
                     document.querySelector('.auto_wrapper').insertAdjacentHTML('beforeend',`
@@ -599,7 +650,6 @@ function loaded(request_data = localStorage){
                     <label for='search_${i}'><span class='auto_item'>${city_data[i]}</span></label>`);
                     let search_res = document.getElementById(`search_${i}`);
                     search_res.onclick =()=>{ 
-
                       fetch(data._embedded['city:search-results'][i]._links["city:item"].href).then((response)=>{
                         return response.json();
                       }).then((data)=>{
@@ -609,10 +659,10 @@ function loaded(request_data = localStorage){
                           .then((city) => {
                             city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
                             city_promise.then(data_set=>{
-                              console.log(data_set);
                               document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
-                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
-                              return false;}, 550);
+                            setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
+                            return false;}, 550);
+                              console.log(data_set);
                               wrapper(data_set);
                               cityName(data_set[1]);
                             });
@@ -623,971 +673,932 @@ function loaded(request_data = localStorage){
                     }
                   Focusing('auto_item', 'city_input');
                 }
-                else if(input_field.value !='' && input_field.value!=' '){
-                  if(document.querySelector('.not_found') != undefined){
-                    document.querySelector('.not_found').remove();
-                  }
-                    let items = document.querySelectorAll('.auto_item');
-                    for(let j=0;j<items.length;j++){
-                      items[j].remove();
-                    }
-                    city_data=[];
-                    for(let i = 0;i<data._embedded['city:search-results'].length;i++){
-                      city_data[i] = data._embedded['city:search-results'][i].matching_full_name;
-                      document.querySelector('.auto_wrapper').insertAdjacentHTML('beforeend',`
-                      <input type='radio' name='search_res' id='search_${i}'>
-                      <label for='search_${i}'><span class='auto_item'>${city_data[i]}</span></label>`);
-                      let search_res = document.getElementById(`search_${i}`);
-                      search_res.onclick =()=>{ 
-                        fetch(data._embedded['city:search-results'][i]._links["city:item"].href).then((response)=>{
-                          return response.json();
-                        }).then((data)=>{
-                          fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${data.location.latlon.latitude}&longitude=${data.location.latlon.longitude}&localityLanguage=${lang}`).then((response) => {
-                              return response.json();
-                            })
-                            .then((city) => {
-                              city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
-                              city_promise.then(data_set=>{
-                                document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
-                              setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
-                              return false;}, 550);
-                                console.log(data_set);
-                                wrapper(data_set);
-                                cityName(data_set[1]);
-                              });
-                            });
-                          
-                          console.log(data.location.latlon)
-                        })}
-                      }
-                    Focusing('auto_item', 'city_input');
-                 }
-                else{
-                  if(document.querySelector('.auto_wrapper')!=undefined){
-                    document.querySelector('.auto_wrapper').remove();
-                  }
-                  createTools = true;
+              else{
+                if(document.querySelector('.auto_wrapper')!=undefined){
+                  document.querySelector('.auto_wrapper').remove();
                 }
+                createTools = true;
               }
-            });
+            }
+          });
+      }
+      input_field.oninput= Cities;
+    function getPreciseLocation() {
+      return new Promise(function (resolve, reject) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          let return_data;
+          fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=${lang}`).then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            return_data = data;
+            resolve([position.coords.latitude, position.coords.longitude, lang, units, return_data]);
+          });
+        });
+      });
+    }
+    //loading starts here
+    if(localStorage.location == 'off'){
+      fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${lang}`).then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+      promise = getWeather(lat, lon, lang, units,data);
+      promise.then(result=>{
+        cityName(result[1]);
+        wrapper(result);
+      });
+      })
+    }else if(cache_results[0]){
+      let cached_objects=cache_results[2], today = cache_results[1];
+        if (today-cached_objects[0].currently.time*1000>28800000){
+          //до 6-дневного после 8-ми часов
+          document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
+          let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
+          let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
+          console.log('до 6-дневного после 8-ми часов', hour_counter);
+          cityName(cached_objects[1]);
+          wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
+        }else{
+          let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+2;
+          let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
+          console.log('до 6-дневного до 8-ми часов', days_counter);
+          cityName(cached_objects[1]);
+          wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
         }
-        input_field.oninput= Cities;
-      function getPreciseLocation() {
-        return new Promise(function (resolve, reject) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            let return_data;
-            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=${lang}`).then((response) => {
-              return response.json();
-            })
-            .then((data) => {
-              return_data = data;
-              resolve([position.coords.latitude, position.coords.longitude, lang, units, return_data]);
-            });
-          });
-        });
-      }
-      //loading starts here
-      if(localStorage.location == 'off'){
-        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${lang}`).then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-        promise = getWeather(lat, lon, lang, units,data);
-        promise.then(result=>{
-          cityName(result[1]);
-          wrapper(result);
-        });
-        })
-      }else if(cache_results[0]){
-        let cached_objects=cache_results[2], today = cache_results[1];
-          if (today-cached_objects[0].currently.time*1000>28800000){
-            //до 6-дневного после 8-ми часов
-            document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
-            let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
-            let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
-            console.log('до 6-дневного после 8-ми часов', hour_counter);
-           cityName(cached_objects[1]);
-           wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
+    }else{
+      promise = getPreciseLocation().then(result =>getWeather(result[0], result[1], result[2],result[3], result[4]));
+      promise.then(data_set=>{
+        cityName(data_set[1]);
+        wrapper(data_set);
+      });
+    }
+    function wrapper(rdata){
+    //rdata is raw data response from the api and promise getWeather
+    localStorage.setItem('cached_data', JSON.stringify(rdata));
+    let city = rdata[1],
+    days_counter= rdata[2],
+    hour_counter=rdata[3];
+    rdata = rdata[0];
+    let data_time= convertSeconds(rdata.currently.time+rdata.offset*3600);
+    let data_date = moment(rdata.currently.time*1000);
+    document.getElementsByClassName('updating')[0].innerHTML = `
+    <span>${localization[lang].updated}${data_time}, ${data_date.format('DD[.]MM[.]YYYY')}</span>
+    <span>${localization[lang].refresh}</span>
+    `;
+    document.getElementsByClassName('updating_footer')[0].innerHTML = `
+    <span>${localization[lang].updated}${data_time}, ${data_date.format('DD[.]MM[.]YYYY')}</span>
+    <span>${localization[lang].refresh}</span>
+    `;
+    console.log(document.getElementsByClassName('updating')[0].innerHTML);
+    console.log(city, rdata);
+        function compass(event){
+          var alpha;
+          const delta = 225;
+          if(wind_mode == 'currently'){
+            if (event.absolute) {
+              alpha = event.alpha;
+            } else if (event.hasOwnProperty('webkitCompassHeading')) {
+              // get absolute orientation for Safari/iOS
+              alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
+            } else {
+                console.log('Could not retrieve absolute orientation');
+                //alert(localization[lang].compass_f);
+                alpha = rdata[wind_mode].windBearing + 45;
+            }
+            alpha = alpha + delta - rdata[wind_mode].windBearing;
+          document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
           }else{
-           let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+2;
-           let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
-           console.log('до 6-дневного до 8-ми часов', days_counter);
-           cityName(cached_objects[1]);
-           wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
-         }
-      }else{
-        promise = getPreciseLocation().then(result =>getWeather(result[0], result[1], result[2],result[3], result[4]));
-        promise.then(data_set=>{
-          cityName(data_set[1]);
-          wrapper(data_set);
-        });
-      }
-      function wrapper(rdata){
-      //rdata is raw data response from the api and promise getWeather
-      localStorage.setItem('cached_data', JSON.stringify(rdata));
-      let city = rdata[1],
-      days_counter= rdata[2],
-      hour_counter=rdata[3];
-      rdata = rdata[0];
-      let data_time= convertSeconds(rdata.currently.time+rdata.offset*3600);
-      let data_date = moment(rdata.currently.time*1000);
-      document.getElementsByClassName('updating')[0].innerHTML = `
-      <span>${localization[lang].updated}${data_time}, ${data_date.format('DD[.]MM[.]YYYY')}</span>
-      <span>${localization[lang].refresh}</span>
-      `;
-      document.getElementsByClassName('updating_footer')[0].innerHTML = `
-      <span>${localization[lang].updated}${data_time}, ${data_date.format('DD[.]MM[.]YYYY')}</span>
-      <span>${localization[lang].refresh}</span>
-      `;
-      console.log(document.getElementsByClassName('updating')[0].innerHTML);
-      console.log(city, rdata);
-          function compass(event){
-            var alpha;
-            const delta = 225;
-            if(wind_mode == 'currently'){
-              if (event.absolute) {
-                alpha = event.alpha;
-              } else if (event.hasOwnProperty('webkitCompassHeading')) {
-                // get absolute orientation for Safari/iOS
-                alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
-              } else {
-                  console.log('Could not retrieve absolute orientation');
-                  //alert(localization[lang].compass_f);
-                  alpha = rdata[wind_mode].windBearing + 45;
-              }
-              alpha = alpha + delta - rdata[wind_mode].windBearing;
-            document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
-            }else{
-              
-              if (event.absolute) {
-                alpha = 360 - event.alpha;
-              } else if (event.hasOwnProperty('webkitCompassHeading')) {
-                // get absolute orientation for Safari/iOS
-                alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
-              } else {
-                  //alert(localization[lang].compass_f);
-                  alpha = wind_mode.windBearing + 45;
-              }
-              alpha = alpha + delta - wind_mode.windBearing;
-            document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
-            }
             
+            if (event.absolute) {
+              alpha = 360 - event.alpha;
+            } else if (event.hasOwnProperty('webkitCompassHeading')) {
+              // get absolute orientation for Safari/iOS
+              alpha = 360 - event.webkitCompassHeading; // conversion taken from a comment on Google Documentation, not tested
+            } else {
+                //alert(localization[lang].compass_f);
+                alpha = wind_mode.windBearing + 45;
+            }
+            alpha = alpha + delta - wind_mode.windBearing;
+          document.querySelector('.wind_dir').style.transform = `rotate(${alpha}deg)`;
           }
-    
-          let wind_mode ='currently';
-          function wind_arrow(mode, i){
-            //mode = currently, daily, hourly
-            wind_mode = mode;
-            if(wind_mode!='currently'){
-              wind_mode = rdata[wind_mode].data[i];
-            }else{
-              wind_mode= rdata[wind_mode];
-            }
-            
-            //if wind is turned off, we remove deviceorientation
-            // event and set normal mode for the wind arrow
-            if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
-              // Chrome 50+ specific
-              window.addEventListener('deviceorientationabsolute', compass);
-            } else if ('ondeviceorientation' in window && localStorage.wind == 'on') {
-              window.addEventListener('deviceorientation', compass);
-            }else if(localStorage.wind == 'off' || localStorage.wind == undefined){
-              window.removeEventListener('deviceorientationabsolute', compass);
-              window.removeEventListener('deviceorientation', compass);
-              setTimeout(()=>
-              document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+225}deg)`, 1000);
-            }else{
-              alert(localization[lang].compass_error);
-              document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+225}deg)`;
-            }
-          }
-          //slidemenu manage which chart to summon onclick on slidemenu
-            function slidemenu(value, option){
-            switch(value){
-              case 'temp':
-                chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, option);
-              break;
-              case 'wind':
-                chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, option);
-              break;
-              case 'humidity':
-                chart_summon('humidity',  'rgb(0,238,255)', 'rgba(0,238,255, 0.25)', '%', option);
-              break;
-              case 'uv':
-                chart_summon('uvIndex', 'rgb(163,78,233)', 'rgba(163,78,233, 0.25)', '', option);
-              break;
-              case 'clouds':
-                chart_summon('cloudCover','rgb(104,231,142)', 'rgba(104,231,142, 0.25)', '%', option);
-              break;
-              case 'precipProbability':
-                chart_summon('precipProbability','rgb(0, 119, 255)', 'rgba(0, 119, 255, 0.25)', '%', option);
-            }
-            
-          }
-          //radio_events removes events for slidemenu and sets new eventListeners
-          function radio_events(option){
-            let radio_arr = document.getElementsByClassName('slide-toggle');
-            radio_arr[0].checked = true;
-            remove_events();
-            for(let i = 0; i<radio_arr.length;i++){
-              radio_arr[i].addEventListener('click', ()=>{
-                slidemenu(radio_arr[i].value, option)}); 
-            }
-          }
-          let water_drop = document.createElement('img');
-            water_drop.src = 'https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
-            water_drop.className = 'pop_drop';
-
-          function hourSetter(mode, option){
-            let create_hours=true,
-            chart_data = [],
-            max_chart =0,
-            chart_labels = [];
-            if(document.querySelector('.hour')==null){
-              console.log('create');
-              create_hours=true;
-            }else{
-              create_hours=false;
-            }
-            if(mode<1000 && mode!=0){
-              let j = 0;
-              for(let i =mode; i<mode+24;i++){
-                //current data
-                if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
-                  chart_data[j] = Math.round(rdata.hourly.data[i][option]*100);
-                }else{
-                  chart_data[j] = Math.round(rdata.hourly.data[i][option]);
-                }
-                let pop_icon = water_drop.cloneNode(true);
-                if(create_hours){
+          
+        }
   
-                  document.querySelector("#hours").insertAdjacentHTML('beforeend',`
-                  <div class="hour">
-                    <div class="pop">${Math.round(rdata.hourly.data[i].precipProbability*100)}%</div>
-                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg" alt="${rdata.hourly.data[i].icon}" class="sky">
-                        <div class="temp">${Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp}</div>
-                        <div class="time">${convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600)}</div>
-                  </div>
-                  `);
-                  document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
-                  j++;
-                }else{
-                  document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
-                  document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
-                  document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg`;
-                  document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
-                  document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
-                  j++;
-                }
-                chart_labels[j-1] = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
-                //console.log(chart_labels);
-                //max_chart makes chart go higher it's maximum value
-                if(max_chart < chart_data[j-1]){
-                  max_chart = chart_data[j-1];
-                }
-              }
-            }else if (mode==0){
-                  for(let j =0; j<24;j++){
-                    //current (for real)
-                    let pop_icon = water_drop.cloneNode(true);
-                    if(create_hours){
-                      console.log('prependin');
-                      document.querySelector("#hours").insertAdjacentHTML('beforeend',`
-                      <div class="hour">
-                        <div class="pop">${Math.round(rdata.hourly.data[j].precipProbability*100)}%</div>
-                            <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[j].icon}.svg" alt="${rdata.hourly.data[j].icon}" class="sky">
-                            <div class="temp">${Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp}</div>
-                            <div class="time">${convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600)}</div>
-                      </div>
-                      `);
-                      document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
-                    }else{
-                      document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[j].precipProbability*100) +'%';
-                      document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp;
-                      document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[j].icon}.svg`;
-                      document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600);
-                      document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
-                    }
-                    if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
-                    chart_data[j] = Math.round(rdata.hourly.data[j][option]*100);
-                  }else{
-                    chart_data[j] = Math.round(rdata.hourly.data[j][option]);
-                  }
-                  chart_labels[j] = convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600);
-                  if(max_chart < chart_data[j]){
-                    max_chart = chart_data[j];
-                  }
-                  }
-            }
-            else if(mode>=1000){
-              mode=mode/1000;
-              for(let i = mode; i<rdata.hourly.data.length;i++){
-                if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
-                  console.log(i, mode);
-                  for(let j =0; j<24;j++){
-                    //hourly for daily
-  
-                    let pop_icon = water_drop.cloneNode(true);
-                    if(create_hours){
-                      console.log('prepending');
-                      document.querySelector("#hours").insertAdjacentHTML('beforeend',`
-                      <div class="hour">
-                        <div class="pop">${Math.round(rdata.hourly.data[i+j].precipProbability*100)}%</div>
-                            <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg" alt="${rdata.hourly.data[i+j].icon}" class="sky">
-                            <div class="temp">${Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp}</div>
-                            <div class="time">${convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600)}</div>
-                      </div>
-                      `);
-                      document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
-                    }else{
-                      document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
-                      document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
-                      document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
-                      document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
-                      document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
-                    }
-                    if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
-                    chart_data[j] = Math.round(rdata.hourly.data[i+j][option]*100);
-                  }else{
-                    chart_data[j] = Math.round(rdata.hourly.data[i+j][option]);
-                  }
-                  chart_labels[j] = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
-                  if(max_chart < chart_data[j]){
-                    max_chart = chart_data[j];
-                  }
-                  }
-                }
-              }
-            }
-            return [chart_data, max_chart, chart_labels];
-          }
-          function chart_summon(option, option_color, option_back, axis_l, mode){
-            //restart chart
-            
-            document.getElementById('myChart').remove();
-            let chart_block = document.createElement('canvas');
-            chart_block.id = 'myChart';
-            document.getElementsByClassName('chart-container')[0].append(chart_block);
-
-            console.log('chart was created');
-
-            //chart
-          let hour_ret=hourSetter(mode, option),
-          chart_data = hour_ret[0],
-          max_chart =hour_ret[1],
-          chart_labels = hour_ret[2];
-          //coef helps max_chart to fix chart maximum
-          let coef =0;
-          if(max_chart > 70){
-            coef = 30;
+        let wind_mode ='currently';
+        function wind_arrow(mode, i){
+          //mode = currently, daily, hourly
+          wind_mode = mode;
+          if(wind_mode!='currently'){
+            wind_mode = rdata[wind_mode].data[i];
           }else{
-            coef = 3;
-            //tooltip_pos = 'bottom';
+            wind_mode= rdata[wind_mode];
           }
-          //using chart.js library
-          let ctx = document.getElementById('myChart').getContext('2d');
-          let bor_width, chartColors;
-              if(option == 'temperature'){
-                bor_width = 6
-                chartColors= {
-                  blue:'rgb(153, 206, 255)',
-                  yellow:'rgb(224, 209, 0)',
-                  red:'rgb(255, 99, 51)',
-                };
-                let min_t = 0;
-                for(let i = 0;i<chart_data.length;i++){
-                  if(chart_data[i]<0){
-                    min_t++;
-                  }
-                }
-                if(min_t>chart_data.length/2){
-                  option_back = 'rgba(56, 75, 243, 0.3)'
-                  chartColors= {
-                    blue:'rgb(56, 75, 243)',
-                    yellow:'rgb(33, 214, 250)',
-                    red:'rgb(24, 190, 140)',
-                  };
-                }else{
-                  option_back = 'rgba(255, 81, 81, 0.25)'
-                }
+          
+          //if wind is turned off, we remove deviceorientation
+          // event and set normal mode for the wind arrow
+          if ('ondeviceorientationabsolute' in window && localStorage.wind == 'on') {
+            // Chrome 50+ specific
+            window.addEventListener('deviceorientationabsolute', compass);
+          } else if ('ondeviceorientation' in window && localStorage.wind == 'on') {
+            window.addEventListener('deviceorientation', compass);
+          }else if(localStorage.wind == 'off' || localStorage.wind == undefined){
+            window.removeEventListener('deviceorientationabsolute', compass);
+            window.removeEventListener('deviceorientation', compass);
+            setTimeout(()=>
+            document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+225}deg)`, 1000);
+          }else{
+            alert(localization[lang].compass_error);
+            document.querySelector('.wind_dir').style.transform = `rotate(${wind_mode.windBearing+225}deg)`;
+          }
+        }
+        //slidemenu manage which chart to summon onclick on slidemenu
+          function slidemenu(value, option){
+          switch(value){
+            case 'temp':
+              chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, option);
+            break;
+            case 'wind':
+              chart_summon('windSpeed', 'rgb(0,204,255)', 'rgba(0,204,255, 0.25)', localization[lang].units[units].wind_units, option);
+            break;
+            case 'humidity':
+              chart_summon('humidity',  'rgb(0,238,255)', 'rgba(0,238,255, 0.25)', '%', option);
+            break;
+            case 'uv':
+              chart_summon('uvIndex', 'rgb(163,78,233)', 'rgba(163,78,233, 0.25)', '', option);
+            break;
+            case 'clouds':
+              chart_summon('cloudCover','rgb(104,231,142)', 'rgba(104,231,142, 0.25)', '%', option);
+            break;
+            case 'precipProbability':
+              chart_summon('precipProbability','rgb(0, 119, 255)', 'rgba(0, 119, 255, 0.25)', '%', option);
+          }
+          
+        }
+        //radio_events removes events for slidemenu and sets new eventListeners
+        function radio_events(option){
+          let radio_arr = document.getElementsByClassName('slide-toggle');
+          radio_arr[0].checked = true;
+          remove_events();
+          for(let i = 0; i<radio_arr.length;i++){
+            radio_arr[i].addEventListener('click', ()=>{
+              slidemenu(radio_arr[i].value, option)}); 
+          }
+        }
+        let water_drop = document.createElement('img');
+          water_drop.src = 'https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
+          water_drop.className = 'pop_drop';
+
+        function hourSetter(mode, option){
+          let create_hours=true,
+          chart_data = [],
+          max_chart =0,
+          chart_labels = [];
+          if(document.querySelector('.hour')==null){
+            console.log('create');
+            create_hours=true;
+          }else{
+            create_hours=false;
+          }
+          if(mode<1000 && mode!=0){
+            let j = 0;
+            for(let i =mode; i<mode+24;i++){
+              //current data
+              if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                chart_data[j] = Math.round(rdata.hourly.data[i][option]*100);
               }else{
-                bor_width = 3;
+                chart_data[j] = Math.round(rdata.hourly.data[i][option]);
               }
-            let gradient =null;
-    
-            
-              let chart = new Chart(ctx, {
-                type: 'line',
-          
-                data: {
-                    labels: chart_labels,
-                    datasets: [{
-                        label: '',
-                        fill:true,
-                        backgroundColor: option_back,
-                        borderColor: function(context) {
-                          var chartArea = context.chart.chartArea;
-                          if (!chartArea) {
-                            // This case happens on initial chart load
-                            return null;
-                          }
-                          if(option == 'temperature'){
-                            if (gradient === null) {
-                              // Create the gradient because this is either the first render
-                              // or the size of the chart has changed
-                              let ctx = context.chart.ctx;
-                              gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                              gradient.addColorStop(0, chartColors.blue);
-                              gradient.addColorStop(0.5, chartColors.yellow);
-                              gradient.addColorStop(1, chartColors.red);}
-                          }
-                          else{
-                            gradient = option_color;
-                          }
-                          return gradient;
-                        },
-                        data: chart_data,
-                        borderWidth:bor_width
-                    }]
-                },
-          
-                // Configuration options go here
-                options: {
-                  //responsive:false,
-                    maintainAspectRatio: false,
-                    onAnimationComplete: function(){
-                        myBarChart.showTooltip(bars,false);
-                        },
-                        
-                    scales: {
-                        xAxes: [{
-          
-                            gridLines: {
-                                  color: "rgba(255, 255, 255, 0.25)",
-                                  zeroLineColor: 'rgba(255, 255, 255, 0.25)',
-                                  drawBorder:false,
-          
-                                  
-                                },
-                            ticks:{
-                                fontColor:'#fff',
-                                fontSize:18,
-          
-                            }
-                            
-                        }],
-                        yAxes: [{
-                          
-                            display:false,
-                            
-                            gridLines: { color: "rgba(255, 255, 255, 0)",
-                          zeroLineColor: 'rgba(255, 255, 255, 0.25)' },
-          
-                            ticks: {
-                                beginAtZero:true,
-                                
-                                max: max_chart +coef
-                            }
-                        }]
-                    },
-                    
-                    legend: {
-                        display: false,
-                    },
-                      showAllTooltips: true,
-                      tooltips:{
-                          
-                        backgroundColor: 'rgba(0, 0, 0, 0)',
-                        displayColors: false,
-                        bodyFontSize: 18,
-                        bodyAlign:'center',
-                      xPadding:-20,
-          
-                        
-                        
-                        bodyFontFamily:"'Rubik', sans-serif",
-                        callbacks: {
-                            label: function(tooltipItem, data) { return tooltipItem.yLabel + axis_l; },
-                            title: function() {return null},
-                          }
-                      }
-                }
-            });
-          }
-          //plugin that lets keep all tooltips always shown
-          Chart.pluginService.register({
-              beforeRender: function(chart) {
-                if (chart.config.options.showAllTooltips) {
-                  // create an array of tooltips
-                  // we can't use the chart tooltip because there is only one tooltip per chart
-                  chart.pluginTooltips = [];
-                  chart.config.data.datasets.forEach(function(dataset, i) {
-                    chart.getDatasetMeta(i).data.forEach(function(sector, j) {
-                      chart.pluginTooltips.push(new Chart.Tooltip({
-                        _chart: chart.chart,
-                        _chartInstance: chart,
-                        _data: chart.data,
-                        _options: chart.options.tooltips,
-                        _active: [sector]
-                      }, chart));
-                    });
-                  });
-          
-                  // turn off normal tooltips
-                  chart.options.tooltips.enabled = false;
-                }
-              },
-              afterDraw: function(chart, easing) {
-                if (chart.config.options.showAllTooltips) {
-                  // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
-                  if (!chart.allTooltipsOnce) {
-                    if (easing !== 1)
-                      return;
-                    chart.allTooltipsOnce = true;
-                  }
-          
-                  // turn on tooltips
-                  chart.options.tooltips.enabled = true;
-                  Chart.helpers.each(chart.pluginTooltips, function(tooltip) {
-                    tooltip.initialize();
-                    tooltip.update();
-                    // we don't actually need this since we are not animating tooltips
-                    tooltip.pivot();
-                    tooltip.transition(easing).draw();
-                  });
-                  chart.options.tooltips.enabled = false;
-                }
+              let pop_icon = water_drop.cloneNode(true);
+              if(create_hours){
+
+                document.querySelector("#hours").insertAdjacentHTML('beforeend',`
+                <div class="hour">
+                  <div class="pop">${Math.round(rdata.hourly.data[i].precipProbability*100)}%</div>
+                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg" alt="${rdata.hourly.data[i].icon}" class="sky">
+                      <div class="temp">${Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp}</div>
+                      <div class="time">${convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600)}</div>
+                </div>
+                `);
+                document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                j++;
+              }else{
+                document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
+                document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
+                document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg`;
+                document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
+                document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                j++;
               }
-            })
-          //removes events for slidemenu
-          function remove_events(){
-            let new_nav = document.getElementById('slidemenu');
-            let newest_nav = new_nav.cloneNode(true);
-            new_nav.remove();
-            document.getElementById('display').appendChild(newest_nav);
-          }
-          function fifthInstance(){
-            let target = document.querySelector('#search');
-            tippy(target, {
-              content: localization[lang].tooltips[4],
-              theme:'normal',
-              sticky: true,
-              arrow: true,
-              showOnCreate: true,
-              placement: 'bottom',
-              delay:500,
-              maxWidth:250,
-              onHidden(instance) {
-                instance.destroy();
-                localStorage.tools = 'false';
-            },
-          });
-          }
-          function fourthInstance(){
-            let target = document.querySelector('#location');
-            tippy(target, {
-              content: localization[lang].tooltips[3],
-              theme:'normal',
-              sticky: true,
-              arrow: true,
-              showOnCreate: true,
-              placement: 'bottom',
-              delay:500,
-              maxWidth:250,
-              onHidden(instance) {
-                instance.destroy();
-                fifthInstance();
-            },
-          });
-          }
-          function thirdInstance(){
-            let target = document.querySelector('#slidemenu > label');
-            tippy(target, {
-              content: localization[lang].tooltips[2],
-              theme:'normal',
-              sticky: true,
-              arrow: true,
-              showOnCreate: true,
-              placement: 'top',
-              delay:500,
-              maxWidth:250,
-    
-              onHidden(instance) {
-                instance.destroy();
-                window.scrollTo(0,0);
-                fourthInstance();
-            },
-          });
-          }
-          function secondInstance(){
-            tippy(document.getElementsByClassName('day')[0], {
-              content: localization[lang].tooltips[1],
-              theme:'normal',
-              sticky: true,
-              arrow: true,
-              showOnCreate: true,
-              placement: 'top',
-              delay:500,
-              maxWidth:250,
-              onHidden(instance) {
-                instance.destroy();
-                window.scrollBy(0,-document.documentElement.clientHeight*0.5);
-                thirdInstance();
-            },
-          });
-          }
-          function firstInstance(){
-            const instance = tippy(settingsIcon, {
-              content: localization[lang].tooltips[0],
-              theme:'normal',
-              sticky: true,
-              arrow: true,
-              showOnCreate: true,
-              placement: 'bottom',
-              delay:500,
-              maxWidth:250,
-    
-              onHidden(instance) {
-                instance.destroy();
-                window.scrollBy(0, document.body.scrollHeight);
-                secondInstance();
+              chart_labels[j-1] = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
+              //console.log(chart_labels);
+              //max_chart makes chart go higher it's maximum value
+              if(max_chart < chart_data[j-1]){
+                max_chart = chart_data[j-1];
               }
-            });
-          }     
-          //end of function declaration part
-    
-            //setting_headlines 
-            let settings_headlines = document.querySelectorAll('.wind-subitem_label > h3');
-            settings_headlines[0].innerHTML = localization[lang].local;
-            settings_headlines[1].innerHTML =localization[lang].uni;
-            settings_headlines[2].innerHTML = localization[lang].wind_dir_h;
-            settings_headlines[3].innerHTML = localization[lang].back;
-            settings_headlines[4].innerHTML = localization[lang].source;
-            document.querySelector('.settings_block > span').innerHTML = localization[lang].tochange;
-            document.querySelector('.wind-settings  p').innerHTML = localization[lang].wind_dir;
-            document.querySelector('.settings_item  p').innerHTML = localization[lang].back_p;
-            let wind_options = document.querySelectorAll('.turn_wind');
-            wind_options[0].innerHTML = localization[lang].on;
-            wind_options[1].innerHTML = localization[lang].off;
-          let back_options = document.querySelectorAll('.back-label > span');
-          back_options[0].innerHTML = localization[lang].img;
-          back_options[1].innerHTML = localization[lang].vid;
-            
-          //legal fix lmao
-            if(moment().format('YYYY') == 2020){
-            document.querySelector('#legal > p>span').innerHTML = moment().format('YYYY')
-            }else{
-            document.querySelector('#legal > p> span').innerHTML = '2020-' + moment().format('YYYY');
             }
-               
-            //current function delivers rdata to every block that needs it
-            
-            function current(i){
-              console.log(i);
-              let option= rdata.currently;
-              if(i>0){
-                option=rdata.hourly.data[i];
+          }else if (mode==0){
+                for(let j =0; j<24;j++){
+                  //current (for real)
+                  let pop_icon = water_drop.cloneNode(true);
+                  if(create_hours){
+                    console.log('prependin');
+                    document.querySelector("#hours").insertAdjacentHTML('beforeend',`
+                    <div class="hour">
+                      <div class="pop">${Math.round(rdata.hourly.data[j].precipProbability*100)}%</div>
+                          <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[j].icon}.svg" alt="${rdata.hourly.data[j].icon}" class="sky">
+                          <div class="temp">${Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp}</div>
+                          <div class="time">${convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600)}</div>
+                    </div>
+                    `);
+                    document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                  }else{
+                    document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[j].precipProbability*100) +'%';
+                    document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp;
+                    document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[j].icon}.svg`;
+                    document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600);
+                    document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                  }
+                  if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                  chart_data[j] = Math.round(rdata.hourly.data[j][option]*100);
+                }else{
+                  chart_data[j] = Math.round(rdata.hourly.data[j][option]);
+                }
+                chart_labels[j] = convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600);
+                if(max_chart < chart_data[j]){
+                  max_chart = chart_data[j];
+                }
+                }
+          }
+          else if(mode>=1000){
+            mode=mode/1000;
+            for(let i = mode; i<rdata.hourly.data.length;i++){
+              if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
+                console.log(i, mode);
+                for(let j =0; j<24;j++){
+                  //hourly for daily
+
+                  let pop_icon = water_drop.cloneNode(true);
+                  if(create_hours){
+                    console.log('prepending');
+                    document.querySelector("#hours").insertAdjacentHTML('beforeend',`
+                    <div class="hour">
+                      <div class="pop">${Math.round(rdata.hourly.data[i+j].precipProbability*100)}%</div>
+                          <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg" alt="${rdata.hourly.data[i+j].icon}" class="sky">
+                          <div class="temp">${Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp}</div>
+                          <div class="time">${convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600)}</div>
+                    </div>
+                    `);
+                    document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                  }else{
+                    document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
+                    document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
+                    document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
+                    document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
+                    document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
+                  }
+                  if(option == 'cloudCover' || option == 'humidity' || option == 'precipProbability'){
+                  chart_data[j] = Math.round(rdata.hourly.data[i+j][option]*100);
+                }else{
+                  chart_data[j] = Math.round(rdata.hourly.data[i+j][option]);
+                }
+                chart_labels[j] = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
+                if(max_chart < chart_data[j]){
+                  max_chart = chart_data[j];
+                }
+                }
               }
-              if(window.matchMedia('(max-width: 700px)').matches && window.matchMedia('(max-width: 550px)').matches == false ){
-                document.getElementById('details').style.marginTop = '-40px';
-                document.getElementById('other').style.marginTop = '-40px';
-              }else if(window.matchMedia('(max-width: 550px)').matches){
-                document.getElementById('other').style.marginTop = '0';
-                document.getElementById('details').style.marginTop = '0';
+            }
+          }
+          return [chart_data, max_chart, chart_labels];
+        }
+        function chart_summon(option, option_color, option_back, axis_l, mode){
+          //restart chart
+          
+          document.getElementById('myChart').remove();
+          let chart_block = document.createElement('canvas');
+          chart_block.id = 'myChart';
+          document.getElementsByClassName('chart-container')[0].append(chart_block);
+
+          console.log('chart was created');
+
+          //chart
+        let hour_ret=hourSetter(mode, option),
+        chart_data = hour_ret[0],
+        max_chart =hour_ret[1],
+        chart_labels = hour_ret[2];
+        //coef helps max_chart to fix chart maximum
+        let coef =0;
+        if(max_chart > 70){
+          coef = 30;
+        }else{
+          coef = 3;
+          //tooltip_pos = 'bottom';
+        }
+        //using chart.js library
+        let ctx = document.getElementById('myChart').getContext('2d');
+        let bor_width, chartColors;
+            if(option == 'temperature'){
+              bor_width = 6
+              chartColors= {
+                blue:'rgb(153, 206, 255)',
+                yellow:'rgb(224, 209, 0)',
+                red:'rgb(255, 99, 51)',
+              };
+              let min_t = 0;
+              for(let i = 0;i<chart_data.length;i++){
+                if(chart_data[i]<0){
+                  min_t++;
+                }
               }
+              if(min_t>chart_data.length/2){
+                option_back = 'rgba(56, 75, 243, 0.3)'
+                chartColors= {
+                  blue:'rgb(56, 75, 243)',
+                  yellow:'rgb(33, 214, 250)',
+                  red:'rgb(24, 190, 140)',
+                };
+              }else{
+                option_back = 'rgba(255, 81, 81, 0.25)'
+              }
+            }else{
+              bor_width = 3;
+            }
+          let gradient =null;
+  
+          
+            let chart = new Chart(ctx, {
+              type: 'line',
+        
+              data: {
+                  labels: chart_labels,
+                  datasets: [{
+                      label: '',
+                      fill:true,
+                      backgroundColor: option_back,
+                      borderColor: function(context) {
+                        var chartArea = context.chart.chartArea;
+                        if (!chartArea) {
+                          // This case happens on initial chart load
+                          return null;
+                        }
+                        if(option == 'temperature'){
+                          if (gradient === null) {
+                            // Create the gradient because this is either the first render
+                            // or the size of the chart has changed
+                            let ctx = context.chart.ctx;
+                            gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, chartColors.blue);
+                            gradient.addColorStop(0.5, chartColors.yellow);
+                            gradient.addColorStop(1, chartColors.red);}
+                        }
+                        else{
+                          gradient = option_color;
+                        }
+                        return gradient;
+                      },
+                      data: chart_data,
+                      borderWidth:bor_width
+                  }]
+              },
+        
+              // Configuration options go here
+              options: {
+                //responsive:false,
+                  maintainAspectRatio: false,
+                  onAnimationComplete: function(){
+                      myBarChart.showTooltip(bars,false);
+                      },
+                      
+                  scales: {
+                      xAxes: [{
+        
+                          gridLines: {
+                                color: "rgba(255, 255, 255, 0.25)",
+                                zeroLineColor: 'rgba(255, 255, 255, 0.25)',
+                                drawBorder:false,
+        
+                                
+                              },
+                          ticks:{
+                              fontColor:'#fff',
+                              fontSize:18,
+        
+                          }
+                          
+                      }],
+                      yAxes: [{
+                        
+                          display:false,
+                          
+                          gridLines: { color: "rgba(255, 255, 255, 0)",
+                        zeroLineColor: 'rgba(255, 255, 255, 0.25)' },
+        
+                          ticks: {
+                              beginAtZero:true,
+                              
+                              max: max_chart +coef
+                          }
+                      }]
+                  },
+                  
+                  legend: {
+                      display: false,
+                  },
+                    showAllTooltips: true,
+                    tooltips:{
+                        
+                      backgroundColor: 'rgba(0, 0, 0, 0)',
+                      displayColors: false,
+                      bodyFontSize: 18,
+                      bodyAlign:'center',
+                    xPadding:-20,
+        
+                      
+                      
+                      bodyFontFamily:"'Rubik', sans-serif",
+                      callbacks: {
+                          label: function(tooltipItem, data) { return tooltipItem.yLabel + axis_l; },
+                          title: function() {return null},
+                        }
+                    }
+              }
+          });
+        }
+        //plugin that lets keep all tooltips always shown
+        Chart.pluginService.register({
+            beforeRender: function(chart) {
+              if (chart.config.options.showAllTooltips) {
+                // create an array of tooltips
+                // we can't use the chart tooltip because there is only one tooltip per chart
+                chart.pluginTooltips = [];
+                chart.config.data.datasets.forEach(function(dataset, i) {
+                  chart.getDatasetMeta(i).data.forEach(function(sector, j) {
+                    chart.pluginTooltips.push(new Chart.Tooltip({
+                      _chart: chart.chart,
+                      _chartInstance: chart,
+                      _data: chart.data,
+                      _options: chart.options.tooltips,
+                      _active: [sector]
+                    }, chart));
+                  });
+                });
+        
+                // turn off normal tooltips
+                chart.options.tooltips.enabled = false;
+              }
+            },
+            afterDraw: function(chart, easing) {
+              if (chart.config.options.showAllTooltips) {
+                // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
+                if (!chart.allTooltipsOnce) {
+                  if (easing !== 1)
+                    return;
+                  chart.allTooltipsOnce = true;
+                }
+        
+                // turn on tooltips
+                chart.options.tooltips.enabled = true;
+                Chart.helpers.each(chart.pluginTooltips, function(tooltip) {
+                  tooltip.initialize();
+                  tooltip.update();
+                  // we don't actually need this since we are not animating tooltips
+                  tooltip.pivot();
+                  tooltip.transition(easing).draw();
+                });
+                chart.options.tooltips.enabled = false;
+              }
+            }
+          })
+        //removes events for slidemenu
+        function remove_events(){
+          let new_nav = document.getElementById('slidemenu');
+          let newest_nav = new_nav.cloneNode(true);
+          new_nav.remove();
+          document.getElementById('display').appendChild(newest_nav);
+        }
+        function fifthInstance(){
+          let target = document.querySelector('#search');
+          tippy(target, {
+            content: localization[lang].tooltips[4],
+            theme:'normal',
+            sticky: true,
+            arrow: true,
+            showOnCreate: true,
+            placement: 'bottom',
+            delay:500,
+            maxWidth:250,
+            onHidden(instance) {
+              instance.destroy();
+              localStorage.tools = 'false';
+          },
+        });
+        }
+        function fourthInstance(){
+          let target = document.querySelector('#location');
+          tippy(target, {
+            content: localization[lang].tooltips[3],
+            theme:'normal',
+            sticky: true,
+            arrow: true,
+            showOnCreate: true,
+            placement: 'bottom',
+            delay:500,
+            maxWidth:250,
+            onHidden(instance) {
+              instance.destroy();
+              fifthInstance();
+          },
+        });
+        }
+        function thirdInstance(){
+          let target = document.querySelector('#slidemenu > label');
+          tippy(target, {
+            content: localization[lang].tooltips[2],
+            theme:'normal',
+            sticky: true,
+            arrow: true,
+            showOnCreate: true,
+            placement: 'top',
+            delay:500,
+            maxWidth:250,
+  
+            onHidden(instance) {
+              instance.destroy();
+              window.scrollTo(0,0);
+              fourthInstance();
+          },
+        });
+        }
+        function secondInstance(){
+          tippy(document.getElementsByClassName('day')[0], {
+            content: localization[lang].tooltips[1],
+            theme:'normal',
+            sticky: true,
+            arrow: true,
+            showOnCreate: true,
+            placement: 'top',
+            delay:500,
+            maxWidth:250,
+            onHidden(instance) {
+              instance.destroy();
+              window.scrollBy(0,-document.documentElement.clientHeight*0.5);
+              thirdInstance();
+          },
+        });
+        }
+        function firstInstance(){
+          const instance = tippy(settingsIcon, {
+            content: localization[lang].tooltips[0],
+            theme:'normal',
+            sticky: true,
+            arrow: true,
+            showOnCreate: true,
+            placement: 'bottom',
+            delay:500,
+            maxWidth:250,
+  
+            onHidden(instance) {
+              instance.destroy();
+              window.scrollBy(0, document.body.scrollHeight);
+              secondInstance();
+            }
+          });
+        }     
+        //end of function declaration part
+  
+          //setting_headlines 
+          let settings_headlines = document.querySelectorAll('.wind-subitem_label > h3');
+          settings_headlines[0].innerHTML = localization[lang].local;
+          settings_headlines[1].innerHTML =localization[lang].uni;
+          settings_headlines[2].innerHTML = localization[lang].wind_dir_h;
+          settings_headlines[3].innerHTML = localization[lang].back;
+          settings_headlines[4].innerHTML = localization[lang].source;
+          document.querySelector('.settings_block > span').innerHTML = localization[lang].tochange;
+          document.querySelector('.wind-settings  p').innerHTML = localization[lang].wind_dir;
+          document.querySelector('.settings_item  p').innerHTML = localization[lang].back_p;
+          let wind_options = document.querySelectorAll('.turn_wind');
+          wind_options[0].innerHTML = localization[lang].on;
+          wind_options[1].innerHTML = localization[lang].off;
+        let back_options = document.querySelectorAll('.back-label > span');
+        back_options[0].innerHTML = localization[lang].img;
+        back_options[1].innerHTML = localization[lang].vid;
+          
+        //legal fix lmao
+          if(moment().format('YYYY') == 2020){
+          document.querySelector('#legal > p>span').innerHTML = moment().format('YYYY')
+          }else{
+          document.querySelector('#legal > p> span').innerHTML = '2020-' + moment().format('YYYY');
+          }
               
-              videoBack(option.icon, option.temperature);
+          //current function delivers rdata to every block that needs it
+          
+          function current(i){
+            console.log(i);
+            let option= rdata.currently;
+            if(i>0){
+              option=rdata.hourly.data[i];
+            }
+            if(window.matchMedia('(max-width: 700px)').matches && window.matchMedia('(max-width: 550px)').matches == false ){
+              document.getElementById('details').style.marginTop = '-40px';
+              document.getElementById('other').style.marginTop = '-40px';
+            }else if(window.matchMedia('(max-width: 550px)').matches){
+              document.getElementById('other').style.marginTop = '0';
+              document.getElementById('details').style.marginTop = '0';
+            }
+            
+            videoBack(option.icon, option.temperature);
+            let icon = document.createElement('img');
+            icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${option.icon}.svg`;
+            icon.alt=option.icon;
+            icon.className='icon';
+            let curr_icon = document.createElement('img');
+            curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
+            curr_icon.alt ='';
+            curr_icon.className = 'curr_icon';
+            document.querySelector('.temp_val').innerHTML = Math.round(option.temperature) + localization[lang].units[units].temp;
+            document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(option.apparentTemperature) +localization[lang].units[units].temp ;
+            document.querySelector('.condition').innerHTML = option.summary;
+            document.querySelector('.condition').prepend(icon);
+    
+            document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.hourly.data[0].precipProbability*100) + '%';
+            document.querySelector('.propability').prepend(curr_icon);
+    
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/uv.svg';
+            document.querySelector('.uv').innerHTML =localization[lang].uvint +  option.uvIndex;
+            document.querySelector('.uv').prepend(curr_icon);
+    
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/coverage.svg';
+            document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(option.cloudCover*100) + '%';
+            document.querySelector('.clouds').prepend(curr_icon);
+    
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/wind.svg';
+            document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
+            document.querySelector('.wind_text > h3').prepend(curr_icon);
+    
+            document.querySelector('.wind_speed').innerHTML = windIntensity(option.windSpeed, lang, units) + getCardinalDirection(option.windBearing, localization[lang].directions) + ', ' + option.windSpeed +' '+ localization[lang].units[units].wind_units;
+            wind_arrow('currently');
+    
+            
+
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
+            if(rdata.daily.data[0].sunriseTime === undefined){
+              document.querySelector('#sunr').innerHTML = localization[lang].undefined;
+            }else{
+              document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
+            }
+            document.querySelector('#sunr').prepend(curr_icon);
+            
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
+            if(rdata.daily.data[0].sunsetTime === undefined){
+              document.querySelector('#suns').innerHTML = localization[lang].undefined;
+            }else{
+              document.querySelector('#suns').innerHTML = localization[lang].suns  +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
+            }
+            document.querySelector('#suns').prepend(curr_icon);
+    
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/pressure.svg';
+            document.querySelector('#pres').innerHTML =localization[lang].pres + option.pressure + localization[lang].units[units].pres_units;
+            document.querySelector('#pres').prepend(curr_icon);
+    
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/humidity.svg';
+            document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(option.humidity*100) + '%';  
+            document.querySelector('#hum').prepend(curr_icon);
+    
+            curr_icon = curr_icon.cloneNode(true);
+            curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/dewpoint.svg';
+            document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(option.dewPoint) + localization[lang].units[units].temp;
+            document.querySelector('#dew').prepend(curr_icon);
+            let label_arr = document.querySelectorAll('#slidemenu > label > span');
+            //labels for slidemenu
+            label_arr[0].innerHTML = localization[lang].temp;
+            label_arr[1].innerHTML = localization[lang].wind;
+            label_arr[2].innerHTML = localization[lang].hum;
+            label_arr[3].innerHTML = localization[lang].uv;
+            label_arr[4].innerHTML = localization[lang].clouds;
+            label_arr[5].innerHTML = localization[lang].pop;
+            
+            //backto button removal
+            if(document.getElementsByClassName('backto')[0] != null){
+              document.getElementsByClassName('backto')[0].remove();
+            }
+            
+            radio_events(i);
+            chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, i);
+            document.getElementById('days-fake').checked = true;
+          }
+
+            //when current function ended it's work, we remove loading window
+            if(load_text[0] != undefined){
+            document.getElementsByClassName('loading')[0].remove();
+            document.getElementById('display').style.opacity='1';
+            document.getElementById('legal').style.opacity='1';
+            document.getElementById('days_wrap').style.opacity='1';
+            document.getElementsByClassName('slider_wrap')[0].style.opacity=1;
+            document.getElementsByClassName('anchor_wrapper')[0].classList.remove('hide_anchor');
+            
+            //setTimeout(()=>, 2000);
+            if(localStorage.tools == 'true'){
+              firstInstance();
+            }
+          }
+          current(169-hour_counter);
+          //daily forecast
+          let create_days=true;
+          if(8-days_counter==0 && document.querySelector('.day')!=null){
+            create_days=false;
+          }else{
+            create_days=true;
+          }
+          for(let i=8-days_counter;i<8;i++){
+            console.log(i);
+            let date = moment(rdata.daily.data[i].time*1000);
+            if(create_days){
+              if(i!=7){
+                document.querySelector('#days').insertAdjacentHTML('beforeend', `
+              <input type="radio" name="days-radio" id="days-${i+1}" class="days_radio">
+              <label for="days-${i+1}" class="day">
+                      <div class="pop">
+                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
+                      </div>
+                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg" alt="${rdata.daily.data[i].icon}" class="sky">
+                      <div class="temp">
+                        <div class="temp_max">
+                          ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
+                        <div class="temp_min">
+                          ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
+                      </div>
+                      <div class="date">${localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date)}</div>
+              </label>`);
+              }else{
+                document.querySelector('#days').insertAdjacentHTML('beforeend', `
+                <div class="day">
+                  <div class="pop">
+                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
+                  </div>
+                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg" alt="${rdata.daily.data[i].icon}" class="sky">
+                  <div class="temp">
+                    <div class="temp_max">
+                      ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
+                    <div class="temp_min">
+                      ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
+                  </div>
+                  <div class="date">${localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date)}</div>
+                </div>`);
+              }
+            }else{
+              if(i==7){
+                break;
+              }
+              document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
+              document.querySelectorAll('.day > .sky')[i].src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
+              document.querySelectorAll('.day > .sky')[i].alt = rdata.daily.data[i].icon;
+              document.querySelectorAll('.day > .temp')[i].innerHTML=`
+              <div class="temp_max">
+                ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
+              <div class="temp_min">
+                ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
+              `;
+              document.querySelectorAll('.date')[i].innerHTML=localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date);
+
+            }
+            
+            if(document.getElementsByClassName('weekday')[i] != null){
+              document.getElementsByClassName('weekday')[i].remove();
+            }
+          }
+          //onclick backto we go to the current weather
+          function backToCurrent(){
+            let backto =document.createElement('div');
+            backto.className='backto';
+            backto.innerHTML = localization[lang].curr;
+            backto.onclick=()=>{
+              current(169-hour_counter);
+            } 
+            if(window.matchMedia('(max-width: 550px)').matches){
+              document.getElementsByClassName('day')[0].before(backto);
+            }else{
+              document.getElementsByClassName('app_temp')[0].after(backto);
+              document.getElementById('other').style.marginTop = '0'
+              document.getElementById('details').style.marginTop = '0'
+            }
+          }
+          function daysSetter(day_number){
+            videoBack(rdata.daily.data[day_number].icon, rdata.daily.data[day_number].temperatureMax);
+            document.getElementById('slide-item-1').checked = 'checked';
               let icon = document.createElement('img');
-              icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${option.icon}.svg`;
-              icon.alt=option.icon;
+              icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[day_number].icon}.svg`;
+              icon.alt='';
               icon.className='icon';
+              document.querySelector('.temp_val').innerHTML = Math.round(rdata.daily.data[day_number].temperatureMax) +localization[lang].units[units].temp ;
+          
+              document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +' ' + Math.round(rdata.daily.data[day_number].apparentTemperatureMax) +localization[lang].units[units].temp ;
+              document.querySelector('.condition').innerHTML = rdata.daily.data[day_number].summary;
+              document.querySelector('.condition').prepend(icon);
+              
               let curr_icon = document.createElement('img');
               curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
               curr_icon.alt ='';
               curr_icon.className = 'curr_icon';
-              document.querySelector('.temp_val').innerHTML = Math.round(option.temperature) + localization[lang].units[units].temp;
-              document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(option.apparentTemperature) +localization[lang].units[units].temp ;
-              document.querySelector('.condition').innerHTML = option.summary;
-              document.querySelector('.condition').prepend(icon);
-      
-              document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.hourly.data[0].precipProbability*100) + '%';
+              if(document.getElementsByClassName('backto')[0] == null){
+                backToCurrent();
+              }else{
+                document.getElementsByClassName('backto')[0].remove();
+                backToCurrent();
+              }
+              window.onresize = ()=>{
+                if(document.getElementsByClassName('backto')[0] != null){
+                  document.getElementsByClassName('backto')[0].remove();
+                  backToCurrent();
+                }
+              };
+  
+              document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.daily.data[day_number].precipProbability*100) + '%';
               document.querySelector('.propability').prepend(curr_icon);
-      
+  
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/uv.svg';
-              document.querySelector('.uv').innerHTML =localization[lang].uvint +  option.uvIndex;
+              document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[day_number].uvIndex;
               document.querySelector('.uv').prepend(curr_icon);
-      
+  
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/coverage.svg';
-              document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' +Math.round(option.cloudCover*100) + '%';
+              document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[day_number].cloudCover*100) + '%';
               document.querySelector('.clouds').prepend(curr_icon);
-      
+  
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/wind.svg';
               document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
               document.querySelector('.wind_text > h3').prepend(curr_icon);
-      
-              document.querySelector('.wind_speed').innerHTML = windIntensity(option.windSpeed, lang, units) + getCardinalDirection(option.windBearing, localization[lang].directions) + ', ' + option.windSpeed +' '+ localization[lang].units[units].wind_units;
-              wind_arrow('currently');
-      
-              
+              document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[day_number].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[day_number].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[day_number].windSpeed +' '+ localization[lang].units[units].wind_units;
+              wind_arrow(`daily`, day_number);
 
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
               if(rdata.daily.data[0].sunriseTime === undefined){
                 document.querySelector('#sunr').innerHTML = localization[lang].undefined;
               }else{
-                document.querySelector('#sunr').innerHTML = localization[lang].sunr  +  convertSeconds(rdata.daily.data[0].sunriseTime +rdata.offset*3600);
+                document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[day_number].sunriseTime +rdata.offset*3600);
               }
               document.querySelector('#sunr').prepend(curr_icon);
-              
+
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
               if(rdata.daily.data[0].sunsetTime === undefined){
                 document.querySelector('#suns').innerHTML = localization[lang].undefined;
               }else{
-                document.querySelector('#suns').innerHTML = localization[lang].suns  +  convertSeconds(rdata.daily.data[0].sunsetTime +rdata.offset*3600);
+                document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[day_number].sunsetTime +rdata.offset*3600);
               }
               document.querySelector('#suns').prepend(curr_icon);
-      
+  
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/pressure.svg';
-              document.querySelector('#pres').innerHTML =localization[lang].pres + option.pressure + localization[lang].units[units].pres_units;
+              document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[day_number].pressure + localization[lang].units[units].pres_units;
               document.querySelector('#pres').prepend(curr_icon);
-      
+              
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/humidity.svg';
-              document.querySelector('#hum').innerHTML =localization[lang].hum+ ': '+ Math.round(option.humidity*100) + '%';  
+              document.querySelector('#hum').innerHTML =localization[lang].hum+ ': ' + Math.round(rdata.daily.data[day_number].humidity*100) + '%';
               document.querySelector('#hum').prepend(curr_icon);
-      
+              
               curr_icon = curr_icon.cloneNode(true);
               curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/dewpoint.svg';
-              document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(option.dewPoint) + localization[lang].units[units].temp;
+              document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[day_number].dewPoint) + localization[lang].units[units].temp;
               document.querySelector('#dew').prepend(curr_icon);
-              let label_arr = document.querySelectorAll('#slidemenu > label > span');
-              //labels for slidemenu
-              label_arr[0].innerHTML = localization[lang].temp;
-              label_arr[1].innerHTML = localization[lang].wind;
-              label_arr[2].innerHTML = localization[lang].hum;
-              label_arr[3].innerHTML = localization[lang].uv;
-              label_arr[4].innerHTML = localization[lang].clouds;
-              label_arr[5].innerHTML = localization[lang].pop;
+              console.log('to graphs: ',day_number*1000);
               
-              //backto button removal
-              if(document.getElementsByClassName('backto')[0] != null){
-                document.getElementsByClassName('backto')[0].remove();
-              }
-              
-              radio_events(i);
-              chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, i);
-              document.getElementById('days-fake').checked = true;
-            }
+              radio_events(day_number*1000);
+              chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, day_number*1000);
 
-              //when current function ended it's work, we remove loading window
-              if(load_text[0] != undefined){
-              document.getElementsByClassName('loading')[0].remove();
-              document.getElementById('display').style.opacity='1';
-              document.getElementById('legal').style.opacity='1';
-              document.getElementById('days_wrap').style.opacity='1';
-              document.getElementsByClassName('slider_wrap')[0].style.opacity=1;
-              document.getElementsByClassName('anchor_wrapper')[0].classList.remove('hide_anchor');
-              
-              //setTimeout(()=>, 2000);
-              if(localStorage.tools == 'true'){
-                firstInstance();
-              }
-            }
-            current(169-hour_counter);
-            //daily forecast
-            let create_days=true;
-            if(8-days_counter==0 && document.querySelector('.day')!=null){
-              create_days=false;
-            }else{
-              create_days=true;
-            }
-            for(let i=8-days_counter;i<8;i++){
-              console.log(i);
-              let date = moment(rdata.daily.data[i].time*1000);
-              if(create_days){
-                if(i!=7){
-                  document.querySelector('#days').insertAdjacentHTML('beforeend', `
-                <input type="radio" name="days-radio" id="days-${i+1}" class="days_radio">
-                <label for="days-${i+1}" class="day">
-                        <div class="pop">
-                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
-                        </div>
-                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg" alt="${rdata.daily.data[i].icon}" class="sky">
-                        <div class="temp">
-                          <div class="temp_max">
-                            ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
-                          <div class="temp_min">
-                            ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
-                        </div>
-                        <div class="date">${localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date)}</div>
-                </label>`);
-                }else{
-                  document.querySelector('#days').insertAdjacentHTML('beforeend', `
-                  <div class="day">
-                    <div class="pop">
-                    <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
-                    </div>
-                    <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg" alt="${rdata.daily.data[i].icon}" class="sky">
-                    <div class="temp">
-                      <div class="temp_max">
-                        ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
-                      <div class="temp_min">
-                        ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
-                    </div>
-                    <div class="date">${localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date)}</div>
-                  </div>`);
-                }
-              }else{
-                if(i==7){
-                  break;
-                }
-                document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
-                document.querySelectorAll('.day > .sky')[i].src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
-                document.querySelectorAll('.day > .sky')[i].alt = rdata.daily.data[i].icon;
-                document.querySelectorAll('.day > .temp')[i].innerHTML=`
-                <div class="temp_max">
-                  ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
-                <div class="temp_min">
-                  ${Math.round(rdata.daily.data[i].temperatureMin)}${localization[lang].units[units].temp}</div>
-                `;
-                document.querySelectorAll('.date')[i].innerHTML=localization[lang][date.format('ddd')]+'<br>' + date.format(localization[lang].date);
-
-              }
-              
-              if(document.getElementsByClassName('weekday')[i] != null){
-                document.getElementsByClassName('weekday')[i].remove();
-              }
-            }
-            //onclick backto we go to the current weather
-            function backToCurrent(){
-              let backto =document.createElement('div');
-              backto.className='backto';
-              backto.innerHTML = localization[lang].curr;
-              backto.onclick=()=>{
-                current(169-hour_counter);
-              } 
-              if(window.matchMedia('(max-width: 550px)').matches){
-                document.getElementsByClassName('day')[0].before(backto);
-              }else{
-                document.getElementsByClassName('app_temp')[0].after(backto);
-                document.getElementById('other').style.marginTop = '0'
-                document.getElementById('details').style.marginTop = '0'
-              }
-            }
-            function daysSetter(day_number){
-              videoBack(rdata.daily.data[day_number].icon, rdata.daily.data[day_number].temperatureMax);
-              document.getElementById('slide-item-1').checked = 'checked';
-                let icon = document.createElement('img');
-                icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[day_number].icon}.svg`;
-                icon.alt='';
-                icon.className='icon';
-                document.querySelector('.temp_val').innerHTML = Math.round(rdata.daily.data[day_number].temperatureMax) +localization[lang].units[units].temp ;
+          }
+          // forecast with hours and graphs on click on the day
+          let days = document.getElementsByClassName('day');
+          console.log(days_counter);
+          let day_numberi=8-days_counter;
+          // if(8-days_counter==0){
+          //   days_counter++;
+          // }
+          for(let j=0;j<days.length-1;j++){
             
-                document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +' ' + Math.round(rdata.daily.data[day_number].apparentTemperatureMax) +localization[lang].units[units].temp ;
-                document.querySelector('.condition').innerHTML = rdata.daily.data[day_number].summary;
-                document.querySelector('.condition').prepend(icon);
-                
-                let curr_icon = document.createElement('img');
-                curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
-                curr_icon.alt ='';
-                curr_icon.className = 'curr_icon';
-                if(document.getElementsByClassName('backto')[0] == null){
-                  backToCurrent();
-                }else{
-                  document.getElementsByClassName('backto')[0].remove();
-                  backToCurrent();
-                }
-                window.onresize = ()=>{
-                  if(document.getElementsByClassName('backto')[0] != null){
-                    document.getElementsByClassName('backto')[0].remove();
-                    backToCurrent();
-                  }
-                };
-    
-                document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.daily.data[day_number].precipProbability*100) + '%';
-                document.querySelector('.propability').prepend(curr_icon);
-    
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/uv.svg';
-                document.querySelector('.uv').innerHTML =localization[lang].uvint +rdata.daily.data[day_number].uvIndex;
-                document.querySelector('.uv').prepend(curr_icon);
-    
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/coverage.svg';
-                document.querySelector('.clouds').innerHTML = localization[lang].clouds+ ': ' + Math.round(rdata.daily.data[day_number].cloudCover*100) + '%';
-                document.querySelector('.clouds').prepend(curr_icon);
-    
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/wind.svg';
-                document.querySelector('.wind_text > h3').innerHTML = localization[lang].wind+ ': ';
-                document.querySelector('.wind_text > h3').prepend(curr_icon);
-                document.querySelector('.wind_speed').innerHTML = windIntensity(rdata.daily.data[day_number].windSpeed, lang, units) + getCardinalDirection(rdata.daily.data[day_number].windBearing, localization[lang].directions) + ', ' + rdata.daily.data[day_number].windSpeed +' '+ localization[lang].units[units].wind_units;
-                wind_arrow(`daily`, day_number);
-
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunrise.svg';
-                if(rdata.daily.data[0].sunriseTime === undefined){
-                  document.querySelector('#sunr').innerHTML = localization[lang].undefined;
-                }else{
-                  document.querySelector('#sunr').innerHTML =localization[lang].sunr +  convertSeconds(rdata.daily.data[day_number].sunriseTime +rdata.offset*3600);
-                }
-                document.querySelector('#sunr').prepend(curr_icon);
-
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/sunset.svg';
-                if(rdata.daily.data[0].sunsetTime === undefined){
-                  document.querySelector('#suns').innerHTML = localization[lang].undefined;
-                }else{
-                  document.querySelector('#suns').innerHTML =localization[lang].suns +  convertSeconds(rdata.daily.data[day_number].sunsetTime +rdata.offset*3600);
-                }
-                document.querySelector('#suns').prepend(curr_icon);
-    
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/pressure.svg';
-                document.querySelector('#pres').innerHTML =localization[lang].pres + rdata.daily.data[day_number].pressure + localization[lang].units[units].pres_units;
-                document.querySelector('#pres').prepend(curr_icon);
-                
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/humidity.svg';
-                document.querySelector('#hum').innerHTML =localization[lang].hum+ ': ' + Math.round(rdata.daily.data[day_number].humidity*100) + '%';
-                document.querySelector('#hum').prepend(curr_icon);
-                
-                curr_icon = curr_icon.cloneNode(true);
-                curr_icon.src= 'https://d3aid59h00lu28.cloudfront.net/img/icons/dewpoint.svg';
-                document.querySelector('#dew').innerHTML =localization[lang].dwp+ ': ' + Math.round(rdata.daily.data[day_number].dewPoint) + localization[lang].units[units].temp;
-                document.querySelector('#dew').prepend(curr_icon);
-                console.log('to graphs: ',day_number*1000);
-                
-                radio_events(day_number*1000);
-                chart_summon('temperature',  'rgb(255, 81, 81)', 'rgba(255, 81, 81, 0.25)', localization[lang].units[units].temp, day_number*1000);
-
-            }
-            // forecast with hours and graphs on click on the day
-            let days = document.getElementsByClassName('day');
-            console.log(days_counter);
-            let day_numberi=8-days_counter;
-            // if(8-days_counter==0){
-            //   days_counter++;
-            // }
-            for(let j=0;j<days.length-1;j++){
-              
-              
-              
-              days[j].addEventListener('click',()=>{
-                daysSetter(8-days_counter+j);}
-              ); 
-            }
-      }    
-    }else{
-      //if browser doesn't support geolocation, we make special error notification
-      load_text[0].innerHTML = localization['ru'].geo_error;
-      load_text[1].innerHTML = localization['en'].geo_error;
-    }
+            
+            
+            days[j].addEventListener('click',()=>{
+              daysSetter(8-days_counter+j);}
+            ); 
+          }
+    }    
+  }else{
+    //if browser doesn't support geolocation, we make special error notification
+    load_text[0].innerHTML = localization['ru'].geo_error;
+    load_text[1].innerHTML = localization['en'].geo_error;
+  }
 }
 window.onload = loaded();
 
