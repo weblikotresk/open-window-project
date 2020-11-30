@@ -139,6 +139,7 @@ body{
     grid-row: 1/2;
     text-align: center;
     border-right: 1px solid rgba(255, 255, 255, 0.3);
+
 }
 .icons{
     display: flex;
@@ -146,7 +147,7 @@ body{
     justify-content: center;
 }
 
-#location{
+#location, #notifications{
     padding: 5px;
     display: flex;
     width: fit-content;
@@ -155,12 +156,119 @@ body{
     cursor: pointer;
     margin: 10px 10px 0 0;
 }
-#location:hover{
+#location:hover, #notifications:hover{
     background-color: #00c8ff;
     color: #fff;
     transition: .2s ease all;
     border-color: #59abc2;
 }
+#notifications:hover > svg{
+    animation: animationFrames ease-in-out 0.5s;
+  animation-iteration-count: 1;
+  transform-origin: 50% 50%;
+  -webkit-animation: animationFrames ease-in-out 0.5s;
+  -webkit-animation-iteration-count: 1;
+  -webkit-transform-origin: 50% 50%;
+  -moz-animation: animationFrames ease-in-out 0.5s;
+  -moz-animation-iteration-count: 1;
+  -moz-transform-origin: 50% 50%;
+  -o-animation: animationFrames ease-in-out 0.5s;
+  -o-animation-iteration-count: 1;
+  -o-transform-origin: 50% 50%;
+  -ms-animation: animationFrames ease-in-out 0.5s;
+  -ms-animation-iteration-count: 1;
+  -ms-transform-origin: 50% 50%;
+}
+
+@keyframes animationFrames{
+    0% {
+      transform:  rotate(0deg) ;
+    }
+    22% {
+      transform:  rotate(-45deg) ;
+    }
+    74% {
+      transform:  rotate(45deg) ;
+    }
+    89% {
+      transform:  rotate(23deg) ;
+    }
+    100% {
+      transform:  rotate(0deg) ;
+    }
+  }
+  
+  @-moz-keyframes animationFrames{
+    0% {
+      -moz-transform:  rotate(0deg) ;
+    }
+    22% {
+      -moz-transform:  rotate(-45deg) ;
+    }
+    74% {
+      -moz-transform:  rotate(45deg) ;
+    }
+    89% {
+      -moz-transform:  rotate(23deg) ;
+    }
+    100% {
+      -moz-transform:  rotate(0deg) ;
+    }
+  }
+  
+  @-webkit-keyframes animationFrames {
+    0% {
+      -webkit-transform:  rotate(0deg) ;
+    }
+    22% {
+      -webkit-transform:  rotate(-45deg) ;
+    }
+    74% {
+      -webkit-transform:  rotate(45deg) ;
+    }
+    89% {
+      -webkit-transform:  rotate(23deg) ;
+    }
+    100% {
+      -webkit-transform:  rotate(0deg) ;
+    }
+  }
+  
+  @-o-keyframes animationFrames {
+    0% {
+      -o-transform:  rotate(0deg) ;
+    }
+    22% {
+      -o-transform:  rotate(-45deg) ;
+    }
+    74% {
+      -o-transform:  rotate(45deg) ;
+    }
+    89% {
+      -o-transform:  rotate(23deg) ;
+    }
+    100% {
+      -o-transform:  rotate(0deg) ;
+    }
+  }
+  
+  @-ms-keyframes animationFrames {
+    0% {
+      -ms-transform:  rotate(0deg) ;
+    }
+    22% {
+      -ms-transform:  rotate(-45deg) ;
+    }
+    74% {
+      -ms-transform:  rotate(45deg) ;
+    }
+    89% {
+      -ms-transform:  rotate(23deg) ;
+    }
+    100% {
+      -ms-transform:  rotate(0deg) ;
+    }
+  }
 .location_img{
     height: 15px;
     fill: white;
