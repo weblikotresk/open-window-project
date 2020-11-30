@@ -107,7 +107,7 @@ body{
     'display display display display display display days'
     'slider_wrap slider_wrap slider_wrap slider_wrap slider_wrap slider_wrap days'
     'legal legal legal legal legal legal days';
-    padding: 25px;
+    padding: 0 25px 25px 25px;
     width: 900px;
     height: 1080px;
     border-radius: 5px;
