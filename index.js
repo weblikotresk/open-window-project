@@ -2,39 +2,20 @@
 const express = require('express');
 const compression = require('compression');
 const fetch = require('node-fetch');
-const bodyParser = require("body-parser");
-const webpush = require('web-push');
 const app = express();
-require('dotenv').config();
+require('dotenv').config()
+
 app.use(compression());
-app.use(bodyParser.json());
-
-
-const vapidKeys = {
-  publicKey:
-    'BAf3Bachk5dewaWpY3F9nmKs_4WumAEH6mDhS6o1F-TBTODJcYuDTs1eTb-4IFBEUZOvCrie8Aje7oBdn4ARwpU',
-  privateKey: 'NmvTaYbUOvtrE-BW2vCg2G4vL5pTa-9XeyUgq0x-fvs',
-}
-webpush.setVapidDetails(
-  'mailto:test@test.com',
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-)
-// Subscribe Route
-app.post("/subscribe", (req, res) => {
-  // Get pushSubscription object
-  const subscription = req.body.sub;
-  console.log(req.body.info);
-  // Send 201 - resource created
-  res.status(201).json({});
-  // Create payload (send to sw)
-  const payload = JSON.stringify({ title: "Push Test" });
-  // Pass object into sendNotification
-  webpush
-    .sendNotification(subscription, payload)
-    .catch(err => console.error(err));
-});
 app.listen(process.env.PORT || 5000);
+// app.use (function (req, res, next) {
+//   if (req.secure) {
+//           // request was via https, so do no special handling
+//           next();
+//   } else {
+//           // request was via http, so redirect to https
+//           res.redirect('https://' + req.headers.host + req.url);
+//   }
+// });
 app.use(express.static('public', {
     etag: true, // Just being explicit about the default.
     lastModified: true,  // Just being explicit about the default.
@@ -58,4 +39,3 @@ app.get('/weather/:latlon/:lang/:units', async (req, res)=>{
     res.setHeader('Cache-Control','max-age=65');
     res.json(json);
 });
-
