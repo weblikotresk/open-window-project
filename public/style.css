@@ -107,7 +107,7 @@ body{
     'display display display display display display days'
     'slider_wrap slider_wrap slider_wrap slider_wrap slider_wrap slider_wrap days'
     'legal legal legal legal legal legal days';
-    padding: 0 25px 25px 25px;
+    padding: 25px;
     width: 900px;
     height: 1080px;
     border-radius: 5px;
@@ -1175,7 +1175,7 @@ label.day:hover{
     #weather{
         grid-template-rows: repeat(3, 2fr) 1fr 1fr;
         grid-template-columns: 1fr 1fr;
-
+        padding: 0 25px 25px 25px;
         /* max-height: 1840px; */
 
         height: auto;
@@ -1241,6 +1241,9 @@ label.day:hover{
     }
 }
  @media screen and (max-width:550px){
+    #videoBG{
+        left: -33.33%;
+    }
      /*Weather*/
     #weather{
         display: block;

@@ -6,7 +6,7 @@ self.addEventListener('install', e => {
 });
 
 // Call Activate Event
-self.addEventListener('activate', e => {
+self.addEventListener('activate',  e => {
   console.log('Service Worker: Activated');
   // Remove unwanted caches
   e.waitUntil(
@@ -22,7 +22,6 @@ self.addEventListener('activate', e => {
     })
   );
 });
-
 // Call Fetch Event
 self.addEventListener('fetch', e => {
   console.log('Service Worker: Fetching');
@@ -34,11 +33,22 @@ self.addEventListener('fetch', e => {
         // Open cahce
         caches.open(cacheName).then(cache => {
           // Add response to cache
-          console.log(cache,e.request, resClone );
+          //console.log(cache,e.request, resClone );
           cache.put(e.request, resClone);
         });
         return res;
       })
       .catch(err => caches.match(e.request).then(res => res))
   );
+});
+
+// Register event listener for the 'push' event.
+self.addEventListener("push", e => {
+  const data = e.data.json();
+  console.log(data);
+  console.log("Push Recieved...");
+  self.registration.showNotification(data.title, {
+    body: "Notified by Traversy Media!",
+    icon: "http://image.ibb.co/frYOFd/tmlogo.png"
+  });
 });
