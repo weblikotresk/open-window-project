@@ -107,8 +107,8 @@ function videoBack(name, temp){
       videobg.classList.add('no_opacity');
   
       let mp4 = document.createElement('source');
-      mp4.src = `https://d3aid59h00lu28.cloudfront.net/videos/${name + postfix}.m4v`;
-      mp4.type = 'video/m4v';
+      mp4.src = `https://d3aid59h00lu28.cloudfront.net/videos/${name + postfix}.mp4`;
+      mp4.type = 'video/mp4';
       videobg.appendChild(mp4);
       let webm = document.createElement('source');
       webm.src = `https://d3aid59h00lu28.cloudfront.net/videos/webm/${name + postfix}.webm`;
@@ -125,8 +125,8 @@ function videoBack(name, temp){
     }else{
       //first creation
       let mp4 = document.createElement('source');
-      mp4.src = `https://d3aid59h00lu28.cloudfront.net/videos/${name + postfix}.m4v`;
-      mp4.type = 'video/m4v';
+      mp4.src = `https://d3aid59h00lu28.cloudfront.net/videos/${name + postfix}.mp4`;
+      mp4.type = 'video/mp4';
       let webm = document.createElement('source');
       webm.src = `https://d3aid59h00lu28.cloudfront.net/videos/webm/${name + postfix}.webm`;
       webm.type = 'video/webm';
@@ -177,7 +177,48 @@ let localization = {
     not_found:'По вашему запросу ничего не было найдено. Пожалуйста, попробуйте ещё раз.',
     undefined:'Не определено (полярный день/ночь)',
     updated:'Ваши данные на ',
-    refresh:'Обновить ⭮',
+    refresh:`Обновить 
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" class='refresh_icon' x="0px" y="0px" viewBox="0 0 489.711 489.711" style="enable-background:new 0 0 489.711 489.711;" xml:space="preserve">
+<g>
+	<g>
+		<path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13    c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13    c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1    c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"/>
+		<path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7    c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8    c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1    c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4    C456.056,357.911,481.656,274.811,462.456,195.511z"/>
+	</g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+</svg>
+    `,
+    details:'Рассвет/закат, точка росы, давление и др.',
+    details_hide:'Скрыть',
     'Mon':'Пн,',
     'Tue':'Вт,',
     'Wed':'Ср,',
@@ -266,7 +307,48 @@ let localization = {
     not_found:'Nothing has been found. Please, try again.',
     undefined:'Undefined (polar day/night)',
     updated:'Your data is on',
-    refresh:'Refresh ⭮',
+    refresh:`Обновить 
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" class='refresh_icon' x="0px" y="0px" viewBox="0 0 489.711 489.711" style="enable-background:new 0 0 489.711 489.711;" xml:space="preserve">
+<g>
+	<g>
+		<path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13    c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13    c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1    c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"/>
+		<path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7    c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8    c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1    c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4    C456.056,357.911,481.656,274.811,462.456,195.511z"/>
+	</g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+</svg>
+    `,
+    details:'Sunrise/sunset, dew point, pressure and more.',
+    details_hide:'Hide',
     'Mon':'Mon,',
     'Tue':'Tue,',
     'Wed':'Wed,',
@@ -419,6 +501,7 @@ closeSearch.addEventListener('click', ()=>{
     setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
     return false;}, 550);
 });
+
 //Loading window
 let load_text = document.getElementsByClassName('loading_support');
 load_text[0].innerHTML = localization['ru'].loading;
@@ -484,7 +567,7 @@ async function getWeather(latitude, longitude, language, unit, city){
     return [rdata, city, 8, 169]; 
    }else if (today-cached_objects[0].currently.time*1000>28800000){
      //до 6-дневного после 8-ми часов
-     document.getElementById('updating').classList.toggle('updating_closed');
+     document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
      let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
      let hour_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/3600000);
      console.log('до 6-дневного после 8-ми часов', hour_counter);
@@ -498,14 +581,25 @@ async function getWeather(latitude, longitude, language, unit, city){
 }
 
 window.onscroll = ()=>{
-  if(window.pageYOffset>800){
-    document.getElementsByClassName('anchor_wrapper')[0].classList.add('hide_anchor');
-  }else{
+  console.log(document.documentElement.clientHeight*2, window.pageYOffset);
+  if(window.matchMedia('(max-width: 1000px)').matches == false){
+    if(window.pageYOffset>document.documentElement.clientHeight){
     document.getElementsByClassName('anchor_wrapper')[0].classList.remove('hide_anchor');
+  }else{
+    document.getElementsByClassName('anchor_wrapper')[0].classList.add('hide_anchor');
+  }
+}
+  else{
+    if(window.pageYOffset>document.documentElement.clientHeight){
+      document.getElementsByClassName('anchor_wrapper')[0].classList.add('hide_anchor');
+    }else{
+      document.getElementsByClassName('anchor_wrapper')[0].classList.remove('hide_anchor');
+    }
   }
 };
 function loaded(request_data = localStorage){
   //location btn fix
+
   let promise;
   if(localStorage != request_data){
     request_data = localStorage;
@@ -531,6 +625,7 @@ function loaded(request_data = localStorage){
           city_promise,
           cache_results=isCache();
         input_field.setAttribute('placeholder', localization[lang].search_place);
+        
         
 
       function Focusing(blocks, input){
@@ -750,7 +845,6 @@ function loaded(request_data = localStorage){
     <span>${localization[lang].updated}${data_time}, ${data_date.format('DD[.]MM[.]YYYY')}</span>
     <span>${localization[lang].refresh}</span>
     `;
-    console.log(document.getElementsByClassName('updating')[0].innerHTML);
     console.log(city, rdata);
         function compass(event){
           var alpha;
@@ -1292,14 +1386,32 @@ function loaded(request_data = localStorage){
           }
               
           //current function delivers rdata to every block that needs it
+          document.getElementById('show_details').innerHTML = localization[lang].details;
           
+            let show_details = document.getElementById('show_details'),
+          details_opened = false;
+            show_details.onclick = ()=>{
+              if(window.matchMedia('(max-width: 550px)').matches){
+              document.getElementsByClassName('details_wrap')[0].classList.toggle('details_opened');
+              if(details_opened){
+                details_opened=false;
+                show_details.innerHTML = localization[lang].details;
+                setTimeout(()=>document.getElementsByClassName('details_wrap')[0].classList.toggle('details_hide'),210);
+              }else{
+                details_opened=true;
+                show_details.innerHTML = localization[lang].details_hide;
+                document.getElementsByClassName('details_wrap')[0].classList.toggle('details_hide')
+              }
+            }
+          }
+        
           function current(i){
             console.log(i);
             let option= rdata.currently;
             if(i>0){
               option=rdata.hourly.data[i];
             }
-            if(window.matchMedia('(max-width: 700px)').matches && window.matchMedia('(max-width: 550px)').matches == false ){
+            if(window.matchMedia('(max-width: 700px)').matches && window.matchMedia('(max-width: 550px)').matches == false){
               document.getElementById('details').style.marginTop = '-40px';
               document.getElementById('other').style.marginTop = '-40px';
             }else if(window.matchMedia('(max-width: 550px)').matches){
@@ -1418,7 +1530,7 @@ function loaded(request_data = localStorage){
             create_days=true;
           }
           for(let i=8-days_counter;i<8;i++){
-            console.log(i);
+            console.log(i, days_counter);
             let date = moment(rdata.daily.data[i].time*1000);
             if(create_days){
               if(i!=7){
@@ -1580,15 +1692,7 @@ function loaded(request_data = localStorage){
           }
           // forecast with hours and graphs on click on the day
           let days = document.getElementsByClassName('day');
-          console.log(days_counter);
-          let day_numberi=8-days_counter;
-          // if(8-days_counter==0){
-          //   days_counter++;
-          // }
           for(let j=0;j<days.length-1;j++){
-            
-            
-            
             days[j].addEventListener('click',()=>{
               daysSetter(8-days_counter+j);}
             ); 
@@ -1601,7 +1705,6 @@ function loaded(request_data = localStorage){
   }
 }
 window.onload = loaded();
-
 
 document.getElementById('location').onclick = ()=>{
   localStorage.removeItem('cached_data');

@@ -34,7 +34,7 @@ self.addEventListener('fetch', e => {
         // Open cahce
         caches.open(cacheName).then(cache => {
           // Add response to cache
-          console.log(cache,e.request, resClone );
+          //console.log(cache,e.request, resClone );
           cache.put(e.request, resClone);
         });
         return res;
