@@ -4,6 +4,35 @@ window.mobileAndTabletCheck = function() {
   (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
   return check;
 };
+
+function snowCheck(rdata, level){
+  if(rdata.precipType ==undefined && rdata.icon =='fog' && (rdata.summary.includes('Туман') || rdata.summary.includes('туман') ||
+  rdata.summary.includes('Fog') ||rdata.summary.includes('fog'))){
+    return 'cloudy'
+  }
+  if((level.includes('hourly') || level.includes('daily') ||level.includes('currently'))&&
+  (rdata.precipType == 'snow' &&
+       (rdata.summary.includes('Туман') || rdata.summary.includes('туман') ||
+       rdata.summary.includes('Fog') ||rdata.summary.includes('fog'))&&
+       rdata.humidity*100<99)
+  )
+  {
+    return true
+  }else if((level=='hourlysumm' || level=='dailysumm')&&
+   (rdata.summary.includes('Туман') || rdata.summary.includes('туман') ||
+    rdata.summary.includes('Fog') ||rdata.summary.includes('fog'))&& rdata.icon == 'snow'){
+    return true
+  }else{
+    return false
+  }
+}
+function fogToSnow(str){
+  if(str.includes('Туман')){
+    return str.replace('Туман', 'Снег')
+  }else if(str.includes('туман')){
+    return str.replace('туман', 'снег');
+  }
+}
 function convertSeconds(seconds){
   let time = new Date();
   time.setTime(seconds * 1000);
@@ -19,7 +48,6 @@ function windIntensity(wind_speed, lang, units){
       wind_speed = wind_speed/3.6
       break;
   }
-  console.log(wind_speed);
   if(wind_speed <= 0.2){
     return localization[lang].windIntensity.calm
   }
@@ -514,7 +542,6 @@ if(load_text[0] != undefined){
 
 
 function cityName(city){
-  console.log(city.locality);
   if(document.querySelector('.city') == null){
     let text = document.createElement('span');
     text.classList.add('city');
@@ -844,6 +871,7 @@ function loaded(request_data = localStorage){
     <span>${localization[lang].updated}${data_time}, ${data_date.format('DD[.]MM[.]YYYY')}</span>
     <span>${localization[lang].refresh}</span>
     `;
+    
     console.log(city, rdata);
         function compass(event){
           var alpha;
@@ -948,7 +976,6 @@ function loaded(request_data = localStorage){
           max_chart =0,
           chart_labels = [];
           if(document.querySelector('.hour')==null){
-            console.log('create');
             create_hours=true;
           }else{
             create_hours=false;
@@ -963,12 +990,19 @@ function loaded(request_data = localStorage){
                 chart_data[j] = Math.round(rdata.hourly.data[i][option]);
               }
               let pop_icon = water_drop.cloneNode(true);
+              let sky_icon = rdata.hourly.data[i].icon;
+              if(snowCheck(rdata.hourly.data[i], 'hourly') == 'cloudy'){
+                sky_icon = 'cloudy'
+              }else
+                if(snowCheck(rdata.hourly.data[i], 'hourly') && sky_icon=='fog'){
+                  sky_icon='snow';
+                }
               if(create_hours){
-
+                
                 document.querySelector("#hours").insertAdjacentHTML('beforeend',`
                 <div class="hour">
                   <div class="pop">${Math.round(rdata.hourly.data[i].precipProbability*100)}%</div>
-                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg" alt="${rdata.hourly.data[i].icon}" class="sky">
+                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" class="sky">
                       <div class="temp">${Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp}</div>
                       <div class="time">${convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600)}</div>
                 </div>
@@ -978,7 +1012,7 @@ function loaded(request_data = localStorage){
               }else{
                 document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i].precipProbability*100) +'%';
                 document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp;
-                document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i].icon}.svg`;
+                document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
                 document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600);
                 document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
                 j++;
@@ -993,13 +1027,19 @@ function loaded(request_data = localStorage){
           }else if (mode==0){
                 for(let j =0; j<24;j++){
                   //current (for real)
+                  let sky_icon = rdata.hourly.data[j].icon;
+                  if(snowCheck(rdata.hourly.data[j], 'hourly') == 'cloudy'){
+                    sky_icon = 'cloudy'
+                  }else
+                  if(snowCheck(rdata.hourly.data[j], 'hourly') && sky_icon=='fog'){
+                    sky_icon='snow';
+                  }
                   let pop_icon = water_drop.cloneNode(true);
                   if(create_hours){
-                    console.log('prependin');
                     document.querySelector("#hours").insertAdjacentHTML('beforeend',`
                     <div class="hour">
                       <div class="pop">${Math.round(rdata.hourly.data[j].precipProbability*100)}%</div>
-                          <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[j].icon}.svg" alt="${rdata.hourly.data[j].icon}" class="sky">
+                          <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" class="sky">
                           <div class="temp">${Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp}</div>
                           <div class="time">${convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600)}</div>
                     </div>
@@ -1008,7 +1048,7 @@ function loaded(request_data = localStorage){
                   }else{
                     document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[j].precipProbability*100) +'%';
                     document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp;
-                    document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[j].icon}.svg`;
+                    document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
                     document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600);
                     document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
                   }
@@ -1026,18 +1066,26 @@ function loaded(request_data = localStorage){
           else if(mode>=1000){
             mode=mode/1000;
             for(let i = mode; i<rdata.hourly.data.length;i++){
+              
               if(rdata.hourly.data[i].time == rdata.daily.data[mode].time){
                 console.log(i, mode);
                 for(let j =0; j<24;j++){
                   //hourly for daily
-
+                  let sky_icon = rdata.hourly.data[i+j].icon;
+                  if(snowCheck(rdata.hourly.data[i+j], 'hourly') == 'cloudy'){
+                    sky_icon = 'cloudy'
+                  }else
+                  if(snowCheck(rdata.hourly.data[i+j], 'hourly') && sky_icon=='fog'){
+                    
+                    sky_icon='snow';
+                  }
                   let pop_icon = water_drop.cloneNode(true);
                   if(create_hours){
                     console.log('prepending');
                     document.querySelector("#hours").insertAdjacentHTML('beforeend',`
                     <div class="hour">
                       <div class="pop">${Math.round(rdata.hourly.data[i+j].precipProbability*100)}%</div>
-                          <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg" alt="${rdata.hourly.data[i+j].icon}" class="sky">
+                          <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" class="sky">
                           <div class="temp">${Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp}</div>
                           <div class="time">${convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600)}</div>
                     </div>
@@ -1046,7 +1094,7 @@ function loaded(request_data = localStorage){
                   }else{
                     document.querySelectorAll('.hour > .pop' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].precipProbability*100) +'%';
                     document.querySelectorAll('.hour > .temp' )[j].innerHTML = Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp;
-                    document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.hourly.data[i+j].icon}.svg`;
+                    document.querySelectorAll('.hour > .sky' )[j].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
                     document.querySelectorAll('.hour > .time' )[j].innerHTML = convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600);
                     document.querySelectorAll('.hour > .pop' )[j].prepend(pop_icon);
                   }
@@ -1072,8 +1120,6 @@ function loaded(request_data = localStorage){
           let chart_block = document.createElement('canvas');
           chart_block.id = 'myChart';
           document.getElementsByClassName('chart-container')[0].append(chart_block);
-
-          console.log('chart was created');
 
           //chart
         let hour_ret=hourSetter(mode, option),
@@ -1405,11 +1451,11 @@ function loaded(request_data = localStorage){
           }
         
           function current(i){
-            console.log(i);
             let option= rdata.currently;
             if(i>0){
               option=rdata.hourly.data[i];
             }
+            let snow = snowCheck(option, 'currently');
             if(window.matchMedia('(max-width: 700px)').matches && window.matchMedia('(max-width: 550px)').matches == false){
               document.getElementById('details').style.marginTop = '-40px';
               document.getElementById('other').style.marginTop = '-40px';
@@ -1418,10 +1464,32 @@ function loaded(request_data = localStorage){
               document.getElementById('details').style.marginTop = '0';
             }
             
-            videoBack(option.icon, option.temperature);
+            
             let icon = document.createElement('img');
-            icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${option.icon}.svg`;
-            icon.alt=option.icon;
+            let sky_icon = option.icon;
+            if(snow){
+              if(sky_icon == 'fog'){
+                icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/snow.svg`;
+                icon.alt='snow';
+                sky_icon='snow';
+              }
+              document.querySelector('.condition').innerHTML = fogToSnow(option.summary);
+            }else{
+              icon.alt=option.icon;
+              icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${option.icon}.svg`;
+              document.querySelector('.condition').innerHTML = option.summary;
+            }
+            let date_ny = moment(option.time*1000);
+            date_ny = date_ny.format(localization[lang].date);
+            console.log(date_ny);
+             if(date_ny== '31.12' || date_ny== '12.31' ){
+              videoBack('newYear', option.temperature);
+             }else{
+              videoBack(sky_icon, option.temperature);
+             }
+            
+            
+            
             icon.className='icon';
             let curr_icon = document.createElement('img');
             curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
@@ -1429,7 +1497,6 @@ function loaded(request_data = localStorage){
             curr_icon.className = 'curr_icon';
             document.querySelector('.temp_val').innerHTML = Math.round(option.temperature) + localization[lang].units[units].temp;
             document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +''+ Math.round(option.apparentTemperature) +localization[lang].units[units].temp ;
-            document.querySelector('.condition').innerHTML = option.summary;
             document.querySelector('.condition').prepend(icon);
     
             document.querySelector('.propability').innerHTML = localization[lang].pop+ ': '+ Math.round(rdata.hourly.data[0].precipProbability*100) + '%';
@@ -1529,17 +1596,24 @@ function loaded(request_data = localStorage){
             create_days=true;
           }
           for(let i=8-days_counter;i<8;i++){
-            console.log(i, days_counter);
             let date = moment(rdata.daily.data[i].time*1000);
+            let sky_icon= rdata.daily.data[i].icon;
+            if(snowCheck(rdata.daily.data[i], 'daily') == 'cloudy'){
+              sky_icon = 'cloudy'
+            }else
+            if(snowCheck(rdata.daily.data[i], 'daily') && sky_icon=='fog'){
+              sky_icon='snow';
+            }
             if(create_days){
               if(i!=7){
+                
                 document.querySelector('#days').insertAdjacentHTML('beforeend', `
               <input type="radio" name="days-radio" id="days-${i+1}" class="days_radio">
               <label for="days-${i+1}" class="day">
                       <div class="pop">
                       <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
                       </div>
-                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg" alt="${rdata.daily.data[i].icon}" class="sky">
+                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" class="sky">
                       <div class="temp">
                         <div class="temp_max">
                           ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
@@ -1554,7 +1628,7 @@ function loaded(request_data = localStorage){
                   <div class="pop">
                   <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
                   </div>
-                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg" alt="${rdata.daily.data[i].icon}" class="sky">
+                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" class="sky">
                   <div class="temp">
                     <div class="temp_max">
                       ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
@@ -1569,8 +1643,8 @@ function loaded(request_data = localStorage){
                 break;
               }
               document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
-              document.querySelectorAll('.day > .sky')[i].src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[i].icon}.svg`;
-              document.querySelectorAll('.day > .sky')[i].alt = rdata.daily.data[i].icon;
+              document.querySelectorAll('.day > .sky')[i].src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
+              document.querySelectorAll('.day > .sky')[i].alt = sky_icon;
               document.querySelectorAll('.day > .temp')[i].innerHTML=`
               <div class="temp_max">
                 ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
@@ -1602,16 +1676,31 @@ function loaded(request_data = localStorage){
             }
           }
           function daysSetter(day_number){
-            videoBack(rdata.daily.data[day_number].icon, rdata.daily.data[day_number].temperatureMax);
+            let sky_icon= rdata.daily.data[day_number].icon;
+            if(snowCheck(rdata.daily.data[day_number], 'daily') == 'cloudy'){
+              sky_icon = 'cloudy'
+            }else
+            if(snowCheck(rdata.daily.data[day_number], 'daily')){
+              if(sky_icon=='fog'){
+                sky_icon='snow';
+              }
+              document.querySelector('.condition').innerHTML =fogToSnow(rdata.daily.data[day_number].summary, 'daily');
+            }else{
+              document.querySelector('.condition').innerHTML = rdata.daily.data[day_number].summary;
+            }
+            if(document.querySelectorAll('.date')[day_number]=='31.12' || document.querySelectorAll('.date')[day_number]=='12.31'){
+              videoBack('newYear', rdata.daily.data[day_number].temperatureMax);
+            }else{
+              videoBack(sky_icon, rdata.daily.data[day_number].temperatureMax);
+            };
+            
             document.getElementById('slide-item-1').checked = 'checked';
               let icon = document.createElement('img');
-              icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata.daily.data[day_number].icon}.svg`;
-              icon.alt='';
+              icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
+              icon.alt=icon;
               icon.className='icon';
               document.querySelector('.temp_val').innerHTML = Math.round(rdata.daily.data[day_number].temperatureMax) +localization[lang].units[units].temp ;
-          
               document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +' ' + Math.round(rdata.daily.data[day_number].apparentTemperatureMax) +localization[lang].units[units].temp ;
-              document.querySelector('.condition').innerHTML = rdata.daily.data[day_number].summary;
               document.querySelector('.condition').prepend(icon);
               
               let curr_icon = document.createElement('img');
