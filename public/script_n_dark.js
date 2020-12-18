@@ -581,7 +581,6 @@ async function getWeather(latitude, longitude, language, unit, city){
 }
 
 window.onscroll = ()=>{
-  console.log(document.documentElement.clientHeight*2, window.pageYOffset);
   if(window.matchMedia('(max-width: 1000px)').matches == false){
     if(window.pageYOffset>document.documentElement.clientHeight){
     document.getElementsByClassName('anchor_wrapper')[0].classList.remove('hide_anchor');
