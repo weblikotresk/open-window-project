@@ -114,7 +114,7 @@ body{
     'legal legal legal legal legal legal days';
     padding: 25px;
     width: 900px;
-    height: 1080px;
+    height: 1200px;
     border-radius: 5px;
 
     /* background: url('img/trianglify-lowres3.png') no-repeat center / cover; */
@@ -870,7 +870,7 @@ input[type='radio']{
     overflow-y: scroll;
     padding-left: 20px;
 }
-.days_slider{
+#days_slider{
     display: flex;
     height: 100%;
     overflow: hidden;
@@ -1072,6 +1072,24 @@ label.day:hover{
     content: '';
     display: block;
 }
+#hourly_summary, #daily_summary{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px auto;
+    padding: 15px;
+    text-align: center;
+    font-size: 21px;
+    border: 1px solid rgba(255, 255, 255, 0.88);
+    border-radius: 20px;
+}
+.summary_img{
+    width: 45px;
+    margin-right: 15px;
+}
+#daily_summary{
+    display: none;
+}
 /*===================================LEGAL============================================*/
 
 #legal{
@@ -1122,7 +1140,7 @@ label.day:hover{
 /*media*/
 @media screen and (max-width:1000px){
     #weather{
-        grid-template-rows: 2fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: repeat(5,1fr);
         grid-template-columns: 1fr repeat(5, 2fr);
         grid-template-areas:
         'display display display display display display'
@@ -1155,16 +1173,13 @@ label.day:hover{
     #display{
      grid-template-rows: 2fr 1fr 2fr;
     }
-    .chart_area, .days_slider, .slider_wrap{
+    .chart_area, #days_slider, .slider_wrap{
         width:84%;
         margin: 0 auto;
     }
     .chart_area{
         margin: auto;
         height: 80%;
-    }
-    #days_wrap{
-        width: 100%;
     }
     #slidemenu{
         width: 95%;
@@ -1176,7 +1191,10 @@ label.day:hover{
         overflow-y: unset;
         padding: 0;
     }
-
+    #daily_summary{
+        width: 80%;
+        display: flex;
+    }
     .day{
         width: 100px;
         margin: 0 30px 15px 0;
@@ -1184,6 +1202,7 @@ label.day:hover{
     }
 
     #days_wrap{
+        height: fit-content;
         margin-left: 0;
         padding-left: 0;
     }
@@ -1197,8 +1216,11 @@ label.day:hover{
     #days{
         padding-left: 5px;
     }
-    .slider_wrap, .days_slider, .chart_area{
+    .slider_wrap, #days_slider, .chart_area{
         width: 100%;
+    }
+    #daily_summary{
+        width: auto;
     }
 }
 @media screen and (max-width:700px){
@@ -1206,11 +1228,8 @@ label.day:hover{
         left: -33.33%;
     }
     #weather{
-        grid-template-rows: repeat(3, 2fr) 1fr 1fr;
+        grid-template-rows: 1fr 2fr 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr;
-
-        /* max-height: 1840px; */
-
         height: auto;
         text-align: center;
         width: auto;
@@ -1289,7 +1308,7 @@ label.day:hover{
         display: block;
     }
     .slider_wrap{
-        margin-bottom: 40px;
+        margin-bottom: 25px;
     }
     .loading{
         width: 87%;
@@ -1363,7 +1382,7 @@ label.day:hover{
     }
     .backto{
         width: 100px;
-        padding-top: 65px;
+        padding-top: 85px;
         margin: 0 30px 15px 0;
     }
     .chart-container{

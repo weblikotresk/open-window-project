@@ -6,6 +6,10 @@ window.mobileAndTabletCheck = function() {
 };
 
 function snowCheck(rdata, level){
+  if(rdata.summary == undefined || rdata.summary =="404: Something has gone wrong.."){
+    rdata.summary="404: Something has gone wrong.."
+    return false
+  }
   if(rdata.precipType ==undefined && rdata.icon =='fog' && (rdata.summary.includes('Туман') || rdata.summary.includes('туман') ||
   rdata.summary.includes('Fog') ||rdata.summary.includes('fog'))){
     return 'cloudy'
@@ -165,7 +169,34 @@ function videoBack(name, temp){
     }
   }
 }
-
+function summaries(rdata, level){
+  let container = '';
+  if(level =='daily'){
+    container='days_slider'
+  }else{
+    container = 'hours'
+  }
+  if(rdata[level].icon=='fog' && snowCheck(rdata[level], 'hourlysumm')){
+    rdata[level].icon='snow';
+    rdata[level].summary=fogToSnow(rdata[level].summary);
+  }
+  if(document.querySelector(`#${level}_summary`)==undefined){
+    document.querySelector(`#${container}`).insertAdjacentHTML('beforebegin', `
+    <div id="${level}_summary">
+      <img class="summary_img" src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg">
+      <span>${rdata[level].summary}</span>
+    </div>
+    `) 
+  }else{
+    console.log(level, container, rdata);
+    if(level =='daily'){
+      document.getElementsByClassName('summary_img')[0].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg`;
+    }else{
+      document.getElementsByClassName('summary_img')[1].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg`;
+    }
+    document.querySelector(`#${level}_summary > span`).innerHTML = rdata[level].summary;
+  }
+}
 let localization = {
   'ru':{
     app_temp:'Ощущается как: ',
@@ -623,7 +654,7 @@ window.onscroll = ()=>{
     }
   }
 };
-function loaded(request_data = localStorage){
+function loaded(request_data = localStorage, cached_coords){
   //location btn fix
 
   let promise;
@@ -651,8 +682,6 @@ function loaded(request_data = localStorage){
           city_promise,
           cache_results=isCache();
         input_field.setAttribute('placeholder', localization[lang].search_place);
-        
-        
 
       function Focusing(blocks, input){
         var divs = document.getElementsByClassName(blocks),
@@ -819,7 +848,11 @@ function loaded(request_data = localStorage){
       });
     }
     //loading starts here
-    if(localStorage.location == 'off'){
+    if(localStorage.location == 'off' || cached_coords!=undefined){
+      if(cached_coords!=undefined){
+        lat= cached_coords[0];
+        lon=cached_coords[1];
+      }
       fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${lang}`).then((response) => {
         return response.json();
       })
@@ -847,6 +880,12 @@ function loaded(request_data = localStorage){
           cityName(cached_objects[1]);
           wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
         }
+    }else if(cached_coords!=undefined){
+      promise = getPreciseLocation().then(result =>getWeather(result[0], result[1], result[2],result[3], result[4]));
+      promise.then(data_set=>{
+        cityName(data_set[1]);
+        wrapper(data_set);
+      });
     }else{
       promise = getPreciseLocation().then(result =>getWeather(result[0], result[1], result[2],result[3], result[4]));
       promise.then(data_set=>{
@@ -1422,6 +1461,10 @@ function loaded(request_data = localStorage){
         let back_options = document.querySelectorAll('.back-label > span');
         back_options[0].innerHTML = localization[lang].img;
         back_options[1].innerHTML = localization[lang].vid;
+        
+        
+        
+
           
         //legal fix lmao
           if(moment().format('YYYY') == 2020){
@@ -1464,7 +1507,8 @@ function loaded(request_data = localStorage){
               document.getElementById('details').style.marginTop = '0';
             }
             
-            
+            summaries(rdata, 'hourly');
+            summaries(rdata, 'daily');
             let icon = document.createElement('img');
             let sky_icon = option.icon;
             if(snow){
@@ -1589,12 +1633,16 @@ function loaded(request_data = localStorage){
           }
           current(169-hour_counter);
           //daily forecast
+          if(days_counter>8){
+            days_counter=8
+          }
           let create_days=true;
           if(8-days_counter==0 && document.querySelector('.day')!=null){
             create_days=false;
           }else{
             create_days=true;
           }
+         
           for(let i=8-days_counter;i<8;i++){
             let date = moment(rdata.daily.data[i].time*1000);
             let sky_icon= rdata.daily.data[i].icon;
@@ -1639,7 +1687,7 @@ function loaded(request_data = localStorage){
                 </div>`);
               }
             }else{
-              if(i==7){
+              if(i==8){
                 break;
               }
               document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
@@ -1677,6 +1725,9 @@ function loaded(request_data = localStorage){
           }
           function daysSetter(day_number){
             let sky_icon= rdata.daily.data[day_number].icon;
+            if(rdata.daily.data[day_number].summary == "404: Something has gone wrong.."){
+              rdata.daily.data[day_number].summary=rdata.daily.data[day_number].icon;
+            }
             if(snowCheck(rdata.daily.data[day_number], 'daily') == 'cloudy'){
               sky_icon = 'cloudy'
             }else
@@ -1800,13 +1851,19 @@ document.getElementById('location').onclick = ()=>{
   loaded(localStorage);
 };
 document.getElementsByClassName('updating')[0].onclick=()=>{
+  let cached_objects= localStorage.getItem('cached_data');
+  cached_objects = JSON.parse(cached_objects);
+  let coords=[cached_objects[1].latitude,cached_objects[1].longitude];
   localStorage.removeItem('cached_data');
-  loaded(localStorage);
+  loaded(localStorage, coords);
   document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
 }
 document.getElementsByClassName('updating_footer')[0].onclick=()=>{
+  let cached_objects= localStorage.getItem('cached_data');
+  cached_objects = JSON.parse(cached_objects);
+  let coords=[cached_objects[1].latitude,cached_objects[1].longitude];
   localStorage.removeItem('cached_data');
-  loaded(localStorage);
+  loaded(localStorage, coords);
   if( document.getElementsByClassName('updating')[0].classList.contains('updating_closed')==false){
     document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
   }

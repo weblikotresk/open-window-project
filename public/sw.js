@@ -44,6 +44,7 @@ self.addEventListener('activate', e => {
        .catch(err => caches.match(e.request).then(res => res))
    );
  });
+ 
 // self.addEventListener('fetch', function(event) {
 //   console.log(event.request.url);
  
