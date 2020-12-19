@@ -190,9 +190,9 @@ function summaries(rdata, level){
   }else{
     console.log(level, container, rdata);
     if(level =='daily'){
-      document.getElementsByClassName('summary_img')[0].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg`;
-    }else{
       document.getElementsByClassName('summary_img')[1].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg`;
+    }else{
+      document.getElementsByClassName('summary_img')[0].src = `https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg`;
     }
     document.querySelector(`#${level}_summary > span`).innerHTML = rdata[level].summary;
   }
