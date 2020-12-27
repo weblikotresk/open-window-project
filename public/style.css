@@ -1109,9 +1109,11 @@ label.day:hover{
 #legal > p{
     margin: 0;
 }
-#legal > a{
+#legal a{
     color: rgba(255,255,255,0.5);
-
+    margin-right:3px;
+}
+#legal > a{
     margin-right:15px;
 }
 .updating_footer>span>.refresh_icon{
