@@ -197,7 +197,7 @@ function summaries(rdata, level){
   if(document.querySelector(`#${level}_summary`)==undefined){
     document.querySelector(`#${container}`).insertAdjacentHTML('beforebegin', `
     <div id="${level}_summary">
-      <img class="summary_img" src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg">
+      <img class="summary_img" alt="${rdata[level].icon}" src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg">
       <span>${rdata[level].summary}</span>
     </div>
     `) 
@@ -1020,7 +1020,7 @@ function loaded(request_data = localStorage, cached_coords){
         let water_drop = document.createElement('img');
           water_drop.src = 'https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
           water_drop.className = 'pop_drop';
-
+          water_drop.alt = 'Precip'
         function hourSetter(mode, option){
           let create_hours=true,
           chart_data = [],
@@ -1675,7 +1675,7 @@ function loaded(request_data = localStorage, cached_coords){
               <input type="radio" name="days-radio" id="days-${i+1}" class="days_radio">
               <label for="days-${i+1}" class="day">
                       <div class="pop">
-                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
+                      <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" alt="Precip"class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
                       </div>
                       <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" class="sky">
                       <div class="temp">
@@ -1690,7 +1690,7 @@ function loaded(request_data = localStorage, cached_coords){
                 document.querySelector('#days').insertAdjacentHTML('beforeend', `
                 <div class="day">
                   <div class="pop">
-                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
+                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" alt="Precip" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
                   </div>
                   <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" class="sky">
                   <div class="temp">
@@ -1707,7 +1707,7 @@ function loaded(request_data = localStorage, cached_coords){
                 break;
               }
               console.log(i);
-              document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
+              document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" alt="Precip" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
               document.querySelectorAll('.day > .sky')[i].src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
               document.querySelectorAll('.day > .sky')[i].alt = sky_icon;
               document.querySelectorAll('.day > .temp')[i].innerHTML=`

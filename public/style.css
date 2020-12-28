@@ -307,6 +307,7 @@ body{
     display: block;
     transition: .25s all ease;
     padding: 5px;
+    height: 15px;
 }
 #settings:hover, #search:hover{
     background-color:#00c8ff;
@@ -629,6 +630,7 @@ input[type='radio']{
 .curr_icon{
     height: 1.5rem;
     margin: 0 7px -7px -7px;
+    width: auto;
 }
 
 /*-----------------------DETAILS-----------------------*/
@@ -843,12 +845,14 @@ input[type='radio']{
 }
 .sky{
     width: 60px;
+    height: 60px;
     margin: 0 auto 10px auto;
     display: block;
 }
 .pop_drop{
     margin-right: 3px;
     width: 13px;
+    height:13px;
 }
 .temp{
     margin-bottom: 10px;
@@ -1085,6 +1089,7 @@ label.day:hover{
 }
 .summary_img{
     width: 45px;
+    height: 45px;
     margin-right: 15px;
 }
 #daily_summary{
