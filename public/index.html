@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
@@ -7,239 +7,56 @@
     name="description"           
     content="Самый точный прогноз на 7 дней в любой точке земного шара, 
      используя метеостанции по всему миру. Без навязчивой рекламы."/>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet" rel="preload">
+    <link async href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet" rel="preload">
     <link rel="stylesheet" href="style.min.css">
-
     <title>OpenWindow | Fast service to deliver the most accurate forecast</title>
     <link rel="shortcut icon" rel="preload" href="https://d3aid59h00lu28.cloudfront.net/img/icons/icon.ico" type="image/x-icon"> 
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="https://d3aid59h00lu28.cloudfront.net/img/icons/icon192.png">
     <link rel="canonical" href="https://open-window.herokuapp.com"/>
+
     <meta name="theme-color" content="#55c1ff"/>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-165464526-1"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-165464526-1" rel="preload"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'UA-165464526-1');
     </script>
 </head>
 <body>
-    <video id="videoBG" autoplay='autoplay' muted='muted' loop='loop' playsinline class="no_opacity">
- 
-    </video>
+    <video id="videoBG" autoplay='autoplay' muted='muted' loop='loop' playsinline class="no_opacity"></video>
     <div class="updating updating_closed">
     </div>
-        <div id="container">
-            <div class="back"></div>
-            
-            <div id="weather">
-                <div class="loading">
-                    <div class="loader"></div>
-                    <p class='loading_support'>
-                    </p>
-                    <p class='loading_support'>
-                    </p>
-                    
-                </div>
+    <div id="container">
+        <div class="back"></div>
+        <div id="weather">
+            <div class="loading">
+                <div class="loader"></div>
+                <p class='loading_support'>
+                </p>
+                <p class='loading_support'>
+                </p>
                 
-        
-                <div id="display">
-                    <div id="current">
-                        <div class="icons">
-                            <div id="location">
-                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 362.13 362.13" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 362.13 362.13" class='location_img'>
-                                    <g>
-                                    <path d="m181.065,0c-75.532,0-136.981,61.45-136.981,136.981 0,31.155 21.475,76.714 63.827,135.411 30.619,42.436 60.744,75.965 62.011,77.372l11.144,12.367 11.144-12.367c1.267-1.406 31.392-34.936 62.011-77.372 42.352-58.697 63.827-104.255 63.827-135.411-0.001-75.531-61.451-136.981-136.983-136.981zm0,316.958c-37.733-44.112-106.981-134.472-106.981-179.977 0-58.989 47.991-106.981 106.981-106.981s106.981,47.992 106.981,106.981c0.001,45.505-69.248,135.865-106.981,179.977z"/>
-                                    <circle cx="181.065" cy="136.982" r="49.696"/>
-                                    </g>
-                                </svg>
+            </div>
+            <div id="display">
+                <div id="current">
+                    <div class="icons">
+                        <div id="location">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 362.13 362.13" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 362.13 362.13" class='location_img'>
+                                <g>
+                                <path d="m181.065,0c-75.532,0-136.981,61.45-136.981,136.981 0,31.155 21.475,76.714 63.827,135.411 30.619,42.436 60.744,75.965 62.011,77.372l11.144,12.367 11.144-12.367c1.267-1.406 31.392-34.936 62.011-77.372 42.352-58.697 63.827-104.255 63.827-135.411-0.001-75.531-61.451-136.981-136.983-136.981zm0,316.958c-37.733-44.112-106.981-134.472-106.981-179.977 0-58.989 47.991-106.981 106.981-106.981s106.981,47.992 106.981,106.981c0.001,45.505-69.248,135.865-106.981,179.977z"/>
+                                <circle cx="181.065" cy="136.982" r="49.696"/>
+                                </g>
+                            </svg>
 
-                            </div>
-                            <div id="settings">
-                                <div class="settings_window">
-                                    <div class="settings_block">
-                                        <span class="to_change"></span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id ='close_settings'version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 496 496" style="enable-background:new 0 0 496 496;" xml:space="preserve">
-                                            <g>
-                                                <g>
-                                                    <g>
-                                                        <path d="M248,0C111.033,0,0,111.033,0,248s111.033,248,248,248s248-111.033,248-248C495.841,111.099,384.901,0.159,248,0z      M248,480C119.87,480,16,376.13,16,248S119.87,16,248,16s232,103.87,232,232C479.859,376.072,376.072,479.859,248,480z"/>
-                                                        <path d="M361.136,134.864c-3.124-3.123-8.188-3.123-11.312,0L248,236.688L146.176,134.864c-3.069-3.178-8.134-3.266-11.312-0.197     c-3.178,3.069-3.266,8.134-0.197,11.312c0.064,0.067,0.13,0.132,0.197,0.197L236.688,248L134.864,349.824     c-3.178,3.07-3.266,8.134-0.196,11.312c3.07,3.178,8.134,3.266,11.312,0.196c0.067-0.064,0.132-0.13,0.196-0.196L248,259.312     l101.824,101.824c3.178,3.07,8.242,2.982,11.312-0.196c2.995-3.1,2.995-8.016,0-11.116L259.312,248l101.824-101.824     C364.259,143.052,364.259,137.988,361.136,134.864z"/>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            <g>
-                                            </g>
-                                            </svg>
-                                            <input type="radio" name="settings-subitems" id="wind-subitem-1" class="settings-subitems-input">
-                                        <div class="settings_item">
-                                            
-
-                                            <label for="wind-subitem-1" class="wind-subitem_label"><h3>Localization</h3></label>
-                                            <div class="settings-subitem">
-                                                <input type="radio" name="lang-item" id="lang-1" value="ru" class="lang"/>
-                                                <label for="lang-1" class="lang-label">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" id='russian'xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
-                                                    <polygon style="fill:#F0F0F0;" points="0,85.33 0,199.107 0,312.885 0,426.662 512,426.662 512,312.885 512,199.107 512,85.33 "/>
-                                                    <rect y="85.333" style="fill:#0052B4;" width="512" height="341.337"/>
-                                                    <rect y="85.333" style="fill:#F0F0F0;" width="512" height="113.775"/>
-                                                    <rect y="312.884" style="fill:#D80027;" width="512" height="113.775"/>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    <g>
-                                                    </g>
-                                                    </svg>
-                                                </label>
-                                                <input type="radio" name="lang-item" id="lang-2" value="en" class="lang"/>
-                                                <label for="lang-2" class="lang-label">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" id="english" enable-background="new 0 0 512 512" height="512" viewBox="0 0 512 512" width="512"><g><path d="m495.484 90.839h-231.226l-255.258 176.661v146.833h486.484l16.516-9.688v-30.673l-10.75-10.222v-29l10.75-7.967v-47.189l-9.667-9.261v-29.667l9.667-8.262v-47.188l-9.667-8.549v-26l9.667-12.639v-30.673c0-9.122-7.395-16.516-16.516-16.516z" fill="#e5646e"/><path d="m256.333 138.028h255.667v47.189h-255.667z" fill="#f2f2f6"/><path d="m256 232.405 8.258 47.189h247.742v-47.189z" fill="#f2f2f6"/><path d="m16.516 355.097v-84.097l-16.516 8.594v47.189l7 5.967v31l-7 10.222v30.673c0 9.122 7.395 16.516 16.516 16.516h478.968c9.121 0 16.516-7.395 16.516-16.516h-445.935c-27.365 0-49.549-22.183-49.549-49.548z" fill="#db4655"/><path d="m264.258 90.839h-247.742l-10.516 16.516 10.516 172.239h247.742z" fill="#5055a0"/><path d="m16.516 90.839c-9.121 0-16.516 7.394-16.516 16.516v172.239h16.516z" fill="#3f3f8f"/><path d="m33.113 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m33.113 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m33.113 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m33.113 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.56-3.695 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m33.113 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m231.306 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m231.306 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m231.306 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><g fill="#f2f2f6"><path d="m231.306 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/><path d="m231.306 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/><path d="m82.661 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/><path d="m82.661 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/><path d="m82.661 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/></g><path d="m82.661 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.56-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m82.661 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m57.887 144.173c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.561-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m57.887 210.238c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m57.887 177.206c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m57.887 243.27c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m132.21 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m132.21 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m132.21 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m132.21 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.56-3.695 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m132.21 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m107.435 144.173c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258 0 4.561-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m107.435 210.238c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m107.435 177.206c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m107.435 243.27c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m181.677 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m181.677 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m181.677 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m181.677 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.56-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m181.677 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m156.903 144.173c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.561-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m156.903 210.238c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m156.903 177.206c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m156.903 243.27c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m206.532 144.173c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.561-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m206.532 210.238c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m206.532 177.206c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m206.532 243.27c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m3 360.333 17.26 13.639h491.74v-47.189h-495.484z" fill="#f2f2f6"/><path d="m0 326.783v47.189h20.26c-2.401-5.82-3.743-12.189-3.743-18.876v-28.314h-16.517z" fill="#e1e1e6"/></g></svg>
-                                                </label>
-                                            </div>
-
-                                            
-                                        </div>
-                                        <input type="radio" name="settings-subitems" id="wind-subitem-2" class="settings-subitems-input">
-                                        <div class="settings_item">
-                                            
-                                            <label for="wind-subitem-2" class="wind-subitem_label"><h3>Units</h3></label>
-                                            <div class="settings-subitem">
-                                                
-                                                <input type="radio" name="units-item" id="units-1" value='uk2' class='units' />
-                                                <label for="units-1" class="units_labels"><span>UK</span></label>
-                                                <input type="radio" name="units-item" id="units-2" value='si' class='units' />
-                                                <label for="units-2" class="units_labels"><span>SI</span></label>
-                                                <input type="radio" name="units-item" id="units-3" value='ca' class='units'/>
-                                                <label for="units-3" class="units_labels"><span>CA</span></label>
-                                                <input type="radio" name="units-item" id="units-4" value='us' class='units'/>
-                                                <label for="units-4" class="units_labels"><span>US</span></label>
-                                            </div>
-                                            
-
-                                        </div>
-                                        <input type="radio" name="settings-subitems" id="wind-subitem-3" class="settings-subitems-input">
-                                        <div class="wind-settings">
-                                            
-                                            <label for="wind-subitem-3" class="wind-subitem_label">
-                                                <h3>Wind direction <br><span>(only for mobile devices)</span></h3>
-                                            </label>
-                                            <div class="settings-subitem">
-                                               
-                                                <p>This function enables auto-positioning of the wind arrow relative to the North Pole.<br> May not work on every device. <br>If the compass doesn't work correctly, consider recalibrate it in the Google/Apple Maps.</p>
-                                                <input type="radio" name="wind-item" id="wind-1" value='on' class='wind-input' />
-                                                <label for="wind-1" class="wind_labels"><span class="turn_wind">On</span></label>
-                                                <input type="radio" name="wind-item" id="wind-2" value='off' class='wind-input' checked />
-                                                <label for="wind-2" class="wind_labels"><span class="turn_wind">Off</span></label>
-                                            </div>
-                                           
-                                            
-                                    
-                                        </div>
-                                        <input type="radio" name="settings-subitems" id="wind-subitem-5" class="settings-subitems-input">
-                                        <div class="settings_item">
-                                            
-
-                                            <label for="wind-subitem-5" class="wind-subitem_label"><h3>Background</h3></label>
-                                            <div class="settings-subitem">
-                                                <p>This option lets you choose your background. Consider using image background if the website takes too long to load.</p>
-                                                <input type="radio" name="back-item" id="back-1" value="img" class="back-input"/>
-                                                <label for="back-1" class="back-label">
-                                                    <span>Image</span>
-                                                </label>
-                                                <input type="radio" name="back-item" id="back-2" value="vid" class="back-input" checked/>
-                                                <label for="back-2" class="back-label">
-                                                    <span>Video</span>
-                                                </label>
-                                            </div>
-
-                                            
-                                        </div>
-                                        <input type="radio" name="settings-subitems" id="wind-subitem-4" class="settings-subitems-input">
-                                        <div class="sources">
-                                            
-                                            <label for="wind-subitem-4" class="wind-subitem_label"> <h3>Sources:</h3></label>
-                                           <div class="settings-subitem">
-                                               
-                                            <div class="sources_block">
-                                                <a href="https://www.youtube.com/watch?v=cAbJtTxU56E">Night Ambience</a>
-                                                <a href="https://www.youtube.com/watch?v=2txWH6IiRi4">Cloudy Sky</a>
-                                                <a href="https://www.youtube.com/watch?v=vz91QpgUjFc">Snowfall at Day</a>
-                                                <a href="https://www.youtube.com/watch?v=3SHG_U2R1mk">Snowfall at Night</a>
-                                                <a href="https://www.youtube.com/watch?v=bN_rKps5Psg">Fog</a>
-                                                <a href="https://www.youtube.com/watch?v=4LeyBbDBvQQ">Rain</a>
-                                                <a href="https://www.youtube.com/watch?v=ZscPuoWN_l8">Partly Cloudy</a>
-                                                <a href="https://www.youtube.com/watch?v=P6jP37U8QVI">Sleet</a>
-                                                <a href="https://www.youtube.com/watch?v=W-GlO_1yrug">Partly Cloudy Night</a>
-                                                <a href="https://www.youtube.com/watch?v=7WPsftkv1ZY">Windy Day</a>
-                                                <a href="https://www.youtube.com/watch?v=a9RqjDlhxtc">Clear Day</a>
-                                            </div>
-                                           </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" class="settings_icon" viewBox="0 0 50 50" width="50px" height="15px"><path d="M47.16,21.221l-5.91-0.966c-0.346-1.186-0.819-2.326-1.411-3.405l3.45-4.917c0.279-0.397,0.231-0.938-0.112-1.282l-3.889-3.887c-0.347-0.346-0.893-0.391-1.291-0.104l-4.843,3.481c-1.089-0.602-2.239-1.08-3.432-1.427l-1.031-5.886C28.607,2.35,28.192,2,27.706,2h-5.5c-0.49,0-0.908,0.355-0.987,0.839l-0.956,5.854c-1.2,0.345-2.352,0.818-3.437,1.412l-4.83-3.45c-0.399-0.285-0.942-0.239-1.289,0.106L6.82,10.648c-0.343,0.343-0.391,0.883-0.112,1.28l3.399,4.863c-0.605,1.095-1.087,2.254-1.438,3.46l-5.831,0.971c-0.482,0.08-0.836,0.498-0.836,0.986v5.5c0,0.485,0.348,0.9,0.825,0.985l5.831,1.034c0.349,1.203,0.831,2.362,1.438,3.46l-3.441,4.813c-0.284,0.397-0.239,0.942,0.106,1.289l3.888,3.891c0.343,0.343,0.884,0.391,1.281,0.112l4.87-3.411c1.093,0.601,2.248,1.078,3.445,1.424l0.976,5.861C21.3,47.647,21.717,48,22.206,48h5.5c0.485,0,0.9-0.348,0.984-0.825l1.045-5.89c1.199-0.353,2.348-0.833,3.43-1.435l4.905,3.441c0.398,0.281,0.938,0.232,1.282-0.111l3.888-3.891c0.346-0.347,0.391-0.894,0.104-1.292l-3.498-4.857c0.593-1.08,1.064-2.222,1.407-3.408l5.918-1.039c0.479-0.084,0.827-0.5,0.827-0.985v-5.5C47.999,21.718,47.644,21.3,47.16,21.221z M25,32c-3.866,0-7-3.134-7-7c0-3.866,3.134-7,7-7s7,3.134,7,7C32,28.866,28.866,32,25,32z"/></svg>   
-                            </div>
-                            <div id="search">
-                                <div class="search_window">
-                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id ='close_search'version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 496 496" style="enable-background:new 0 0 496 496;" xml:space="preserve">
+                        </div>
+                        <div id="settings">
+                            <div class="settings_window">
+                                <div class="settings_block">
+                                    <span class="to_change"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id ='close_settings'version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 496 496" style="enable-background:new 0 0 496 496;" xml:space="preserve">
                                         <g>
                                             <g>
                                                 <g>
@@ -279,139 +96,287 @@
                                         <g>
                                         </g>
                                         </svg>
-                                    <input type="search" name="" id="city_input" placeholder="City name...">
-                                    <label for="city_input" style="display: none;">City name...</label>
+                                        <input type="radio" name="settings-subitems" id="settings-item-1" class="settings-subitems-input">
+                                    <div class="settings_item">
+                                        
+
+                                        <label for="settings-item-1" class="settings-item_label"><h3>Localization</h3></label>
+                                        <div class="settings-subitem">
+                                            <input type="radio" name="lang-item" id="lang-1" value="ru" class="lang"/>
+                                            <label for="lang-1" class="lang-label">
+                                                <svg xmlns="http://www.w3.org/2000/svg" id='russian'xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                                                <polygon style="fill:#F0F0F0;" points="0,85.33 0,199.107 0,312.885 0,426.662 512,426.662 512,312.885 512,199.107 512,85.33 "/>
+                                                <rect y="85.333" style="fill:#0052B4;" width="512" height="341.337"/>
+                                                <rect y="85.333" style="fill:#F0F0F0;" width="512" height="113.775"/>
+                                                <rect y="312.884" style="fill:#D80027;" width="512" height="113.775"/>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                <g>
+                                                </g>
+                                                </svg>
+                                            </label>
+                                            <input type="radio" name="lang-item" id="lang-2" value="en" class="lang"/>
+                                            <label for="lang-2" class="lang-label">
+                                                <svg xmlns="http://www.w3.org/2000/svg" id="english" enable-background="new 0 0 512 512" height="512" viewBox="0 0 512 512" width="512"><g><path d="m495.484 90.839h-231.226l-255.258 176.661v146.833h486.484l16.516-9.688v-30.673l-10.75-10.222v-29l10.75-7.967v-47.189l-9.667-9.261v-29.667l9.667-8.262v-47.188l-9.667-8.549v-26l9.667-12.639v-30.673c0-9.122-7.395-16.516-16.516-16.516z" fill="#e5646e"/><path d="m256.333 138.028h255.667v47.189h-255.667z" fill="#f2f2f6"/><path d="m256 232.405 8.258 47.189h247.742v-47.189z" fill="#f2f2f6"/><path d="m16.516 355.097v-84.097l-16.516 8.594v47.189l7 5.967v31l-7 10.222v30.673c0 9.122 7.395 16.516 16.516 16.516h478.968c9.121 0 16.516-7.395 16.516-16.516h-445.935c-27.365 0-49.549-22.183-49.549-49.548z" fill="#db4655"/><path d="m264.258 90.839h-247.742l-10.516 16.516 10.516 172.239h247.742z" fill="#5055a0"/><path d="m16.516 90.839c-9.121 0-16.516 7.394-16.516 16.516v172.239h16.516z" fill="#3f3f8f"/><path d="m33.113 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m33.113 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m33.113 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m33.113 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.56-3.695 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m33.113 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m231.306 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m231.306 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m231.306 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><g fill="#f2f2f6"><path d="m231.306 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/><path d="m231.306 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/><path d="m82.661 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/><path d="m82.661 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/><path d="m82.661 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z"/></g><path d="m82.661 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.56-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m82.661 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m57.887 144.173c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.561-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m57.887 210.238c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m57.887 177.206c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m57.887 243.27c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m132.21 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m132.21 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m132.21 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#fff"/><path d="m132.21 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.56-3.695 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m132.21 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.695 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m107.435 144.173c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258 0 4.561-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m107.435 210.238c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m107.435 177.206c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m107.435 243.27c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m181.677 127.657c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m181.677 193.722c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m181.677 259.786c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m181.677 160.69c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.56-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m181.677 226.754c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m156.903 144.173c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.561-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m156.903 210.238c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m156.903 177.206c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m156.903 243.27c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m206.532 144.173c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258-.001 4.561-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m206.532 210.238c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#f2f2f6"/><path d="m206.532 177.206c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m206.532 243.27c-4.565 0-8.298-3.698-8.298-8.258s3.653-8.258 8.218-8.258h.081c4.565 0 8.258 3.698 8.258 8.258s-3.694 8.258-8.259 8.258z" fill="#fff"/><path d="m3 360.333 17.26 13.639h491.74v-47.189h-495.484z" fill="#f2f2f6"/><path d="m0 326.783v47.189h20.26c-2.401-5.82-3.743-12.189-3.743-18.876v-28.314h-16.517z" fill="#e1e1e6"/></g></svg>
+                                            </label>
+                                        </div>
+
+                                        
+                                    </div>
+                                    <input type="radio" name="settings-subitems" id="settings-item-2" class="settings-subitems-input">
+                                    <div class="settings_item">
+                                        
+                                        <label for="settings-item-2" class="settings-item_label"><h3>Units</h3></label>
+                                        <div class="settings-subitem">
+                                            
+                                            <input type="radio" name="units-item" id="units-1" value='uk2' class='units' />
+                                            <label for="units-1" class="units_labels"><span>UK</span></label>
+                                            <input type="radio" name="units-item" id="units-2" value='si' class='units' />
+                                            <label for="units-2" class="units_labels"><span>SI</span></label>
+                                            <input type="radio" name="units-item" id="units-3" value='ca' class='units'/>
+                                            <label for="units-3" class="units_labels"><span>CA</span></label>
+                                            <input type="radio" name="units-item" id="units-4" value='us' class='units'/>
+                                            <label for="units-4" class="units_labels"><span>US</span></label>
+                                        </div>
+                                        
+
+                                    </div>
+                                    <input type="radio" name="settings-subitems" id="settings-item-3" class="settings-subitems-input">
+                                    <div class="wind-settings">
+                                        
+                                        <label for="settings-item-3" class="settings-item_label">
+                                            <h3>Wind direction <br><span>(only for mobile devices)</span></h3>
+                                        </label>
+                                        <div class="settings-subitem">
+                                            
+                                            <p>This function enables auto-positioning of the wind arrow relative to the North Pole.<br> May not work on every device. <br>If the compass doesn't work correctly, consider recalibrate it in the Google/Apple Maps.</p>
+                                            <input type="radio" name="wind-item" id="wind-1" value='on' class='wind-input' />
+                                            <label for="wind-1" class="wind_labels"><span class="turn_wind">On</span></label>
+                                            <input type="radio" name="wind-item" id="wind-2" value='off' class='wind-input' checked />
+                                            <label for="wind-2" class="wind_labels"><span class="turn_wind">Off</span></label>
+                                        </div>
+                                        
+                                        
+                                
+                                    </div>
+                                    <input type="radio" name="settings-subitems" id="settings-item-5" class="settings-subitems-input">
+                                    <div class="settings_item">
+                                        
+
+                                        <label for="settings-item-5" class="settings-item_label"><h3>Background</h3></label>
+                                        <div class="settings-subitem">
+                                            <p>This option lets you choose your background. Consider using image background if the website takes too long to load.</p>
+                                            <input type="radio" name="back-item" id="back-1" value="img" class="back-input"/>
+                                            <label for="back-1" class="back-label">
+                                                <span>Image</span>
+                                            </label>
+                                            <input type="radio" name="back-item" id="back-2" value="vid" class="back-input" checked/>
+                                            <label for="back-2" class="back-label">
+                                                <span>Video</span>
+                                            </label>
+                                        </div>
+
+                                        
+                                    </div>
+                                    <input type="radio" name="settings-subitems" id="settings-item-4" class="settings-subitems-input">
+                                    <div class="sources">
+                                        
+                                        <label for="settings-item-4" class="settings-item_label"> <h3>Sources:</h3></label>
+                                        <div class="settings-subitem">
+                                            
+                                        <div class="sources_block">
+                                            <a href="https://www.youtube.com/watch?v=cAbJtTxU56E">Night Ambience</a>
+                                            <a href="https://www.youtube.com/watch?v=2txWH6IiRi4">Cloudy Sky</a>
+                                            <a href="https://www.youtube.com/watch?v=vz91QpgUjFc">Snowfall at Day</a>
+                                            <a href="https://www.youtube.com/watch?v=3SHG_U2R1mk">Snowfall at Night</a>
+                                            <a href="https://www.youtube.com/watch?v=bN_rKps5Psg">Fog</a>
+                                            <a href="https://www.youtube.com/watch?v=4LeyBbDBvQQ">Rain</a>
+                                            <a href="https://www.youtube.com/watch?v=ZscPuoWN_l8">Partly Cloudy</a>
+                                            <a href="https://www.youtube.com/watch?v=P6jP37U8QVI">Sleet</a>
+                                            <a href="https://www.youtube.com/watch?v=W-GlO_1yrug">Partly Cloudy Night</a>
+                                            <a href="https://www.youtube.com/watch?v=7WPsftkv1ZY">Windy Day</a>
+                                            <a href="https://www.youtube.com/watch?v=a9RqjDlhxtc">Clear Day</a>
+                                        </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-                                <img src="https://d3aid59h00lu28.cloudfront.net/img/search.svg" alt="Search" class="settings_icon">
+
                             </div>
-
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" class="settings_icon" viewBox="0 0 50 50" width="50px" height="15px"><path d="M47.16,21.221l-5.91-0.966c-0.346-1.186-0.819-2.326-1.411-3.405l3.45-4.917c0.279-0.397,0.231-0.938-0.112-1.282l-3.889-3.887c-0.347-0.346-0.893-0.391-1.291-0.104l-4.843,3.481c-1.089-0.602-2.239-1.08-3.432-1.427l-1.031-5.886C28.607,2.35,28.192,2,27.706,2h-5.5c-0.49,0-0.908,0.355-0.987,0.839l-0.956,5.854c-1.2,0.345-2.352,0.818-3.437,1.412l-4.83-3.45c-0.399-0.285-0.942-0.239-1.289,0.106L6.82,10.648c-0.343,0.343-0.391,0.883-0.112,1.28l3.399,4.863c-0.605,1.095-1.087,2.254-1.438,3.46l-5.831,0.971c-0.482,0.08-0.836,0.498-0.836,0.986v5.5c0,0.485,0.348,0.9,0.825,0.985l5.831,1.034c0.349,1.203,0.831,2.362,1.438,3.46l-3.441,4.813c-0.284,0.397-0.239,0.942,0.106,1.289l3.888,3.891c0.343,0.343,0.884,0.391,1.281,0.112l4.87-3.411c1.093,0.601,2.248,1.078,3.445,1.424l0.976,5.861C21.3,47.647,21.717,48,22.206,48h5.5c0.485,0,0.9-0.348,0.984-0.825l1.045-5.89c1.199-0.353,2.348-0.833,3.43-1.435l4.905,3.441c0.398,0.281,0.938,0.232,1.282-0.111l3.888-3.891c0.346-0.347,0.391-0.894,0.104-1.292l-3.498-4.857c0.593-1.08,1.064-2.222,1.407-3.408l5.918-1.039c0.479-0.084,0.827-0.5,0.827-0.985v-5.5C47.999,21.718,47.644,21.3,47.16,21.221z M25,32c-3.866,0-7-3.134-7-7c0-3.866,3.134-7,7-7s7,3.134,7,7C32,28.866,28.866,32,25,32z"/></svg>   
                         </div>
-                            
-                            <div class="condition"> </div>
-                            <div class="temperature">
-                                <span class="temp_val"></span> 
+                        <div id="search">
+                            <div class="search_window">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id ='close_search'version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 496 496" style="enable-background:new 0 0 496 496;" xml:space="preserve">
+                                    <g>
+                                        <g>
+                                            <g>
+                                                <path d="M248,0C111.033,0,0,111.033,0,248s111.033,248,248,248s248-111.033,248-248C495.841,111.099,384.901,0.159,248,0z      M248,480C119.87,480,16,376.13,16,248S119.87,16,248,16s232,103.87,232,232C479.859,376.072,376.072,479.859,248,480z"/>
+                                                <path d="M361.136,134.864c-3.124-3.123-8.188-3.123-11.312,0L248,236.688L146.176,134.864c-3.069-3.178-8.134-3.266-11.312-0.197     c-3.178,3.069-3.266,8.134-0.197,11.312c0.064,0.067,0.13,0.132,0.197,0.197L236.688,248L134.864,349.824     c-3.178,3.07-3.266,8.134-0.196,11.312c3.07,3.178,8.134,3.266,11.312,0.196c0.067-0.064,0.132-0.13,0.196-0.196L248,259.312     l101.824,101.824c3.178,3.07,8.242,2.982,11.312-0.196c2.995-3.1,2.995-8.016,0-11.116L259.312,248l101.824-101.824     C364.259,143.052,364.259,137.988,361.136,134.864z"/>
+                                            </g>
+                                        </g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    </svg>
+                                <input type="search" name="" id="city_input" placeholder="City name...">
+                                <label for="city_input" style="display: none;">City name...</label>
                             </div>
-                            <div class="app_temp"></div>
-                        
+                            <img src="https://d3aid59h00lu28.cloudfront.net/img/search.svg" alt="Search" class="settings_icon">
+                        </div>
 
                     </div>
+                    <div class="condition"> </div>
+                    <div class="temperature">
+                        <span class="temp_val"></span> 
+                    </div>
+                    <div class="app_temp"></div>
                     
-                    <div id="other">
-                            <h3 class="wind_headline propability">Precipation:</h3>
-
-                            <h3 class="wind_headline uv">UV intensity:</h3>
-                            
-
-                            <h3 class="wind_headline clouds">Cloud coverage:</h3>
-
-                        <div class="wind">
-                            <div class="wind_text">
-                                <h3 class="wind_headline">Wind:</h3>
-                                <div class="wind_speed"></div>
-                            </div>
-
-                            <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="preserve" class = 'wind_dir'>
-                            <g>
-                                <path d="M128.835,297c-4.015,0-7.646-2.395-9.227-6.092L1.295,13.976C-0.317,10.202,0.531,5.827,3.436,2.93
-                                    c2.907-2.898,7.285-3.734,11.052-2.112l275.956,118.729c3.715,1.599,6.107,5.271,6.068,9.314c-0.04,4.044-2.504,7.67-6.248,9.194
-                                    L182.059,182.13l-43.921,108.598c-1.52,3.758-5.15,6.233-9.203,6.273C128.901,297,128.868,297,128.835,297z M29.609,29.17
-                                    l98.974,231.661l36.462-90.156c1.017-2.513,3.006-4.508,5.517-5.53L260.5,128.51L29.609,29.17z"/>
-                            </g>
-                            </svg>
-                        </div>
-
-                    </div>
-                    <div id="details">
-                        <div class="details_wrap details_hide">
-                            <span id="sunr">Sunrise: </span>
-                            <span id="suns">Sunset: </span>
-                            <span id="pres">Pressure: </span>
-                            <span id="hum">Humidity: </span>
-                            <span id="dew">Dew point: </span>
-                        </div>
-                        <div id="show_details">
-                            Show somethin
-                        </div>
-                    </div>
-                    <nav id="slidemenu">
-  
-                        <!-- Item 1 -->
-                        <input type="radio" name="slideItem" id="slide-item-1" class="slide-toggle" value="temp" checked/>
-                        <label for="slide-item-1"><span>Temperature</span></label>
-
-                        <input type="radio" name="slideItem" id="slide-item-2" class="slide-toggle" value="wind" checked/>
-                        <label for="slide-item-2"><span>Wind</span></label>
-                        
-                        <!-- Item 2 -->
-                        <input type="radio" name="slideItem" id="slide-item-3" class="slide-toggle" value="humidity"/>
-                        <label for="slide-item-3"><span>Humidity</span></label>
-                        
-                        <!-- Item 3 -->
-                        <input type="radio" name="slideItem" id="slide-item-4" class="slide-toggle" value="uv"/>
-                        <label for="slide-item-4"><span>UV</span></label>
-                        
-                        <!-- Item 4 -->
-                        <input type="radio" name="slideItem" id="slide-item-5" class="slide-toggle" value="clouds"/>
-                        <label for="slide-item-5"><span>Clouds</span></label>
-
-                        <!-- Item 4 -->
-                        <input type="radio" name="slideItem" id="slide-item-6" class="slide-toggle" value="precipProbability"/>
-                        <label for="slide-item-6"><span>Precipation</span></label>
-                        
-                        
-                    </nav>
-                    <div class="chart_area">
-                        <div class="chart-container">
-                            <canvas id="myChart"></canvas>
-                        </div>
-                    </div>
-                    
-
-                    
-
-                </div>
-               
-                <div class="slider_wrap">
-                    
-                        <div id="hours">    
-                        </div> 
-                </div>
-                <div id="days_wrap">
-                    <div id="days_slider">
-                        <div id="days">
-                            <input type="radio" name="days-radio" id="days-fake"class="days_radio" checked>
-                        </div>
-                    </div>
                 </div>
                 
-                <div id="legal">
-                    <div class="updating_footer">
-                    </div>
-                    <a href="https://darksky.net/poweredby/">Powered by Dark Sky API.</a>
-                    <p> Copyright © <a href="mailto:klimov.studnweb@gmail.com">Vladislav Klimov,</a> <span></span>. All rights reserved.</p>
+                <div id="other">
+                        <h3 class="wind_headline propability">Precipation:</h3>
+                        <h3 class="wind_headline uv">UV intensity:</h3>
+                        <h3 class="wind_headline clouds">Cloud coverage:</h3>
+                    <div class="wind">
+                        <div class="wind_text">
+                            <h3 class="wind_headline">Wind:</h3>
+                            <div class="wind_speed"></div>
+                        </div>
 
+                        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="preserve" class = 'wind_dir'>
+                        <g>
+                            <path d="M128.835,297c-4.015,0-7.646-2.395-9.227-6.092L1.295,13.976C-0.317,10.202,0.531,5.827,3.436,2.93
+                                c2.907-2.898,7.285-3.734,11.052-2.112l275.956,118.729c3.715,1.599,6.107,5.271,6.068,9.314c-0.04,4.044-2.504,7.67-6.248,9.194
+                                L182.059,182.13l-43.921,108.598c-1.52,3.758-5.15,6.233-9.203,6.273C128.901,297,128.868,297,128.835,297z M29.609,29.17
+                                l98.974,231.661l36.462-90.156c1.017-2.513,3.006-4.508,5.517-5.53L260.5,128.51L29.609,29.17z"/>
+                        </g>
+                        </svg>
+                    </div>
 
                 </div>
+                <div id="details">
+                    <div class="details_wrap details_hide">
+                        <span id="sunr">Sunrise: </span>
+                        <span id="suns">Sunset: </span>
+                        <span id="pres">Pressure: </span>
+                        <span id="hum">Humidity: </span>
+                        <span id="dew">Dew point: </span>
+                    </div>
+                    <div id="show_details">
+                    </div>
+                </div>
+                <nav id="slidemenu">
+
+                    <!-- Item 1 -->
+                    <input type="radio" name="slideItem" id="slide-item-1" class="slide-toggle" value="temp" checked/>
+                    <label for="slide-item-1"><span>Temperature</span></label>
+
+                    <input type="radio" name="slideItem" id="slide-item-2" class="slide-toggle" value="wind" checked/>
+                    <label for="slide-item-2"><span>Wind</span></label>
+                    
+                    <!-- Item 2 -->
+                    <input type="radio" name="slideItem" id="slide-item-3" class="slide-toggle" value="humidity"/>
+                    <label for="slide-item-3"><span>Humidity</span></label>
+                    
+                    <!-- Item 3 -->
+                    <input type="radio" name="slideItem" id="slide-item-4" class="slide-toggle" value="uv"/>
+                    <label for="slide-item-4"><span>UV</span></label>
+                    
+                    <!-- Item 4 -->
+                    <input type="radio" name="slideItem" id="slide-item-5" class="slide-toggle" value="clouds"/>
+                    <label for="slide-item-5"><span>Clouds</span></label>
+
+                    <!-- Item 4 -->
+                    <input type="radio" name="slideItem" id="slide-item-6" class="slide-toggle" value="precipProbability"/>
+                    <label for="slide-item-6"><span>Precipation</span></label>
+                    
+                </nav>
+                <div class="chart_area">
+                    <div class="chart-container">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+            <div class="slider_wrap">
+                <div id="hours">    
+                </div> 
+            </div>
+            <div id="days_wrap">
+                <div id="days_slider">
+                    <div id="days">
+                        <input type="radio" name="days-radio" id="days-fake"class="days_radio" checked>
+                    </div>
+                </div>
+            </div>
+            <div id="legal">
+                <div class="updating_footer">
+                </div>
+                <a href="https://darksky.net/poweredby/">Powered by Dark Sky API.</a>
+                <p> Copyright © <a href="mailto:klimov.studnweb@gmail.com">Vladislav Klimov,</a> <span></span>. All rights reserved.</p>
             </div>
         </div>
-        <a href="#days" class='anchor_wrapper hide_anchor'>
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 384.928 384.928" style="enable-background:new 0 0 384.928 384.928;" class='anchor' xml:space="preserve">
-                <g>
-                    <path  d="M321.339,245.334c-4.74-4.692-12.439-4.704-17.179,0l-99.551,98.564V12.03   c0-6.641-5.438-12.03-12.151-12.03s-12.151,5.39-12.151,12.03v331.868l-99.551-98.552c-4.74-4.704-12.439-4.704-17.179,0   s-4.74,12.319,0,17.011l120.291,119.088c4.692,4.644,12.499,4.644,17.191,0l120.291-119.088   C326.091,257.653,326.091,250.038,321.339,245.334C316.599,240.642,326.091,250.038,321.339,245.334z"/>
-                    <g>
-                    </g>
-                    <g>
-                    </g>
-                    <g>
-                    </g>
-                    <g>
-                    </g>
-                    <g>
-                    </g>
-                    <g>
-                    </g>
-                </g>
+    </div>
+    <a href="#days" class='anchor_wrapper hide_anchor'>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 384.928 384.928" style="enable-background:new 0 0 384.928 384.928;" class='anchor' xml:space="preserve">
+            <g>
+                <path  d="M321.339,245.334c-4.74-4.692-12.439-4.704-17.179,0l-99.551,98.564V12.03   c0-6.641-5.438-12.03-12.151-12.03s-12.151,5.39-12.151,12.03v331.868l-99.551-98.552c-4.74-4.704-12.439-4.704-17.179,0   s-4.74,12.319,0,17.011l120.291,119.088c4.692,4.644,12.499,4.644,17.191,0l120.291-119.088   C326.091,257.653,326.091,250.038,321.339,245.334C316.599,240.642,326.091,250.038,321.339,245.334z"/>
                 <g>
                 </g>
                 <g>
@@ -424,26 +389,39 @@
                 </g>
                 <g>
                 </g>
-                <g>
-                </g>
-                <g>
-                </g>
-                <g>
-                </g>
-                <g>
-                </g>
-                <g>
-                </g>
-                <g>
-                </g>
-                <g>
-                </g>
-                <g>
-                </g>
-                <g>
-                </g>
-                </svg>
-        </a>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            </svg>
+    </a>
     <script src="popper.min.js"></script>
     <script src="tippy-bundle.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
