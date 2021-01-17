@@ -1,3 +1,5 @@
+
+
 const cacheName = 'app_v1';
 
 // Call Install Event
@@ -17,6 +19,12 @@ self.addEventListener('activate', e => {
           if (cache !== cacheName) {
             console.log('Service Worker: Clearing Old Cache');
             return caches.delete(cache);
+          }else{
+            caches.match('timestamp').then(function(response) {
+              if(response==undefined){
+                setTimestamp();
+              }
+             })
           }
         })
       );
@@ -24,41 +32,46 @@ self.addEventListener('activate', e => {
   );
 });
 
-
- //clean cache every week
-function cleaningCache(){
-  caches.open(cacheName).then(cache => {
-    let cssfile = cache.match('style.css').then(resp=>{return resp}).then(res=>{
-      if(res!=undefined){
-        return res.headers.get('date')
-      }else{
-        return 0
-      }
-    });
-    cssfile.then(date_old=>{
-      let today = new Date();
-      today=today.getTime();
-      date_old = new Date(date_old);
-      date_old=date_old.getTime();
-      if(today - date_old>=604800000){
-        caches.keys().then(cacheNames => {
-          return Promise.all(
-            cacheNames.map(cache => {
-              //removing previous version of cache
-                console.log('Service Worker: Clearing Old Cache');
-                return caches.delete(cache);
-            })
-          );
-        })
-      }
-    })
+function setTimestamp(){
+  let caching_time = new Date();
+  caching_time=caching_time.getTime();
+  let time_header = new Headers({
+    'timestamp':caching_time
   });
+  let myBlob = new Blob([caching_time], {type: 'text/plain'});
+  let init = { "status" : 200 , "url":"timestamp", "headers":time_header};
+  let myResponse = new Response(myBlob,init);
+  console.log(myResponse);
+  getCached('timestamp',myResponse)
+}
+ //clean cache every week
+function cleaningCache(caching_time){
+    let today = new Date();
+    today=today.getTime();
+    caching_time = parseInt(caching_time,10)
+    console.log(today-caching_time);
+    if(today - caching_time>=7*24*60*60*60){
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cache => {
+            //removing previous version of cache
+            caches.delete(cache);
+          })
+        );
+      })
+    }
 }
 // Add response to cache
 function getCached(request, resClone){
   // Open cache
   caches.open(cacheName).then(cache => {
-    if(!(request.url.includes('www.google-analytics.com/'))  &&  request.url.includes('/weather/')==false &&  request.url.includes('api')==false){
+    if (request.url==undefined){
+      cache.put(request, resClone).catch(err=>{
+        console.error(err, request)
+
+      });
+    }else
+    if(!(request.url.includes('www.google-analytics.com/'))   &&  request.url.includes('/weather/')==false &&  request.url.includes('api')==false){
       // console.log('Service Worker: Caching New Material', request, resClone);
       //because it gives us 206 code
       if(request.destination != 'video'){
@@ -71,7 +84,24 @@ function getCached(request, resClone){
 }
 
 // Call Fetch Event
+let fetch_counter=0
 self.addEventListener('fetch', e => {
+  if (fetch_counter>30){
+    fetch_counter=0
+  }
+  fetch_counter++;
+  console.log(fetch_counter);
+  if(fetch_counter==2){
+    console.log('pls');
+    caches.match('timestamp').then(function(response) {
+      if(response==undefined){
+        let time=new Date()
+        time=time.getTime()
+        cleaningCache(time);
+      }else{
+        cleaningCache(response.headers.get('timestamp'));}
+     })
+  }
   console.log('Service Worker: Fetching');
   e.respondWith( 
     caches.match(e.request).then(function(response) {
@@ -96,5 +126,5 @@ self.addEventListener('fetch', e => {
     })
   );
 });
-cleaningCache();
+
 

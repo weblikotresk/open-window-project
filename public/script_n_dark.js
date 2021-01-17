@@ -641,7 +641,9 @@ settingsIcon.addEventListener('click', ()=>{
 closeBtn.addEventListener('click', ()=>{
   //close the settings window
     document.getElementsByClassName('settings_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
-    setTimeout(()=>{document.getElementsByClassName('settings_window')[0].style.zIndex = -2;location.reload();
+    setTimeout(()=>{document.getElementsByClassName('settings_window')[0].style.zIndex = -2;
+    localStorage.removeItem(cached_data);
+    location.reload();
     return false;}, 550);
 });
 searchIcon.addEventListener('click', ()=>{
