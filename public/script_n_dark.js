@@ -1,3 +1,4 @@
+
 // declaration of general functions
 window.mobileAndTabletCheck = function() {
   let check = false;
@@ -52,13 +53,17 @@ function snowCheck(rdata, level){
     return false
   }
 }
-function fogToSnow(str){
+function fogToSnow(str, lang){
   if(str.includes('Туман')){
     return str.replace('Туман', 'Снег')
   }else if(str.includes('туман')){
     return str.replace('туман', 'снег');
   }else{
+    if(lang =='ru'){
     return str.replace('.', ',') + ' возможен снег.'
+    }else{
+      return str.replace('Foggy', 'It may snow')
+    }
   }
 }
 function convertSeconds(seconds){
@@ -190,7 +195,7 @@ function summaries(rdata, level){
   }
   if(rdata[level].icon=='fog' && snowCheck(rdata[level], 'hourlysumm')){
     rdata[level].icon='snow';
-    rdata[level].summary=fogToSnow(rdata[level].summary);
+    rdata[level].summary=fogToSnow(rdata[level].summary, localStorage.lang);
   }
   if(document.querySelector(`#${level}_summary`)==undefined){
     document.querySelector(`#${container}`).insertAdjacentHTML('beforebegin', `
@@ -331,7 +336,6 @@ let localization = {
     wind_dir_h:'Направление ветра<br><span>(только для мобильных устройств)</span>',
     wind_dir:'Эта функция включает автопозиционирование стрелки, которая показывает направление ветра относительно Северного полюса.<br> Может работать не на всех устройствах.<br> Если ваш компас работает некорректно, откалибруйте его в Google/Apple Maps.',
     directions:['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'],
-    //directions:['Ю', 'ЮЗ', 'З', 'СЗ', 'С', 'СВ', 'В', 'ЮВ'],
     on:'Включить',
     off:'Выключить',
     compass_error:'Ваш браузер не поддерживает получение данных компаса. Пожалуйста, обновите его до последней версии и попробуйте снова.',
@@ -429,9 +433,7 @@ let localization = {
     },
     tooltips:[`Здесь вы можете настроить сайт согласно вашим предпочтениям: изменить язык, единицы измерения и т.д.`,
     `Нажав на любую из этих иконок, вы сможете увидеть прогноз погоды в данный день.`,
-    `Также для просмотра прогноза погоды вы можете использовать диаграмму.`,
-     `Нажав на эту иконку, вы сможете узнать прогноз погоды для вашего населённого пункта.`,
-    `Нажав на эту иконку, вы сможете найти прогноз погоды для многих населённых пунктов планеты.`]
+]
   }, 
   'en':{
     app_temp:'Feels like: ',
@@ -559,10 +561,7 @@ let localization = {
       hurricane:'Hurricane, ',
     },
     tooltips:[`Here you can customize the site according to your preferences: change the language, units of measurement, etc.`,
-    `If you click on any of these icons, you will see the weather forecast for that day.`,
-    `You can also use the chart to view the weather forecast.`,
-    `If you'll click on this icon, you'll see the weather forecast for your location.`,
-    `By clicking on this icon, you can find the weather forecast for many localities on the planet.`],
+    `If you click on any of these icons, you will see the weather forecast for that day.`],
   },
 },
 settingsIcon = document.querySelector('#settings > svg'),
@@ -642,7 +641,7 @@ closeBtn.addEventListener('click', ()=>{
   //close the settings window
     document.getElementsByClassName('settings_window')[0].style.clipPath = 'circle(0.1% at 53.6% 2.2%)'; 
     setTimeout(()=>{document.getElementsByClassName('settings_window')[0].style.zIndex = -2;
-    localStorage.removeItem(cached_data);
+    localStorage.removeItem('cached_data');
     location.reload();
     return false;}, 550);
 });
@@ -677,13 +676,13 @@ function loaded(request_data = localStorage, cached_coords){
   //service worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').then(function(registration) {
-        // Registration was successful
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function(err) {
-        // registration failed :(
-        console.log('ServiceWorker registration failed: ', err);
-      });
+       navigator.serviceWorker.register('/sw.js').then(function(registration) {
+      //   // Registration was successful
+         console.log('ServiceWorker registration successful with scope: ', registration.scope);
+       }, function(err) {
+      //   // registration failed :(
+         console.log('ServiceWorker registration failed: ', err);
+       });
     });
   }
   if('geolocation' in navigator){
@@ -1364,58 +1363,6 @@ function loaded(request_data = localStorage, cached_coords){
         document.getElementById('display').appendChild(newest_nav);
       }
       //tooltips
-      function fifthTooltip(){
-        let target = document.querySelector('#search');
-        tippy(target, {
-          content: localization[lang].tooltips[4],
-          theme:'normal',
-          sticky: true,
-          arrow: true,
-          showOnCreate: true,
-          placement: 'bottom',
-          delay:500,
-          maxWidth:250,
-          onHidden(Tooltip) {
-            Tooltip.destroy();
-            localStorage.tools = 'false';
-        },
-      });
-      }
-      function fourthTooltip(){
-        let target = document.querySelector('#location');
-        tippy(target, {
-          content: localization[lang].tooltips[3],
-          theme:'normal',
-          sticky: true,
-          arrow: true,
-          showOnCreate: true,
-          placement: 'bottom',
-          delay:500,
-          maxWidth:250,
-          onHidden(Tooltip) {
-            Tooltip.destroy();
-            fifthTooltip();
-        },
-      });
-      }
-      function thirdTooltip(){
-        let target = document.querySelector('#slidemenu > label');
-        tippy(target, {
-          content: localization[lang].tooltips[2],
-          theme:'normal',
-          sticky: true,
-          arrow: true,
-          showOnCreate: true,
-          placement: 'top',
-          delay:500,
-          maxWidth:250,
-          onHidden(Tooltip) {
-            Tooltip.destroy();
-            window.scrollTo(0,0);
-            fourthTooltip();
-        },
-      });
-      }
       function secondTooltip(){
         tippy(document.getElementsByClassName('day')[0], {
           content: localization[lang].tooltips[1],
@@ -1428,8 +1375,7 @@ function loaded(request_data = localStorage, cached_coords){
           maxWidth:250,
           onHidden(Tooltip) {
             Tooltip.destroy();
-            window.scrollBy(0,-document.documentElement.clientHeight*0.5);
-            thirdTooltip();
+            localStorage.tools = 'false';
         },
       });
       }
@@ -1480,12 +1426,14 @@ function loaded(request_data = localStorage, cached_coords){
           document.getElementsByClassName('details_wrap')[0].classList.toggle('details_opened');
           if(details_opened){
             details_opened=false;
-            show_details.innerHTML = localization[lang].details;
-            setTimeout(()=>document.getElementsByClassName('details_wrap')[0].classList.toggle('details_hide'),210);
+            setTimeout(()=>{
+              document.getElementsByClassName('details_wrap')[0].classList.toggle('details_hide');
+              show_details.innerHTML = localization[lang].details;
+              },210);
           }else{
             details_opened=true;
             show_details.innerHTML = localization[lang].details_hide;
-            document.getElementsByClassName('details_wrap')[0].classList.toggle('details_hide')
+            setTimeout(()=>document.getElementsByClassName('details_wrap')[0].classList.toggle('details_hide'),210);
           }
         }
       }
@@ -1515,7 +1463,7 @@ function loaded(request_data = localStorage, cached_coords){
             icon.alt='snow';
             sky_icon='snow';
           }
-          document.querySelector('.condition').innerHTML = fogToSnow(option.summary);
+          document.querySelector('.condition').innerHTML = fogToSnow(option.summary,localStorage.lang);
         }else{
           icon.alt=option.icon;
           icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${option.icon}.svg`;
@@ -1734,7 +1682,7 @@ function loaded(request_data = localStorage, cached_coords){
           if(sky_icon=='fog'){
             sky_icon='snow';
           }
-          document.querySelector('.condition').innerHTML =fogToSnow(rdata.daily.data[day_number].summary, 'daily');
+          document.querySelector('.condition').innerHTML =fogToSnow(rdata.daily.data[day_number].summary, localStorage.lang);
         }else{
           document.querySelector('.condition').innerHTML = rdata.daily.data[day_number].summary;
         }

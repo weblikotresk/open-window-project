@@ -1,5 +1,4 @@
 
-
 const cacheName = 'app_v1';
 
 // Call Install Event
@@ -72,8 +71,7 @@ function getCached(request, resClone){
       });
     }else
     if(!(request.url.includes('www.google-analytics.com/'))   &&  request.url.includes('/weather/')==false &&  request.url.includes('api')==false){
-      // console.log('Service Worker: Caching New Material', request, resClone);
-      //because it gives us 206 code
+      //can't store videos because it gives us 206 code
       if(request.destination != 'video'){
         cache.put(request, resClone).catch(err=>{
           console.error(err, request)
