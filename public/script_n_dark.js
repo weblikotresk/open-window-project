@@ -577,7 +577,7 @@ closeSearch = document.querySelector('#close_search');
 
 //setting default localStorage data
 if(localStorage.tools == undefined){
-  localStorage.lang = 'en';
+  localStorage.lang = 'ru';
   localStorage.units = 'si';
   localStorage.wind = 'off';
   localStorage.back = 'vid';
