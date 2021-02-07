@@ -1412,7 +1412,7 @@ function loaded(request_data = localStorage, cached_coords){
       document.querySelector('.settings_block > span').innerHTML = localization[lang].tochange;
       document.querySelector('.wind-settings  p').innerHTML = localization[lang].wind_dir;
       document.querySelector('.settings_item  p').innerHTML = localization[lang].back_p;
-      document.querySelectorAll('#city_input_label').innerHTML= localization[lang].city_label;
+      document.querySelector('#city_input_label').innerHTML= localization[lang].city_label;
 
       let wind_options = document.querySelectorAll('.turn_wind');
       wind_options[0].innerHTML = localization[lang].on;
