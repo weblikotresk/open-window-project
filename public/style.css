@@ -575,9 +575,9 @@ input[type='radio']{
     width: 90%;
 }
 .curr_icon{
-    height: 1.5rem;
+    height: 1.5rem ! important;
     margin: 0 7px -7px -7px;
-    width: auto;
+    width: auto ! important;
 }
 
 /*-----------------------DETAILS-----------------------*/
@@ -1249,7 +1249,7 @@ label.day:hover{
     }
     
     .curr_icon{
-        height: 1.85rem;
+        height: 1.85rem ! important;
     }
 
     #legal{
