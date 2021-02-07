@@ -3,6 +3,7 @@ const cacheName = 'app_v1';
 
 // Call Install Event
 self.addEventListener('install', e => {
+  self.skipWaiting();
   console.log('Service Worker: Installed');
 });
 

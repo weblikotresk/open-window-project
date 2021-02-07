@@ -340,6 +340,7 @@ let localization = {
     off:'Выключить',
     compass_error:'Ваш браузер не поддерживает получение данных компаса. Пожалуйста, обновите его до последней версии и попробуйте снова.',
     compass_f:'Сервис не смог получить информацию компаса. Обновите ваш браузер до последней версии и попробуйте снова.',
+    city_label:'Поиск городов:',
     search_place:'Название города...',
     not_found:'По вашему запросу ничего не было найдено. Пожалуйста, попробуйте ещё раз.',
     undefined:'Не определено (полярный день/ночь)',
@@ -468,6 +469,7 @@ let localization = {
     off:'Off',
     compass_error:'Compass heading is not available in your browser. Consider update it to the last version and try again.',
     compass_f:'Could not retrieve absolute orientation. Consider update your browser to the last version and try again.',
+    city_label:'Global forecast:',
     search_place:'City name...',
     not_found:'Nothing has been found. Please, try again.',
     undefined:'Undefined (polar day/night)',
@@ -1410,6 +1412,7 @@ function loaded(request_data = localStorage, cached_coords){
       document.querySelector('.settings_block > span').innerHTML = localization[lang].tochange;
       document.querySelector('.wind-settings  p').innerHTML = localization[lang].wind_dir;
       document.querySelector('.settings_item  p').innerHTML = localization[lang].back_p;
+      document.querySelectorAll('#city_input_label').innerHTML= localization[lang].city_label;
 
       let wind_options = document.querySelectorAll('.turn_wind');
       wind_options[0].innerHTML = localization[lang].on;
@@ -1702,9 +1705,9 @@ function loaded(request_data = localStorage, cached_coords){
           let icon = document.createElement('img');
           icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
           icon.alt=icon;
-          icon.className='icon';
           icon.width="60px";
           icon.height="60px";
+          icon.className='icon';
           document.querySelector('.temp_val').innerHTML = Math.round(rdata.daily.data[day_number].temperatureMax) +localization[lang].units[units].temp ;
           document.querySelector('.app_temp').innerHTML = localization[lang].app_temp +' ' + Math.round(rdata.daily.data[day_number].apparentTemperatureMax) +localization[lang].units[units].temp ;
           document.querySelector('.condition').prepend(icon);
