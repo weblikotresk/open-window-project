@@ -539,7 +539,11 @@ input[type='radio']{
     width: 95%;
     margin: 0 auto 10px;
 }
-
+#city_input_label{
+    display: block;
+    margin: 0 auto 15px auto;
+    text-align: center;
+}
 /*==========================DISPLAY-CURRENT====================================*/
 .condition{
     width: 90%;
@@ -802,7 +806,7 @@ input[type='radio']{
 }
 #days{
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     height: 100%;
     flex-direction: column;
     position: relative;
