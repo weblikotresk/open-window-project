@@ -41,7 +41,6 @@ function setTimestamp(){
   let myBlob = new Blob([caching_time], {type: 'text/plain'});
   let init = { "status" : 200 , "url":"timestamp", "headers":time_header};
   let myResponse = new Response(myBlob,init);
-  console.log(myResponse);
   getCached('timestamp',myResponse)
 }
  //clean cache every week
@@ -49,7 +48,7 @@ function cleaningCache(caching_time){
     let today = new Date();
     today=today.getTime();
     caching_time = parseInt(caching_time,10)
-    console.log(today-caching_time);
+    //console.log(today-caching_time);
     if(today - caching_time>=7*24*60*60*60){
       caches.keys().then(cacheNames => {
         return Promise.all(
@@ -73,7 +72,7 @@ function getCached(request, resClone){
     }else
     if(!(request.url.includes('www.google-analytics.com/'))   &&  request.url.includes('/weather/')==false &&  request.url.includes('api')==false){
       //can't store videos because it gives us 206 code
-      if(request.destination != 'video'){
+      if(request.destination != 'video' && resClone.status!=0){
         cache.put(request, resClone).catch(err=>{
           console.error(err, request)
         });
@@ -89,9 +88,7 @@ self.addEventListener('fetch', e => {
     fetch_counter=0
   }
   fetch_counter++;
-  console.log(fetch_counter);
   if(fetch_counter==2){
-    console.log('pls');
     caches.match('timestamp').then(function(response) {
       if(response==undefined){
         let time=new Date()
@@ -101,7 +98,7 @@ self.addEventListener('fetch', e => {
         cleaningCache(response.headers.get('timestamp'));}
      })
   }
-  console.log('Service Worker: Fetching');
+
   e.respondWith( 
     caches.match(e.request).then(function(response) {
       //return cached version of response, if it's not in cahce, then fetch and cache it

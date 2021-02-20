@@ -141,6 +141,7 @@ function videoBack(name,rdata){
     let img_bg = document.createElement('img');
     img_bg.src = `https://d3aid59h00lu28.cloudfront.net/img/back/${name + postfix}.png`;
     img_bg.id = 'videoBG';
+    img_bg.crossOrigin = 'anonymous';
     document.body.prepend(img_bg);
   }
   else{
@@ -158,10 +159,12 @@ function videoBack(name,rdata){
       let mp4 = document.createElement('source');
       mp4.src = `https://d3aid59h00lu28.cloudfront.net/videos/${name + postfix}.mp4`;
       mp4.type = 'video/mp4';
+      mp4.crossOrigin = 'anonymous';
       videobg.appendChild(mp4);
       let webm = document.createElement('source');
       webm.src = `https://d3aid59h00lu28.cloudfront.net/videos/webm/${name + postfix}.webm`;
       webm.type = 'video/webm';
+      webm.crossOrigin = 'anonymous';
       videobg.appendChild(webm);
       document.querySelector('#videoBG').classList.add('no_opacity');
       setTimeout(()=>{
@@ -176,9 +179,11 @@ function videoBack(name,rdata){
       let mp4 = document.createElement('source');
       mp4.src = `https://d3aid59h00lu28.cloudfront.net/videos/${name + postfix}.mp4`;
       mp4.type = 'video/mp4';
+      mp4.crossOrigin = 'anonymous';
       let webm = document.createElement('source');
       webm.src = `https://d3aid59h00lu28.cloudfront.net/videos/webm/${name + postfix}.webm`;
       webm.type = 'video/webm';
+      webm.crossOrigin = 'anonymous';
       document.querySelector('#videoBG').appendChild(mp4);
       document.querySelector('#videoBG').appendChild(webm);
       document.querySelector('#videoBG').classList.add('full_opacity');
@@ -200,7 +205,7 @@ function summaries(rdata, level){
   if(document.querySelector(`#${level}_summary`)==undefined){
     document.querySelector(`#${container}`).insertAdjacentHTML('beforebegin', `
     <div id="${level}_summary">
-      <img class="summary_img" alt="${rdata[level].icon}" width="45px" height="45px" src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg">
+      <img class="summary_img" alt="${rdata[level].icon}" crossorigin="anonymous" width="45px" height="45px" src="https://d3aid59h00lu28.cloudfront.net/img/icons/${rdata[level].icon}.svg">
       <span>${rdata[level].summary}</span>
     </div>
     `) 
@@ -774,7 +779,9 @@ function loaded(request_data = localStorage, cached_coords){
                 <label for='search_${i}'><span class='auto_item'>${city_data[i]}</span></label>`);
                 let search_res = document.getElementById(`search_${i}`);
                 search_res.onclick =()=>{ 
-
+                  if(localStorage.location == "off"){
+                    localStorage.location = "on"
+                  }
                   fetch(data._embedded['city:search-results'][i]._links["city:item"].href).then((response)=>{
                     return response.json();
                   }).then((data)=>{
@@ -1019,6 +1026,7 @@ function loaded(request_data = localStorage, cached_coords){
       }
       let water_drop = document.createElement('img');
         water_drop.src = 'https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
+        water_drop.crossOrigin = 'anonymous';
         water_drop.width="13px";
         water_drop.height="13px";
         water_drop.className = 'pop_drop';
@@ -1055,7 +1063,7 @@ function loaded(request_data = localStorage, cached_coords){
               document.querySelector("#hours").insertAdjacentHTML('beforeend',`
               <div class="hour">
                 <div class="pop">${Math.round(rdata.hourly.data[i].precipProbability*100)}%</div>
-                    <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" width="60px" height="60px" class="sky">
+                    <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" crossorigin="anonymous" alt="${sky_icon}" width="60px" height="60px" class="sky">
                     <div class="temp">${Math.round(rdata.hourly.data[i].temperature) +localization[lang].units[units].temp}</div>
                     <div class="time">${convertSeconds(rdata.hourly.data[i].time+rdata.offset*3600)}</div>
               </div>
@@ -1091,7 +1099,7 @@ function loaded(request_data = localStorage, cached_coords){
                   document.querySelector("#hours").insertAdjacentHTML('beforeend',`
                   <div class="hour">
                     <div class="pop">${Math.round(rdata.hourly.data[j].precipProbability*100)}%</div>
-                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" width="60px" height="60px" class="sky">
+                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" crossorigin="anonymous" alt="${sky_icon}" width="60px" height="60px" class="sky">
                         <div class="temp">${Math.round(rdata.hourly.data[j].temperature) +localization[lang].units[units].temp}</div>
                         <div class="time">${convertSeconds(rdata.hourly.data[j].time+rdata.offset*3600)}</div>
                   </div>
@@ -1135,7 +1143,7 @@ function loaded(request_data = localStorage, cached_coords){
                   document.querySelector("#hours").insertAdjacentHTML('beforeend',`
                   <div class="hour">
                     <div class="pop">${Math.round(rdata.hourly.data[i+j].precipProbability*100)}%</div>
-                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" width="60px" height="60px" class="sky">
+                        <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" crossorigin="anonymous" alt="${sky_icon}" width="60px" height="60px" class="sky">
                         <div class="temp">${Math.round(rdata.hourly.data[i+j].temperature) +localization[lang].units[units].temp}</div>
                         <div class="time">${convertSeconds(rdata.hourly.data[i+j].time+rdata.offset*3600)}</div>
                   </div>
@@ -1481,11 +1489,13 @@ function loaded(request_data = localStorage, cached_coords){
           }else{
           videoBack(sky_icon, rdata);
           }
+        icon.crossOrigin = 'anonymous';
         icon.className='icon';
         icon.width='60px';
         icon.height='60px';
         let curr_icon = document.createElement('img');
         curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
+        curr_icon.crossOrigin = 'anonymous';
         curr_icon.alt ='';
         curr_icon.className = 'curr_icon';
         curr_icon.width='30px';
@@ -1615,9 +1625,9 @@ function loaded(request_data = localStorage, cached_coords){
           <input type="radio" name="days-radio" id="days-${i+1}" class="days_radio">
           <label for="days-${i+1}" class="day">
                   <div class="pop">
-                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" width="13px" height="13px" alt="Precip" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
+                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" crossorigin="anonymous" width="13px" height="13px" alt="Precip" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
                   </div>
-                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" width="60px" height="60px" class="sky">
+                  <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" crossorigin="anonymous" alt="${sky_icon}" width="60px" height="60px" class="sky">
                   <div class="temp">
                     <div class="temp_max">
                       ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
@@ -1630,9 +1640,9 @@ function loaded(request_data = localStorage, cached_coords){
             document.querySelector('#days').insertAdjacentHTML('beforeend', `
             <div class="day">
               <div class="pop">
-              <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" alt="Precip" width="13px" height="13px" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
+              <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" crossorigin="anonymous" alt="Precip" width="13px" height="13px" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%
               </div>
-              <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" alt="${sky_icon}" width="60px" height="60px" class="sky">
+              <img src="https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg" crossorigin="anonymous" alt="${sky_icon}" width="60px" height="60px" class="sky">
               <div class="temp">
                 <div class="temp_max">
                   ${Math.round(rdata.daily.data[i].temperatureMax)}${localization[lang].units[units].temp}</div>
@@ -1646,7 +1656,7 @@ function loaded(request_data = localStorage, cached_coords){
           if(i==8){
             break;
           }
-          document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" width="13px" height="13px" alt="Precip" class="pop_drop">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
+          document.querySelectorAll('.day > .pop')[i].innerHTML= `<img src="https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg" width="13px" height="13px" alt="Precip" class="pop_drop" crossorigin="anonymous">${Math.round(rdata.daily.data[i].precipProbability*100)}%`;
           document.querySelectorAll('.day > .sky')[i].src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
           document.querySelectorAll('.day > .sky')[i].alt = sky_icon;
           document.querySelectorAll('.day > .temp')[i].innerHTML=`
@@ -1704,6 +1714,7 @@ function loaded(request_data = localStorage, cached_coords){
         document.getElementById('slide-item-1').checked = 'checked';
           let icon = document.createElement('img');
           icon.src=`https://d3aid59h00lu28.cloudfront.net/img/icons/${sky_icon}.svg`;
+          icon.crossOrigin = 'anonymous';
           icon.alt=icon;
           icon.width="60px";
           icon.height="60px";
@@ -1714,6 +1725,7 @@ function loaded(request_data = localStorage, cached_coords){
           
           let curr_icon = document.createElement('img');
           curr_icon.src='https://d3aid59h00lu28.cloudfront.net/img/icons/water.svg';
+          curr_icon.crossOrigin = 'anonymous';
           curr_icon.alt ='';
           curr_icon.className = 'curr_icon';
           curr_icon.width='30px';
