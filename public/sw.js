@@ -4,12 +4,12 @@ const cacheName = 'app_v1';
 // Call Install Event
 self.addEventListener('install', e => {
   self.skipWaiting();
-  console.log('Service Worker: Installed');
+  //console.log('Service Worker: Installed');
 });
 
 // Call Activate Event
 self.addEventListener('activate', e => {
-  console.log('Service Worker: Activated');
+  //console.log('Service Worker: Activated');
   // Remove unwanted caches
   e.waitUntil(
     caches.keys().then(cacheNames => {
@@ -17,7 +17,7 @@ self.addEventListener('activate', e => {
         cacheNames.map(cache => {
           //removing previous version of cache
           if (cache !== cacheName) {
-            console.log('Service Worker: Clearing Old Cache');
+            //console.log('Service Worker: Clearing Old Cache');
             return caches.delete(cache);
           }else{
             caches.match('timestamp').then(function(response) {

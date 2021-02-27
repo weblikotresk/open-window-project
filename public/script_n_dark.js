@@ -250,7 +250,7 @@ function isCache(){
   today=today.getTime();
   let cached_objects= localStorage.getItem('cached_data');
   cached_objects = JSON.parse(cached_objects);
-  console.log(cached_objects);
+  //console.log(cached_objects);
   if(cached_objects==null || today>cached_objects[0].daily.data[6].time*1000){
     return [false];
   }else{
@@ -272,7 +272,7 @@ async function getWeather(latitude, longitude, language, unit, city){
   //response varies due to different time of request
   if(cache_result[0]==false || city.locality!=cached_objects[1].locality){
     //after 6 days we are fetchng new data
-    console.log('after 6 days');
+    //console.log('after 6 days');
     const response = await fetch(api_url, options);
     const rdata = await response.json();
     return [rdata, city, 8, 169]; 
@@ -281,13 +281,13 @@ async function getWeather(latitude, longitude, language, unit, city){
      document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
      let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
      let hour_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/3600000);
-     console.log('before 6 days, but after 8 hours', hour_counter);
+     //console.log('before 6 days, but after 8 hours', hour_counter);
      return [cached_objects[0], cached_objects[1], days_counter ,hour_counter];
    }else if (today-cached_objects[0].currently.time*1000<28800000){
      //before 8 hours since first request
     let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
     let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
-    console.log('before 8 hours', days_counter);
+    //console.log('before 8 hours', days_counter);
     return [cached_objects[0], cached_objects[1],days_counter,hour_counter];
   }
 }
@@ -791,7 +791,7 @@ function loaded(request_data = localStorage, cached_coords){
                       .then((city) => {
                         city_promise = getWeather(data.location.latlon.latitude, data.location.latlon.longitude, lang, units,city);
                         city_promise.then(data_set=>{
-                          console.log(data_set);
+                          //console.log(data_set);
                           document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
                           setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
                           return false;}, 550);
@@ -831,7 +831,7 @@ function loaded(request_data = localStorage, cached_coords){
                             document.getElementsByClassName('search_window')[0].style.clipPath = 'circle(0.1% at 53.6% 6.2%)'; 
                           setTimeout(()=>{document.getElementsByClassName('search_window')[0].style.zIndex = -5;
                           return false;}, 550);
-                            console.log(data_set);
+                           // console.log(data_set);
                             wrapper(data_set);
                             cityName(data_set[1]);
                           });
@@ -889,14 +889,14 @@ function loaded(request_data = localStorage, cached_coords){
           document.getElementsByClassName('updating')[0].classList.toggle('updating_closed');
           let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+1;
           let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
-          console.log('before 6 days, but after 8 hours', hour_counter);
+         // console.log('before 6 days, but after 8 hours', hour_counter);
           cityName(cached_objects[1]);
           wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
         }else{
           //before 8 hours since first request
           let days_counter=Math.round((cached_objects[0].daily.data[7].time*1000-today)/86400000)+2;
           let hour_counter=Math.round((cached_objects[0].hourly.data[168].time*1000-today)/3600000)+1;
-          console.log('before 8 hours', days_counter);
+          //console.log('before 8 hours', days_counter);
           cityName(cached_objects[1]);
           wrapper([cached_objects[0], cached_objects[1], days_counter ,hour_counter]);
         }
@@ -932,7 +932,7 @@ function loaded(request_data = localStorage, cached_coords){
       <span>${localization[lang].refresh}</span>
       `;
       
-      console.log(city, rdata);
+      //console.log(city, rdata);
       function compass(event){
         var alpha;
         const delta = 225;
