@@ -18,11 +18,11 @@ function seasonsCheck(rdata){
       }
     }
   }
-  if(min_temp<15 && min_temp>5){
+  if(min_temp<8 && min_temp>0){
     return '-autumn'
-  }else if(min_temp<=5){
+  }else if(min_temp<=0){
     return '-winter'
-  }else if(min_temp>=15 && min_temp<20){
+  }else if(min_temp>=8 && min_temp<15){
     return '-spring'
   }else{
     return ''
